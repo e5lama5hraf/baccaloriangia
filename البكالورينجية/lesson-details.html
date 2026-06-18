@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>مشاهدة الدرس | البكالورينجية</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #0f9f6e;
+            --whatsapp: #25D366;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Cairo", sans-serif;
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1120px, 92%);
+            margin: auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            box-shadow: 0 14px 30px rgba(18, 60, 140, 0.25);
+        }
+
+        .btn-light {
+            background: var(--white);
+            color: var(--primary);
+            border: 1px solid rgba(18, 60, 140, 0.12);
+        }
+
+        .btn-whatsapp {
+            background: var(--whatsapp);
+            color: var(--white);
+            box-shadow: 0 12px 26px rgba(37, 211, 102, 0.25);
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(18, 60, 140, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 25px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+        }
+
+        .lesson-page {
+            padding: 56px 0 76px;
+        }
+
+        .lesson-layout {
+            display: grid;
+            grid-template-columns: 1fr 330px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .lesson-main {
+            background: var(--white);
+            border-radius: 32px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(18, 60, 140, 0.08);
+        }
+
+        .badge {
+            display: inline-flex;
+            background: rgba(11, 182, 214, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(11, 182, 214, 0.22);
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            color: var(--dark);
+            font-size: clamp(30px, 4vw, 46px);
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 12px;
+        }
+
+        .lesson-desc {
+            color: var(--muted);
+            line-height: 1.9;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .video-box {
+            background: var(--dark);
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 22px;
+        }
+
+        .youtube-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        .youtube-box iframe {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border: none;
+        }
+
+        .no-video {
+            min-height: 300px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 900;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .watch-info {
+            background: #f8fbff;
+            border: 1px solid rgba(18, 60, 140, 0.08);
+            border-radius: 22px;
+            padding: 18px;
+        }
+
+        .watch-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .watch-bar {
+            height: 11px;
+            border-radius: 999px;
+            background: #e8eef8;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .watch-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .watch-note {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: 700;
+        }
+
+        .completed-message {
+            display: none;
+            margin-top: 14px;
+            background: rgba(15, 159, 110, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(15, 159, 110, 0.18);
+            border-radius: 18px;
+            padding: 13px 15px;
+            font-weight: 900;
+            line-height: 1.7;
+        }
+
+        .completed-message.active {
+            display: block;
+        }
+
+        .sidebar {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(18, 60, 140, 0.08);
+            position: sticky;
+            top: 105px;
+        }
+
+        .sidebar h3 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .lesson-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .lesson-list a {
+            display: block;
+            background: #f8fbff;
+            border: 1px solid rgba(18, 60, 140, 0.08);
+            border-radius: 16px;
+            padding: 12px;
+            color: var(--dark);
+            font-weight: 800;
+            line-height: 1.6;
+            transition: 0.3s;
+        }
+
+        .lesson-list a:hover,
+        .lesson-list a.active {
+            background: rgba(18, 60, 140, 0.08);
+            color: var(--primary);
+        }
+
+        .lesson-list a.locked {
+            color: var(--muted);
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+
+        .access-denied {
+            min-height: calc(100vh - 82px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        }
+
+        .access-denied.active {
+            display: flex;
+        }
+
+        .denied-box {
+            width: min(560px, 92%);
+            background: var(--white);
+            border-radius: 32px;
+            padding: 34px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(18, 60, 140, 0.08);
+        }
+
+        .denied-box h1 {
+            color: var(--dark);
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .denied-box p {
+            color: var(--muted);
+            line-height: 1.9;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .denied-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .loading-box {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 30px;
+            box-shadow: var(--soft-shadow);
+            text-align: center;
+            color: var(--muted);
+            font-weight: 900;
+        }
+
+        @media (max-width: 900px) {
+            .lesson-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .navbar {
+                height: 76px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .lesson-main,
+            .sidebar,
+            .denied-box {
+                padding: 20px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .watch-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">ب</span>
+                البكالورينجية
+            </a>
+
+            <a href="#" class="back-to-course btn btn-primary">
+                الرجوع للكورس
+            </a>
+        </div>
+    </header>
+
+    <main class="lesson-page" id="lessonPage">
+        <div class="container lesson-layout">
+
+            <div class="lesson-main">
+                <div class="badge" id="lessonBadge">
+                    جاري تحميل بيانات الدرس...
+                </div>
+
+                <h1 id="lessonTitle">
+                    عنوان الدرس
+                </h1>
+
+                <p class="lesson-desc" id="lessonDescription">
+                    وصف الدرس يظهر هنا حسب الدرس المختار.
+                </p>
+
+                <div class="video-box youtube-box" id="videoBox">
+                    <iframe id="youtubeFrame" src="" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div class="watch-info">
+                    <div class="watch-head">
+                        <span>حالة مشاهدة هذا الدرس</span>
+                        <span id="watchPercent">0%</span>
+                    </div>
+
+                    <div class="watch-bar">
+                        <div class="watch-fill" id="watchFill"></div>
+                    </div>
+
+                    <p class="watch-note">
+                        لأن الفيديو من YouTube، يتم تسجيل إتمام الدرس يدويًا بعد المشاهدة.
+                    </p>
+
+                    <button class="btn btn-primary" id="completeLessonBtn" type="button" style="margin-top: 14px;">
+                        تسجيل الدرس كمكتمل
+                    </button>
+
+                    <div class="completed-message" id="completedMessage">
+                        ✅ تم تسجيل إتمام مشاهدة الدرس بنجاح.
+                    </div>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <h3>دروس الكورس</h3>
+
+                <ul class="lesson-list" id="lessonList"></ul>
+
+                <a href="#" class="back-to-course btn btn-primary">
+                    الرجوع لمحتوى الكورس
+                </a>
+            </aside>
+
+        </div>
+    </main>
+
+    <section class="access-denied" id="accessDenied">
+        <div class="denied-box">
+            <h1>الكورس غير مفعل لحسابك</h1>
+
+            <p>
+                هذا الدرس متاح فقط للطلاب الذين لديهم اشتراك مفعل.
+                تواصل معنا لتفعيل الكورس على الإيميل المسجل به في المنصة.
+            </p>
+
+            <div class="denied-actions">
+                <a href="#" target="_blank" class="btn btn-whatsapp" id="whatsappAccessBtn">
+                    ☎ تواصل واتساب
+                </a>
+
+                <a href="tel:+201000000000" class="btn btn-light">
+                    رقم الهاتف: 01000000000
+                </a>
+
+                <a href="#" class="back-to-course btn btn-primary">
+                    الرجوع للكورس
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const supabaseClient = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const courseId = Number(urlParams.get("course"));
+        const lessonId = Number(urlParams.get("lesson"));
+
+        const lessonPage = document.getElementById("lessonPage");
+        const accessDenied = document.getElementById("accessDenied");
+
+        const lessonBadge = document.getElementById("lessonBadge");
+        const lessonTitle = document.getElementById("lessonTitle");
+        const lessonDescription = document.getElementById("lessonDescription");
+        const lessonList = document.getElementById("lessonList");
+
+        const videoBox = document.getElementById("videoBox");
+        const youtubeFrame = document.getElementById("youtubeFrame");
+
+        const watchPercent = document.getElementById("watchPercent");
+        const watchFill = document.getElementById("watchFill");
+        const completedMessage = document.getElementById("completedMessage");
+        const completeLessonBtn = document.getElementById("completeLessonBtn");
+
+        const whatsappAccessBtn = document.getElementById("whatsappAccessBtn");
+
+        let currentUser = null;
+        let currentCourse = null;
+        let currentLesson = null;
+        let hasAccess = false;
+        let completedSaved = false;
+
+        document.querySelectorAll(".back-to-course").forEach(btn => {
+            btn.href = `course-details.html?id=${courseId}`;
+        });
+
+        function getYouTubeId(url) {
+            if (!url) return "";
+
+            try {
+                const cleanUrl = url.trim();
+
+                // لو المستخدم حط ID الفيديو بس
+                if (
+                    !cleanUrl.includes("youtube.com") &&
+                    !cleanUrl.includes("youtu.be")
+                ) {
+                    return cleanUrl;
+                }
+
+                const parsedUrl = new URL(cleanUrl);
+
+                // الشكل العادي:
+                // https://www.youtube.com/watch?v=VIDEO_ID
+                if (parsedUrl.hostname.includes("youtube.com")) {
+                    if (parsedUrl.pathname === "/watch") {
+                        return parsedUrl.searchParams.get("v") || "";
+                    }
+
+                    // الشكل:
+                    // https://www.youtube.com/embed/VIDEO_ID
+                    if (parsedUrl.pathname.startsWith("/embed/")) {
+                        return parsedUrl.pathname.split("/embed/")[1].split("/")[0];
+                    }
+
+                    // الشكل:
+                    // https://www.youtube.com/shorts/VIDEO_ID
+                    if (parsedUrl.pathname.startsWith("/shorts/")) {
+                        return parsedUrl.pathname.split("/shorts/")[1].split("/")[0];
+                    }
+
+                    // الشكل:
+                    // https://www.youtube.com/live/VIDEO_ID
+                    if (parsedUrl.pathname.startsWith("/live/")) {
+                        return parsedUrl.pathname.split("/live/")[1].split("/")[0];
+                    }
+                }
+
+                // الشكل المختصر:
+                // https://youtu.be/VIDEO_ID
+                if (parsedUrl.hostname.includes("youtu.be")) {
+                    return parsedUrl.pathname.replace("/", "").split("?")[0];
+                }
+
+                return "";
+            } catch (error) {
+                console.error("Invalid YouTube URL:", error);
+                return "";
+            }
+        }
+
+        function showPageError(message) {
+            document.body.innerHTML =
+                `<h1 style="padding:50px;text-align:center">${message}</h1>`;
+        }
+
+        async function getCurrentUser() {
+            const { data } = await supabaseClient.auth.getUser();
+
+            currentUser = data.user;
+        }
+
+        async function loadCourse() {
+            const { data: course, error } = await supabaseClient
+                .from("courses")
+                .select("id, title, is_active")
+                .eq("id", courseId)
+                .eq("is_active", true)
+                .single();
+
+            if (error || !course) {
+                showPageError("الكورس غير موجود");
+                return false;
+            }
+
+            currentCourse = course;
+
+            return true;
+        }
+
+        async function checkCourseAccess() {
+            if (!currentUser) {
+                hasAccess = false;
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from("course_enrollments")
+                .select("id")
+                .eq("course_id", courseId)
+                .eq("user_id", currentUser.id)
+                .eq("status", "active")
+                .maybeSingle();
+
+            if (error) {
+                console.error(error);
+                hasAccess = false;
+                return;
+            }
+
+            hasAccess = !!data;
+        }
+
+        async function loadLesson() {
+            const { data: lesson, error } = await supabaseClient
+                .from("lessons")
+                .select("*")
+                .eq("id", lessonId)
+                .eq("course_id", courseId)
+                .eq("is_active", true)
+                .single();
+
+            if (error || !lesson) {
+                lessonTitle.textContent = "الدرس غير موجود";
+                lessonDescription.textContent = "لم نتمكن من تحميل بيانات هذا الدرس.";
+                return false;
+            }
+
+            currentLesson = lesson;
+
+            const isFreeLesson =
+                lesson.status === "free" ||
+                lesson.is_preview === true;
+
+            if (!isFreeLesson && !hasAccess) {
+                showAccessDenied();
+                return false;
+            }
+
+            document.title = `${lesson.title} | البكالورينجية`;
+
+            lessonBadge.textContent =
+                `درس داخل كورس ${currentCourse.title}`;
+
+            lessonTitle.textContent =
+                lesson.title;
+
+            lessonDescription.textContent =
+                lesson.description || "لا يوجد وصف لهذا الدرس حاليًا.";
+
+            const videoId =
+                lesson.youtube_video_id ||
+                getYouTubeId(lesson.youtube_url || lesson.video_url);
+
+            if (videoId) {
+                youtubeFrame.src =
+                    `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1`;
+            } else {
+                videoBox.classList.remove("youtube-box");
+
+                videoBox.innerHTML =
+                    `<div class="no-video">لا يوجد فيديو مضاف لهذا الدرس حاليًا.</div>`;
+            }
+
+            return true;
+        }
+
+        async function loadCourseLessons() {
+            const { data: lessons, error } = await supabaseClient
+                .from("lessons")
+                .select("id, title, status, is_preview, lesson_order, is_active")
+                .eq("course_id", courseId)
+                .eq("is_active", true)
+                .order("lesson_order", { ascending: true });
+
+            if (error) {
+                console.error(error);
+                lessonList.innerHTML = "<li>حدث خطأ أثناء تحميل دروس الكورس.</li>";
+                return;
+            }
+
+            if (!lessons || lessons.length === 0) {
+                lessonList.innerHTML = "<li>لا توجد دروس متاحة.</li>";
+                return;
+            }
+
+            lessonList.innerHTML = "";
+
+            lessons.forEach(lesson => {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+
+                const isFreeLesson =
+                    lesson.status === "free" ||
+                    lesson.is_preview === true;
+
+                const isLocked =
+                    !isFreeLesson && !hasAccess;
+
+                a.href = isLocked
+                    ? "#"
+                    : `lesson-details.html?course=${courseId}&lesson=${lesson.id}`;
+
+                a.textContent = isLocked
+                    ? `🔒 ${lesson.title}`
+                    : lesson.title;
+
+                if (lesson.id === lessonId) {
+                    a.classList.add("active");
+                }
+
+                if (isLocked) {
+                    a.classList.add("locked");
+
+                    a.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showAccessDenied();
+                    });
+                }
+
+                li.appendChild(a);
+                lessonList.appendChild(li);
+            });
+        }
+
+        async function loadProgress() {
+            if (!currentUser) {
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from("lesson_progress")
+                .select("watched_percent, is_completed")
+                .eq("user_id", currentUser.id)
+                .eq("lesson_id", lessonId)
+                .maybeSingle();
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            if (!data) {
+                return;
+            }
+
+            const watched = data.is_completed
+                ? 100
+                : data.watched_percent || 0;
+
+            watchPercent.textContent = watched + "%";
+            watchFill.style.width = watched + "%";
+
+            if (data.is_completed) {
+                completedSaved = true;
+                completedMessage.classList.add("active");
+                completeLessonBtn.textContent = "تم إكمال الدرس";
+                completeLessonBtn.disabled = true;
+            }
+        }
+
+        async function saveCompleted() {
+            if (!currentUser) {
+                alert("من فضلك سجل الدخول أولًا حتى يتم حفظ تقدمك.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            if (completedSaved) {
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from("lesson_progress")
+                .upsert({
+                    user_id: currentUser.id,
+                    course_id: courseId,
+                    lesson_id: lessonId,
+                    is_completed: true,
+                    watched_percent: 100,
+                    completed_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                }, {
+                    onConflict: "user_id,lesson_id"
+                });
+
+            if (error) {
+                console.error(error);
+                alert("حدث خطأ أثناء حفظ تقدمك. حاول مرة أخرى.");
+                return;
+            }
+
+            completedSaved = true;
+
+            watchPercent.textContent = "100%";
+            watchFill.style.width = "100%";
+
+            completedMessage.classList.add("active");
+
+            completeLessonBtn.textContent = "تم إكمال الدرس";
+            completeLessonBtn.disabled = true;
+        }
+
+        function showAccessDenied() {
+            lessonPage.style.display = "none";
+            accessDenied.classList.add("active");
+            updateWhatsAppLink();
+        }
+
+        function updateWhatsAppLink() {
+            if (!whatsappAccessBtn) {
+                return;
+            }
+
+            const email = currentUser?.email || "زائر لم يسجل الدخول";
+            const courseName = currentCourse?.title || "كورس غير محدد";
+
+            const message =
+                `مرحبًا، أريد تفعيل كورس:
+📚 ${courseName}
+📧 الإيميل: ${email}`;
+
+            whatsappAccessBtn.href =
+                `https://wa.me/201000000000?text=${encodeURIComponent(message)}`;
+        }
+
+        completeLessonBtn.addEventListener("click", saveCompleted);
+
+        async function initPage() {
+            if (!courseId || !lessonId) {
+                showPageError("رابط الدرس غير صحيح");
+                return;
+            }
+
+            await getCurrentUser();
+
+            const courseLoaded = await loadCourse();
+
+            if (!courseLoaded) {
+                return;
+            }
+
+            await checkCourseAccess();
+
+            const lessonLoaded = await loadLesson();
+
+            await loadCourseLessons();
+
+            if (lessonLoaded) {
+                await loadProgress();
+            }
+
+            updateWhatsAppLink();
+        }
+
+        initPage();
+    </script>
+
+</body>
+
+</html>

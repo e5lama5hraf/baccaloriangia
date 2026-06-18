@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أ / أحمد محمود | البكالورينجية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #123c8c;
+      --secondary: #0bb6d6;
+      --accent: #ffb703;
+      --dark: #071a3d;
+      --light: #f4f8ff;
+      --white: #ffffff;
+      --text: #1d2b45;
+      --muted: #6c7890;
+      --danger: #ff4d6d;
+      --radius: 24px;
+      --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+      --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Cairo", sans-serif;
+      background: var(--light);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 24px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      box-shadow: 0 14px 30px rgba(18, 60, 140, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(18, 60, 140, 0.08);
+    }
+
+    .navbar {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+    }
+
+    nav ul {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      list-style: none;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    nav a {
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--secondary);
+    }
+
+    .menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .hero {
+      padding: 145px 0 78px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(11, 182, 214, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(255, 183, 3, 0.22), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      background: rgba(11, 182, 214, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(11, 182, 214, 0.22);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.18;
+      color: var(--dark);
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .hero-text p {
+      font-size: 19px;
+      line-height: 1.9;
+      color: var(--muted);
+      max-width: 650px;
+      margin-bottom: 18px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 24px;
+    }
+
+    .social-link {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.1);
+      box-shadow: var(--soft-shadow);
+      font-weight: 900;
+      transition: 0.3s;
+    }
+
+    .social-link:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .profile-card {
+      background: rgba(255, 255, 255, 0.86);
+      border-radius: 34px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(18, 60, 140, 0.1);
+    }
+
+    .teacher-photo {
+      height: 430px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(7, 26, 61, 0.02) 0%, rgba(7, 26, 61, 0.22) 70%, rgba(7, 26, 61, 0.78) 100%),
+        url("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80");
+      background-size: cover;
+      background-position: center top;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-label {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      background: var(--white);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-weight: 900;
+      box-shadow: 0 12px 25px rgba(7, 26, 61, 0.18);
+    }
+
+    section {
+      padding: 76px 0;
+    }
+
+    .courses-section {
+      background: linear-gradient(180deg, #eef6ff, #ffffff);
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .section-heading .tag {
+      display: block;
+      color: var(--secondary);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .section-heading h2 {
+      color: var(--dark);
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+      max-width: 680px;
+      margin: auto;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .course-card {
+      background: var(--white);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 14px 34px rgba(7, 26, 61, 0.09);
+      border: 1px solid rgba(18, 60, 140, 0.07);
+      transition: 0.3s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow);
+    }
+
+    .course-thumb {
+      height: 175px;
+      background: var(--course-image);
+      background-position: center;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .course-body {
+      padding: 22px;
+    }
+
+    .course-body h3 {
+      color: var(--dark);
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .course-body p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .course-meta span {
+      background: #f8fbff;
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .course-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-top: 1px solid rgba(18, 60, 140, 0.08);
+      padding-top: 16px;
+    }
+
+    .price small {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .price strong {
+      color: var(--danger);
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .course-footer .btn {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+
+    .lessons-toggle {
+      width: 100%;
+      margin-top: 16px;
+      background: #f8fbff;
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+    }
+
+    .lessons-toggle:hover {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .lessons-toggle .arrow {
+      display: inline-block;
+      margin-right: 8px;
+      transition: 0.3s;
+    }
+
+    .course-card.open .lessons-toggle .arrow {
+      transform: rotate(180deg);
+    }
+
+    .lessons-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      background: #f8fbff;
+      border-radius: 18px;
+      margin-top: 12px;
+    }
+
+    .course-card.open .lessons-list {
+      max-height: 620px;
+      border: 1px solid rgba(18, 60, 140, 0.07);
+    }
+
+    .unit-title {
+      padding: 13px 15px 4px;
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .lesson-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 13px 15px;
+      border-bottom: 1px solid rgba(18, 60, 140, 0.07);
+      color: var(--dark);
+    }
+
+    .lesson-item:last-child {
+      border-bottom: none;
+    }
+
+    .lesson-title {
+      font-weight: 900;
+      line-height: 1.6;
+    }
+
+    .lesson-meta {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+
+    .lesson-meta span {
+      background: var(--white);
+      color: var(--muted);
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .lesson-meta .free {
+      color: #0f9f6e;
+    }
+
+    .lesson-meta .locked {
+      color: var(--muted);
+    }
+
+    .lesson-meta .quiz {
+      color: var(--danger);
+    }
+
+    .lesson-number {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      padding-top: 4px;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      color: var(--white);
+      border-radius: 34px;
+      padding: 46px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-box h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .cta-box p {
+      color: rgba(255, 255, 255, .78);
+      line-height: 1.8;
+      font-weight: 600;
+    }
+
+    .cta-box .btn {
+      background: var(--accent);
+      color: var(--dark);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(420px, 92%);
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-box h2 {
+      margin-bottom: 10px;
+      color: var(--dark);
+      font-weight: 900;
+    }
+
+    .modal-note {
+      color: var(--muted);
+      margin: 10px 0 20px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+    }
+
+    footer {
+      background: var(--dark);
+      color: var(--white);
+      padding: 34px 0;
+      text-align: center;
+    }
+
+    footer p {
+      color: rgba(255, 255, 255, .68);
+      font-weight: 600;
+    }
+
+    @media (max-width: 992px) {
+      nav {
+        position: fixed;
+        top: 82px;
+        right: -100%;
+        width: 78%;
+        height: calc(100vh - 82px);
+        background: var(--white);
+        box-shadow: -10px 0 30px rgba(7, 26, 61, 0.12);
+        transition: 0.35s;
+        padding: 35px;
+      }
+
+      nav.active {
+        right: 0;
+      }
+
+      nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      .navbar>.btn {
+        display: none;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .courses-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cta-box {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .navbar {
+        height: 76px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .hero {
+        padding-top: 122px;
+      }
+
+      .teacher-photo {
+        height: 320px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .social-link {
+        width: 44px;
+        height: 44px;
+      }
+
+      .courses-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .lesson-item {
+        grid-template-columns: 1fr;
+      }
+
+      .lesson-number {
+        padding-top: 0;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      .profile-card,
+      .cta-box {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container navbar">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">ب</span>
+        البكالورينجية
+      </a>
+
+      <nav id="navMenu">
+        <ul>
+          <li><a href="#courses">الكورسات</a></li>
+        </ul>
+      </nav>
+
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <div class="badge" id="teacherBadge">
+          🎓 مدرس الرياضيات - أولى بكالوريا
+        </div>
+        <h1 id="teacherName">أ / أحمد محمود</h1>
+        <p id="teacherDescription">
+          شرح مبسط ومنظم يساعدك تفهم الرياضيات خطوة بخطوة، مع تدريبات بعد كل درس
+          واختبارات قصيرة تتابع مستواك طول السنة.
+        </p>
+
+        <div class="social-links" aria-label="روابط منصات المدرس">
+          <a href="#" class="social-link" title="يوتيوب">▶</a>
+          <a href="#" class="social-link" title="فيسبوك">f</a>
+          <a href="#" class="social-link" title="تليجرام">✈</a>
+          <a href="#" class="social-link" title="واتساب">☎</a>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#courses" class="btn btn-primary">شوف الكورسات</a>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="teacher-photo" id="teacherPhoto">
+          <div class="photo-label">رياضيات ببساطة</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section id="courses" class="courses-section">
+    <div class="container">
+      <div class="section-heading">
+        <span class="tag">كورسات المدرس</span>
+        <h2>اختار الكورس المناسب ليك</h2>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid"></div>
+
+    </div>
+  </section>
+
+  <!-- Subscription Modal -->
+  <div id="subscribeModal" class="modal">
+    <div class="modal-box">
+      <h2>طلب الاشتراك في الكورس</h2>
+      <p id="modalCourseName">...</p>
+
+      <p class="modal-note">
+        سيتم التواصل معك عبر واتساب لتفعيل الكورس على حسابك.
+      </p>
+
+      <div class="modal-actions">
+        <a id="whatsappLink" target="_blank" class="btn btn-primary">
+          📲 تأكيد عبر واتساب
+        </a>
+
+        <button id="closeModal" class="btn btn-light">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 جميع الحقوق محفوظة لمنصة البكالورينجية</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    const menuBtn = document.getElementById("menuBtn");
+    const navMenu = document.getElementById("navMenu");
+
+    const teacherBadge = document.getElementById("teacherBadge");
+    const teacherName = document.getElementById("teacherName");
+    const teacherDescription = document.getElementById("teacherDescription");
+    const teacherPhoto = document.getElementById("teacherPhoto");
+    const coursesGrid = document.getElementById("coursesGrid");
+
+    const modal = document.getElementById("subscribeModal");
+    const modalCourseName = document.getElementById("modalCourseName");
+    const whatsappLink = document.getElementById("whatsappLink");
+    const closeModal = document.getElementById("closeModal");
+
+    const adminPhone = "201000000000";
+
+    const params = new URLSearchParams(window.location.search);
+    const teacherId = Number(params.get("id"));
+
+    menuBtn.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+      menuBtn.textContent = navMenu.classList.contains("active") ? "×" : "☰";
+    });
+
+    document.querySelectorAll("nav a").forEach(link => {
+      link.addEventListener("click", () => {
+        navMenu.classList.remove("active");
+        menuBtn.textContent = "☰";
+      });
+    });
+
+    function getStageArabic(stage) {
+      if (stage === "first") {
+        return "أولى بكالوريا";
+      }
+
+      if (stage === "second") {
+        return "تانية بكالوريا";
+      }
+
+      return "";
+    }
+
+    function getLessonStatus(status) {
+      if (status === "free") {
+        return {
+          text: "مجاني",
+          className: "free"
+        };
+      }
+
+      if (status === "quiz") {
+        return {
+          text: "Quiz",
+          className: "quiz"
+        };
+      }
+
+      return {
+        text: "مقفول",
+        className: "locked"
+      };
+    }
+
+    async function loadTeacherProfile() {
+      if (!teacherId) {
+        teacherName.textContent = "المدرس غير موجود";
+        teacherDescription.textContent = "لم يتم تحديد مدرس صحيح.";
+        coursesGrid.innerHTML = "<p>ارجع لصفحة الرئيسية واختر مدرس من القائمة.</p>";
+        return;
+      }
+
+      const { data: teacher, error } = await supabaseClient
+        .from("teachers")
+        .select("*")
+        .eq("id", teacherId)
+        .eq("is_active", true)
+        .single();
+
+      if (error || !teacher) {
+        console.error(error);
+        teacherName.textContent = "المدرس غير موجود";
+        teacherDescription.textContent = "لم نتمكن من تحميل بيانات هذا المدرس.";
+        coursesGrid.innerHTML = "<p>لا توجد بيانات متاحة.</p>";
+        return;
+      }
+
+      document.title = `${teacher.name} | البكالورينجية`;
+
+      teacherName.textContent = teacher.name;
+      teacherBadge.textContent = `🎓 مدرس ${teacher.subject} - ${getStageArabic(teacher.stage)}`;
+      teacherDescription.textContent = teacher.bio || "مدرس على منصة البكالورينجية.";
+
+      teacherPhoto.style.background = `
+      linear-gradient(
+        180deg,
+        rgba(7,26,61,.02) 0%,
+        rgba(7,26,61,.22) 70%,
+        rgba(7,26,61,.78) 100%
+      ),
+      url('${teacher.image || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80"}')
+    `;
+
+      teacherPhoto.style.backgroundSize = "cover";
+      teacherPhoto.style.backgroundPosition = "center top";
+
+      const photoLabel = teacherPhoto.querySelector(".photo-label");
+      if (photoLabel) {
+        photoLabel.textContent = teacher.photo_label || teacher.subject;
+      }
+
+      updateSocialLinks(teacher);
+    }
+
+    function updateSocialLinks(teacher) {
+      const socialLinks = document.querySelectorAll(".social-link");
+
+      const links = [
+        teacher.youtube_url,
+        teacher.facebook_url,
+        teacher.telegram_url,
+        teacher.whatsapp_url
+      ];
+
+      socialLinks.forEach((link, index) => {
+        if (links[index]) {
+          link.href = links[index];
+          link.style.display = "grid";
+          link.target = "_blank";
+        } else {
+          link.style.display = "none";
+        }
+      });
+    }
+
+    async function loadTeacherCourses() {
+      coursesGrid.innerHTML = "<p>جاري تحميل كورسات المدرس...</p>";
+
+      const { data: courses, error } = await supabaseClient
+        .from("courses")
+        .select(`
+        *,
+        lessons (
+          id,
+          title,
+          duration,
+          status,
+          lesson_order,
+          is_active
+        )
+      `)
+        .eq("teacher_id", teacherId)
+        .eq("is_active", true)
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        coursesGrid.innerHTML = "<p>حدث خطأ أثناء تحميل الكورسات.</p>";
+        return;
+      }
+
+      if (!courses || courses.length === 0) {
+        coursesGrid.innerHTML = "<p>لا توجد كورسات متاحة لهذا المدرس حاليًا.</p>";
+        return;
+      }
+
+      coursesGrid.innerHTML = "";
+
+      courses.forEach(course => {
+        const activeLessons = (course.lessons || [])
+          .filter(lesson => lesson.is_active)
+          .sort((a, b) => a.lesson_order - b.lesson_order);
+
+        const lessonsHTML = activeLessons.map((lesson, index) => {
+          const status = getLessonStatus(lesson.status);
+
+          return `
+          <div class="lesson-item">
+            <div>
+              <div class="lesson-title">
+                ${lesson.title}
+              </div>
+
+              <div class="lesson-meta">
+                <span>${lesson.duration || ""}</span>
+                <span class="${status.className}">
+                  ${status.text}
+                </span>
+              </div>
+            </div>
+
+            <div class="lesson-number">
+              درس ${String(index + 1).padStart(2, "0")}
+            </div>
+          </div>
+        `;
+        }).join("");
+
+        coursesGrid.innerHTML += `
+        <div class="course-card">
+
+          <div
+            class="course-thumb"
+            style="--course-image:url('${course.image || "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=900&q=80"}')">
+
+          </div>
+
+          <div class="course-body">
+            <h3>${course.title}</h3>
+
+            <p>${course.description || ""}</p>
+
+            <div class="course-meta">
+              <span>${activeLessons.length} درس</span>
+              <span>${getStageArabic(course.stage)}</span>
+            </div>
+
+            <div class="course-footer">
+              <div class="price">
+                <small>سعر الكورس</small>
+                <strong>${course.price} ج</strong>
+              </div>
+
+              <button
+                class="btn btn-primary subscribe-btn"
+                data-course="${course.title}">
+                اشترك
+              </button>
+            </div>
+
+            <button class="btn lessons-toggle">
+              عرض الدروس
+              <span class="arrow">⌄</span>
+            </button>
+
+            <div class="lessons-list">
+              ${activeLessons.length > 0
+            ? lessonsHTML
+            : '<div class="lesson-item"><div class="lesson-title">لا توجد دروس مضافة حاليًا</div></div>'
+          }
+            </div>
+          </div>
+        </div>
+      `;
+      });
+
+      initLessonButtons();
+    }
+
+    function initLessonButtons() {
+      document
+        .querySelectorAll(".lessons-toggle")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            const card = button.closest(".course-card");
+
+            card.classList.toggle("open");
+
+            const isOpen = card.classList.contains("open");
+
+            button.firstChild.textContent = isOpen
+              ? "إخفاء الدروس "
+              : "عرض الدروس ";
+          });
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("subscribe-btn")) {
+        const courseName = e.target.getAttribute("data-course");
+
+        modalCourseName.textContent = courseName;
+
+        const message =
+          `مرحبًا، أريد الاشتراك في الكورس: ${courseName} - الرجاء تفعيل الحساب`;
+
+        whatsappLink.href =
+          `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+
+        modal.classList.add("active");
+      }
+
+      if (e.target === closeModal || e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+
+    loadTeacherProfile();
+    loadTeacherCourses();
+  </script>
+
+</body>
+
+</html>

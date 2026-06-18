@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الدروس | البكالورينجية</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #0f9f6e;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            background: var(--accent);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: .3s;
+            font-weight: 800;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li.active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .topbar {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 25px;
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 900;
+            font-family: inherit;
+            transition: .3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 12px 25px rgba(18, 60, 140, 0.22);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-light {
+            background: #f8fbff;
+            color: var(--primary);
+            border: 1px solid rgba(18, 60, 140, 0.12);
+        }
+
+        .btn-danger {
+            background: rgba(255, 77, 109, 0.12);
+            color: var(--danger);
+        }
+
+        .btn-success {
+            background: rgba(15, 159, 110, 0.12);
+            color: var(--success);
+        }
+
+        .btn-warning {
+            background: rgba(255, 183, 3, 0.18);
+            color: #8a5d00;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .filters-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .input,
+        .select,
+        textarea {
+            width: 100%;
+            border: 1px solid rgba(18, 60, 140, 0.14);
+            border-radius: 14px;
+            padding: 12px 14px;
+            outline: none;
+            background: white;
+            color: var(--dark);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .input:focus,
+        .select:focus,
+        textarea:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(11, 182, 214, 0.12);
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .table-header h2 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th {
+            background: var(--light);
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid #edf1f7;
+            vertical-align: middle;
+        }
+
+        td {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .lesson-cell {
+            text-align: right;
+        }
+
+        .lesson-cell strong {
+            display: block;
+            color: var(--dark);
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .lesson-cell small {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            background: rgba(15, 159, 110, 0.1);
+            color: var(--success);
+        }
+
+        .badge-hidden {
+            background: rgba(255, 77, 109, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-free {
+            background: rgba(15, 159, 110, 0.1);
+            color: var(--success);
+        }
+
+        .badge-locked {
+            background: rgba(108, 120, 144, 0.14);
+            color: var(--muted);
+        }
+
+        .badge-quiz {
+            background: rgba(255, 77, 109, 0.1);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .small-btn {
+            padding: 9px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 26, 61, 0.68);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-box {
+            width: min(920px, 96%);
+            max-height: 92vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 30px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            color: var(--dark);
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .close-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 14px;
+            background: #f4f8ff;
+            color: var(--dark);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--dark);
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 13px 15px;
+            border-radius: 14px;
+            font-weight: 900;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(15, 159, 110, 0.1);
+            color: var(--success);
+        }
+
+        .message.error {
+            background: rgba(255, 77, 109, 0.1);
+            color: var(--danger);
+        }
+
+        .empty-state {
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+            font-weight: 900;
+        }
+
+        @media(max-width: 1100px) {
+            .filters-box {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+
+            .main-content {
+                margin-right: 0;
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters-box {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 950px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">ب</div>
+                البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li>
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li class="active">
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li>
+                    <a href="exams.html">📝 الامتحانات</a>
+                </li>
+
+                <li>
+                    <a href="attachments.html">📂 الملفات</a>
+                </li>
+
+                <li>
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+
+                <li>
+                    <a href="enrollments.html">💳 الاشتراكات</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="topbar">
+                <div class="page-title">
+                    <h1>إدارة الدروس</h1>
+                    <p>إضافة وتعديل وإخفاء الدروس وربطها بالكورسات والوحدات</p>
+                </div>
+
+                <div class="top-actions">
+                    <button class="btn btn-primary" id="addLessonBtn">
+                        + إضافة درس
+                    </button>
+
+                    <button class="btn logout-btn" id="logoutBtn">
+                        خروج
+                    </button>
+                </div>
+            </div>
+
+            <div class="filters-box">
+                <input type="text" id="searchInput" class="input" placeholder="ابحث باسم الدرس...">
+
+                <select id="courseFilter" class="select">
+                    <option value="">كل الكورسات</option>
+                </select>
+
+                <select id="statusFilter" class="select">
+                    <option value="">كل أنواع الدروس</option>
+                    <option value="free">مجاني</option>
+                    <option value="locked">مقفول</option>
+                    <option value="quiz">Quiz</option>
+                </select>
+
+                <select id="activeFilter" class="select">
+                    <option value="">كل الحالات</option>
+                    <option value="active">ظاهر</option>
+                    <option value="hidden">مخفي</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <div class="table-header">
+                    <h2>قائمة الدروس</h2>
+                    <span id="lessonsCountLabel">0 درس</span>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الدرس</th>
+                            <th>الكورس</th>
+                            <th>الوحدة</th>
+                            <th>المدة</th>
+                            <th>النوع</th>
+                            <th>معاينة</th>
+                            <th>الترتيب</th>
+                            <th>الحالة</th>
+                            <th>التحكم</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="lessonsTable">
+                        <tr>
+                            <td colspan="9">جاري تحميل الدروس...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="modal" id="lessonModal">
+        <div class="modal-box">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">إضافة درس</h2>
+
+                <button class="close-btn" id="closeModalBtn" type="button">
+                    ×
+                </button>
+            </div>
+
+            <div class="message success" id="successMessage"></div>
+            <div class="message error" id="errorMessage"></div>
+
+            <form id="lessonForm">
+
+                <input type="hidden" id="lessonId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="title">اسم الدرس</label>
+                        <input type="text" id="title" class="input" required placeholder="مثال: مقدمة في الأعداد">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">مدة الدرس</label>
+                        <input type="text" id="duration" class="input" placeholder="مثال: 20 دقيقة">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="courseId">الكورس</label>
+                        <select id="courseId" class="select" required>
+                            <option value="">اختر الكورس</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unitId">الوحدة</label>
+                        <select id="unitId" class="select">
+                            <option value="">بدون وحدة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">نوع الدرس</label>
+                        <select id="status" class="select">
+                            <option value="locked">مقفول</option>
+                            <option value="free">مجاني</option>
+                            <option value="quiz">Quiz</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lessonOrder">ترتيب الدرس</label>
+                        <input type="number" id="lessonOrder" class="input" min="1" step="1" value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="isPreview">معاينة مجانية؟</label>
+                        <select id="isPreview" class="select">
+                            <option value="false">لا</option>
+                            <option value="true">نعم</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="isActive">حالة الظهور</label>
+                        <select id="isActive" class="select">
+                            <option value="true">ظاهر</option>
+                            <option value="false">مخفي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="description">وصف الدرس</label>
+                        <textarea id="description" placeholder="اكتب وصف مختصر للدرس..."></textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="youtubeUrl">رابط فيديو YouTube</label>
+                        <input type="text" id="youtubeUrl" class="input"
+                            placeholder="https://www.youtube.com/watch?v=VIDEO_ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="youtubeVideoId">YouTube Video ID</label>
+                        <input type="text" id="youtubeVideoId" class="input" placeholder="يتم استخراجه تلقائيًا">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thumbnailUrl">رابط صورة مصغرة</label>
+                        <input type="text" id="thumbnailUrl" class="input" placeholder="يتم توليده تلقائيًا إن أمكن">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="videoUrl">رابط فيديو بديل</label>
+                        <input type="text" id="videoUrl" class="input" placeholder="اختياري">
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="saveLessonBtn">
+                        حفظ الدرس
+                    </button>
+
+                    <button type="button" class="btn btn-light" id="cancelBtn">
+                        إلغاء
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        const lessonsTable = document.getElementById("lessonsTable");
+        const lessonsCountLabel = document.getElementById("lessonsCountLabel");
+
+        const addLessonBtn = document.getElementById("addLessonBtn");
+        const lessonModal = document.getElementById("lessonModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        const lessonForm = document.getElementById("lessonForm");
+        const modalTitle = document.getElementById("modalTitle");
+
+        const successMessage = document.getElementById("successMessage");
+        const errorMessage = document.getElementById("errorMessage");
+
+        const searchInput = document.getElementById("searchInput");
+        const courseFilter = document.getElementById("courseFilter");
+        const statusFilter = document.getElementById("statusFilter");
+        const activeFilter = document.getElementById("activeFilter");
+
+        const lessonIdInput = document.getElementById("lessonId");
+        const titleInput = document.getElementById("title");
+        const durationInput = document.getElementById("duration");
+        const courseIdInput = document.getElementById("courseId");
+        const unitIdInput = document.getElementById("unitId");
+        const statusInput = document.getElementById("status");
+        const lessonOrderInput = document.getElementById("lessonOrder");
+        const isPreviewInput = document.getElementById("isPreview");
+        const isActiveInput = document.getElementById("isActive");
+        const descriptionInput = document.getElementById("description");
+        const youtubeUrlInput = document.getElementById("youtubeUrl");
+        const youtubeVideoIdInput = document.getElementById("youtubeVideoId");
+        const thumbnailUrlInput = document.getElementById("thumbnailUrl");
+        const videoUrlInput = document.getElementById("videoUrl");
+
+        let allLessons = [];
+        let allCourses = [];
+        let allUnits = [];
+
+        function showSuccess(message) {
+            errorMessage.style.display = "none";
+            successMessage.textContent = message;
+            successMessage.style.display = "block";
+        }
+
+        function showError(message) {
+            successMessage.style.display = "none";
+            errorMessage.textContent = message;
+            errorMessage.style.display = "block";
+        }
+
+        function hideMessages() {
+            successMessage.style.display = "none";
+            errorMessage.style.display = "none";
+        }
+
+        function getYouTubeId(url) {
+            if (!url) return "";
+
+            try {
+                const cleanUrl = url.trim();
+
+                if (
+                    !cleanUrl.includes("youtube.com") &&
+                    !cleanUrl.includes("youtu.be")
+                ) {
+                    return cleanUrl;
+                }
+
+                const parsedUrl = new URL(cleanUrl);
+
+                if (parsedUrl.hostname.includes("youtube.com")) {
+                    if (parsedUrl.pathname === "/watch") {
+                        return parsedUrl.searchParams.get("v") || "";
+                    }
+
+                    if (parsedUrl.pathname.startsWith("/embed/")) {
+                        return parsedUrl.pathname.split("/embed/")[1].split("/")[0];
+                    }
+
+                    if (parsedUrl.pathname.startsWith("/shorts/")) {
+                        return parsedUrl.pathname.split("/shorts/")[1].split("/")[0];
+                    }
+
+                    if (parsedUrl.pathname.startsWith("/live/")) {
+                        return parsedUrl.pathname.split("/live/")[1].split("/")[0];
+                    }
+                }
+
+                if (parsedUrl.hostname.includes("youtu.be")) {
+                    return parsedUrl.pathname.replace("/", "").split("?")[0];
+                }
+
+                return "";
+            } catch (error) {
+                console.error("Invalid YouTube URL:", error);
+                return "";
+            }
+        }
+
+        function getThumbnailFromId(videoId) {
+            if (!videoId) return "";
+            return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+        }
+
+        function getStatusArabic(status) {
+            if (status === "free") return "مجاني";
+            if (status === "quiz") return "Quiz";
+            return "مقفول";
+        }
+
+        function getStatusClass(status) {
+            if (status === "free") return "badge-free";
+            if (status === "quiz") return "badge-quiz";
+            return "badge-locked";
+        }
+
+        async function checkAdmin() {
+            const {
+                data: { session }
+            } = await db.auth.getSession();
+
+            if (!session) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            const { data: profile, error } = await db
+                .from("profiles")
+                .select("id, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error || !profile) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            if (profile.role !== "admin") {
+                window.location.href = "../index.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function loadCourses() {
+            const { data, error } = await db
+                .from("courses")
+                .select("id, title, is_active")
+                .order("created_at", { ascending: false });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            allCourses = data || [];
+
+            courseIdInput.innerHTML = `<option value="">اختر الكورس</option>`;
+            courseFilter.innerHTML = `<option value="">كل الكورسات</option>`;
+
+            allCourses.forEach(course => {
+                const option = document.createElement("option");
+                option.value = course.id;
+                option.textContent = course.title;
+                courseIdInput.appendChild(option);
+
+                const filterOption = document.createElement("option");
+                filterOption.value = course.id;
+                filterOption.textContent = course.title;
+                courseFilter.appendChild(filterOption);
+            });
+        }
+
+        async function loadUnits() {
+            const { data, error } = await db
+                .from("course_units")
+                .select("id, title, course_id, unit_order, is_active")
+                .order("unit_order", { ascending: true });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            allUnits = data || [];
+        }
+
+        function updateUnitOptions(selectedCourseId, selectedUnitId = "") {
+            unitIdInput.innerHTML = `<option value="">بدون وحدة</option>`;
+
+            if (!selectedCourseId) return;
+
+            const relatedUnits = allUnits.filter(unit =>
+                String(unit.course_id) === String(selectedCourseId)
+            );
+
+            relatedUnits.forEach(unit => {
+                const option = document.createElement("option");
+                option.value = unit.id;
+                option.textContent = unit.title;
+                unitIdInput.appendChild(option);
+            });
+
+            if (selectedUnitId) {
+                unitIdInput.value = selectedUnitId;
+            }
+        }
+
+        async function loadLessons() {
+            lessonsTable.innerHTML = `
+                <tr>
+                    <td colspan="9">جاري تحميل الدروس...</td>
+                </tr>
+            `;
+
+            const { data, error } = await db
+                .from("lessons")
+                .select(`
+                    *,
+                    courses (
+                        id,
+                        title
+                    ),
+                    course_units (
+                        id,
+                        title
+                    )
+                `)
+                .order("created_at", { ascending: false });
+
+            if (error) {
+                console.error(error);
+
+                lessonsTable.innerHTML = `
+                    <tr>
+                        <td colspan="9">حدث خطأ أثناء تحميل الدروس: ${error.message}</td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            allLessons = data || [];
+            renderLessons();
+        }
+
+        function renderLessons() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            const selectedCourse = courseFilter.value;
+            const selectedStatus = statusFilter.value;
+            const selectedActive = activeFilter.value;
+
+            let filteredLessons = [...allLessons];
+
+            if (searchValue) {
+                filteredLessons = filteredLessons.filter(lesson =>
+                    lesson.title?.toLowerCase().includes(searchValue)
+                );
+            }
+
+            if (selectedCourse) {
+                filteredLessons = filteredLessons.filter(lesson =>
+                    String(lesson.course_id) === String(selectedCourse)
+                );
+            }
+
+            if (selectedStatus) {
+                filteredLessons = filteredLessons.filter(lesson =>
+                    lesson.status === selectedStatus
+                );
+            }
+
+            if (selectedActive === "active") {
+                filteredLessons = filteredLessons.filter(lesson =>
+                    lesson.is_active === true
+                );
+            }
+
+            if (selectedActive === "hidden") {
+                filteredLessons = filteredLessons.filter(lesson =>
+                    lesson.is_active === false
+                );
+            }
+
+            lessonsCountLabel.textContent = `${filteredLessons.length} درس`;
+
+            if (!filteredLessons.length) {
+                lessonsTable.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                لا توجد دروس مطابقة
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            lessonsTable.innerHTML = filteredLessons.map(lesson => `
+                <tr>
+                    <td>
+                        <div class="lesson-cell">
+                            <strong>${lesson.title}</strong>
+                            <small>${lesson.youtube_video_id || "لا يوجد YouTube ID"}</small>
+                        </div>
+                    </td>
+
+                    <td>${lesson.courses?.title || "غير محدد"}</td>
+
+                    <td>${lesson.course_units?.title || "-"}</td>
+
+                    <td>${lesson.duration || "-"}</td>
+
+                    <td>
+                        <span class="badge ${getStatusClass(lesson.status)}">
+                            ${getStatusArabic(lesson.status)}
+                        </span>
+                    </td>
+
+                    <td>${lesson.is_preview ? "نعم" : "لا"}</td>
+
+                    <td>${lesson.lesson_order || 1}</td>
+
+                    <td>
+                        <span class="badge ${lesson.is_active ? "badge-active" : "badge-hidden"}">
+                            ${lesson.is_active ? "ظاهر" : "مخفي"}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-light small-btn"
+                               href="../lesson-details.html?course=${lesson.course_id}&lesson=${lesson.id}"
+                               target="_blank">
+                                مشاهدة
+                            </a>
+
+                            <button class="btn btn-light small-btn" onclick="editLesson(${lesson.id})">
+                                تعديل
+                            </button>
+
+                            <button class="btn ${lesson.is_active ? "btn-warning" : "btn-success"} small-btn"
+                                onclick="toggleLessonStatus(${lesson.id}, ${lesson.is_active})">
+                                ${lesson.is_active ? "إخفاء" : "إظهار"}
+                            </button>
+
+                            <button class="btn btn-danger small-btn" onclick="deleteLesson(${lesson.id})">
+                                حذف
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function openModal() {
+            lessonModal.classList.add("active");
+        }
+
+        function closeModal() {
+            lessonModal.classList.remove("active");
+            hideMessages();
+        }
+
+        function resetForm() {
+            lessonForm.reset();
+
+            lessonIdInput.value = "";
+            courseIdInput.value = "";
+            updateUnitOptions("");
+
+            statusInput.value = "locked";
+            lessonOrderInput.value = 1;
+            isPreviewInput.value = "false";
+            isActiveInput.value = "true";
+
+            modalTitle.textContent = "إضافة درس";
+            hideMessages();
+        }
+
+        addLessonBtn.addEventListener("click", () => {
+            resetForm();
+            openModal();
+        });
+
+        closeModalBtn.addEventListener("click", closeModal);
+        cancelBtn.addEventListener("click", closeModal);
+
+        lessonModal.addEventListener("click", (e) => {
+            if (e.target === lessonModal) {
+                closeModal();
+            }
+        });
+
+        courseIdInput.addEventListener("change", () => {
+            updateUnitOptions(courseIdInput.value);
+        });
+
+        youtubeUrlInput.addEventListener("input", () => {
+            const videoId = getYouTubeId(youtubeUrlInput.value);
+
+            if (videoId) {
+                youtubeVideoIdInput.value = videoId;
+                thumbnailUrlInput.value = getThumbnailFromId(videoId);
+            }
+        });
+
+        lessonForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            hideMessages();
+
+            const lessonId = lessonIdInput.value;
+
+            const youtubeVideoId =
+                youtubeVideoIdInput.value.trim() ||
+                getYouTubeId(youtubeUrlInput.value);
+
+            const payload = {
+                title: titleInput.value.trim(),
+                duration: durationInput.value.trim() || null,
+                course_id: courseIdInput.value ? Number(courseIdInput.value) : null,
+                unit_id: unitIdInput.value ? Number(unitIdInput.value) : null,
+                status: statusInput.value,
+                lesson_order: Number(lessonOrderInput.value) || 1,
+                is_preview: isPreviewInput.value === "true",
+                is_active: isActiveInput.value === "true",
+                description: descriptionInput.value.trim() || null,
+                youtube_url: youtubeUrlInput.value.trim() || null,
+                youtube_video_id: youtubeVideoId || null,
+                thumbnail_url: thumbnailUrlInput.value.trim() || (youtubeVideoId ? getThumbnailFromId(youtubeVideoId) : null),
+                video_url: videoUrlInput.value.trim() || null
+            };
+
+            if (!payload.title) {
+                showError("اسم الدرس مطلوب");
+                return;
+            }
+
+            if (!payload.course_id) {
+                showError("لازم تختار الكورس");
+                return;
+            }
+
+            try {
+                let response;
+
+                if (lessonId) {
+                    response = await db
+                        .from("lessons")
+                        .update(payload)
+                        .eq("id", lessonId);
+                } else {
+                    response = await db
+                        .from("lessons")
+                        .insert(payload);
+                }
+
+                if (response.error) {
+                    throw response.error;
+                }
+
+                showSuccess(lessonId ? "تم تعديل الدرس بنجاح" : "تم إضافة الدرس بنجاح");
+
+                await loadLessons();
+
+                setTimeout(() => {
+                    closeModal();
+                }, 700);
+
+            } catch (error) {
+                console.error(error);
+                showError(error.message || "حدث خطأ أثناء حفظ الدرس");
+            }
+        });
+
+        window.editLesson = function (id) {
+            const lesson = allLessons.find(item => item.id === id);
+
+            if (!lesson) {
+                alert("لم يتم العثور على الدرس");
+                return;
+            }
+
+            resetForm();
+
+            modalTitle.textContent = "تعديل درس";
+
+            lessonIdInput.value = lesson.id;
+            titleInput.value = lesson.title || "";
+            durationInput.value = lesson.duration || "";
+            courseIdInput.value = lesson.course_id || "";
+
+            updateUnitOptions(lesson.course_id, lesson.unit_id || "");
+
+            statusInput.value = lesson.status || "locked";
+            lessonOrderInput.value = lesson.lesson_order || 1;
+            isPreviewInput.value = String(lesson.is_preview);
+            isActiveInput.value = String(lesson.is_active);
+            descriptionInput.value = lesson.description || "";
+            youtubeUrlInput.value = lesson.youtube_url || "";
+            youtubeVideoIdInput.value = lesson.youtube_video_id || "";
+            thumbnailUrlInput.value = lesson.thumbnail_url || "";
+            videoUrlInput.value = lesson.video_url || "";
+
+            openModal();
+        };
+
+        window.toggleLessonStatus = async function (id, currentStatus) {
+            const actionText = currentStatus ? "إخفاء" : "إظهار";
+
+            const confirmed = confirm(`هل تريد ${actionText} هذا الدرس؟`);
+
+            if (!confirmed) return;
+
+            const { error } = await db
+                .from("lessons")
+                .update({
+                    is_active: !currentStatus
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("حدث خطأ أثناء تغيير حالة الدرس");
+                return;
+            }
+
+            await loadLessons();
+        };
+
+        window.deleteLesson = async function (id) {
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف الدرس نهائيًا؟\nالأفضل استخدام الإخفاء بدل الحذف لو الدرس عليه تقدم طلاب."
+            );
+
+            if (!confirmed) return;
+
+            const { error } = await db
+                .from("lessons")
+                .delete()
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("لم يتم الحذف. غالبًا الدرس مرتبط بتقدم طلاب. استخدم زر إخفاء بدل الحذف.");
+                return;
+            }
+
+            await loadLessons();
+        };
+
+        searchInput.addEventListener("input", renderLessons);
+        courseFilter.addEventListener("change", renderLessons);
+        statusFilter.addEventListener("change", renderLessons);
+        activeFilter.addEventListener("change", renderLessons);
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await db.auth.signOut();
+            window.location.href = "../login.html";
+        });
+
+        async function initPage() {
+            const isAdmin = await checkAdmin();
+
+            if (!isAdmin) return;
+
+            await loadCourses();
+            await loadUnits();
+            await loadLessons();
+        }
+
+        initPage();
+    </script>
+
+</body>
+
+</html>

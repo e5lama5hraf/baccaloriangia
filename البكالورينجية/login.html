@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل الدخول | البكالورينجية</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #0f9f6e;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .card {
+            width: min(420px, 92%);
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+            color: var(--dark);
+            font-weight: 900;
+        }
+
+        p {
+            color: var(--muted);
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(18, 60, 140, 0.15);
+            margin-bottom: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(11, 182, 214, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 999px;
+            font-weight: 900;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transition: 0.3s;
+            margin-top: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            font-weight: 700;
+            line-height: 1.7;
+        }
+
+        .error {
+            color: var(--danger);
+        }
+
+        .success {
+            color: var(--success);
+        }
+
+        .switch {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .switch a {
+            color: var(--primary);
+            font-weight: 800;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>تسجيل الدخول</h1>
+        <p>ادخل البريد وكلمة المرور للدخول إلى المنصة</p>
+
+        <form id="loginForm">
+            <input type="email" id="email" class="input" placeholder="البريد الإلكتروني" required>
+            <input type="password" id="password" class="input" placeholder="كلمة المرور" required>
+
+            <div class="message error" id="errorMessage">من فضلك أدخل بيانات صحيحة</div>
+            <div class="message success" id="successMessage">تم تسجيل الدخول بنجاح</div>
+
+            <button class="btn" id="loginBtn" type="submit">دخول</button>
+        </form>
+
+        <div class="switch">
+            ليس لديك حساب؟ <a href="register.html">إنشاء حساب</a>
+        </div>
+    </div>
+
+    <script>
+        /*
+            هنا حط نفس بيانات Supabase اللي حطيتها في صفحة register.html
+        */
+
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const supabaseClient = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+        const loginForm = document.getElementById("loginForm");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const errorMessage = document.getElementById("errorMessage");
+        const successMessage = document.getElementById("successMessage");
+        const loginBtn = document.getElementById("loginBtn");
+
+        function showError(message) {
+            successMessage.style.display = "none";
+
+            errorMessage.textContent = message;
+            errorMessage.style.display = "block";
+        }
+
+        function showSuccess(message) {
+            errorMessage.style.display = "none";
+
+            successMessage.textContent = message;
+            successMessage.style.display = "block";
+        }
+
+        loginForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            errorMessage.style.display = "none";
+            successMessage.style.display = "none";
+
+            if (!emailRegex.test(email)) {
+                showError("من فضلك أدخل بريد إلكتروني صحيح");
+                return;
+            }
+
+            if (password.length < 6) {
+                showError("كلمة المرور يجب ألا تقل عن 6 أحرف");
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = "جاري تسجيل الدخول...";
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    showError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+                    return;
+                }
+
+                showSuccess("تم تسجيل الدخول بنجاح");
+
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 800);
+
+            } catch (err) {
+                showError("حدث خطأ غير متوقع. حاول مرة أخرى.");
+                console.error(err);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = "دخول";
+            }
+        });
+    </script>
+
+</body>
+
+</html>

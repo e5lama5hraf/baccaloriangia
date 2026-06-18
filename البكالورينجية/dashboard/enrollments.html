@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الاشتراكات | البكالورينجية</title>
+
+    ```
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #10b981;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px;
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-btn,
+        .logout-btn {
+            border: none;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .add-btn {
+            background: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--soft-shadow);
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 8px;
+            color: var(--primary);
+            font-size: 34px;
+            font-weight: 900;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            flex: 1;
+            min-width: 230px;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .student-name,
+        .course-title {
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .student-phone,
+        .course-price {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            display: inline-flex;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, .15);
+            color: var(--success);
+        }
+
+        .badge-pending {
+            background: rgba(255, 183, 3, .22);
+            color: #8a5d00;
+        }
+
+        .badge-cancelled {
+            background: rgba(255, 77, 109, .15);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn,
+        .delete-btn,
+        .status-btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+        }
+
+        .edit-btn {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+        }
+
+        .status-btn {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 760px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: visible;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-modal {
+            border: none;
+            background: var(--danger);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+            width: 100%;
+        }
+
+        .search-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-select input {
+            padding-left: 45px;
+            background: white;
+        }
+
+        .search-select::after {
+            content: "⌄";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            left: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: var(--soft-shadow);
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-option {
+            padding: 13px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .search-option:last-child {
+            border-bottom: none;
+        }
+
+        .search-option:hover {
+            background: var(--light);
+        }
+
+        .search-option strong {
+            display: block;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .search-option span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .selected-hint {
+            margin-top: 8px;
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 800;
+            display: none;
+        }
+
+        .selected-hint.show {
+            display: block;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99999;
+        }
+
+        @media(max-width:1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:992px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <span>ب</span> البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li>
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li>
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li>
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+
+                <li class="active">
+                    <a href="enrollments.html">💳 الاشتراكات</a>
+                </li>
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>إدارة الاشتراكات</h1>
+                    <p>تفعيل وإلغاء اشتراكات الطلاب في الكورسات</p>
+                </div>
+
+                <div class="header-actions">
+                    <button class="add-btn" id="openModalBtn">
+                        + إضافة اشتراك
+                    </button>
+
+                    <button class="logout-btn" id="logoutBtn">
+                        خروج
+                    </button>
+                </div>
+            </div>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span>إجمالي الاشتراكات</span>
+                    <strong id="totalEnrollmentsCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>اشتراكات مفعلة</span>
+                    <strong id="activeEnrollmentsCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>قيد الانتظار</span>
+                    <strong id="pendingEnrollmentsCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>ملغية</span>
+                    <strong id="cancelledEnrollmentsCount">0</strong>
+                </div>
+            </section>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الطالب أو الكورس...">
+
+                <select id="courseFilter">
+                    <option value="">كل الكورسات</option>
+                </select>
+
+                <select id="studentFilter">
+                    <option value="">كل الطلاب</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">كل الحالات</option>
+                    <option value="active">مفعل</option>
+                    <option value="pending">قيد الانتظار</option>
+                    <option value="cancelled">ملغي</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>الكورس</th>
+                            <th>حالة الاشتراك</th>
+                            <th>تاريخ التفعيل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="enrollmentsTable"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div class="modal" id="enrollmentModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    إضافة اشتراك جديد
+                </h2>
+
+                <button class="close-modal" id="closeModalBtn">
+                    ✕
+                </button>
+            </div>
+
+            <form id="enrollmentForm">
+
+                <input type="hidden" id="enrollmentId">
+                <input type="hidden" id="userId">
+                <input type="hidden" id="courseId">
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+                        <label>الطالب</label>
+
+                        <div class="search-select">
+                            <input type="text" id="studentSearchInput" placeholder="ابحث باسم الطالب أو رقم الهاتف..."
+                                autocomplete="off">
+                        </div>
+
+                        <div class="search-results" id="studentSearchResults"></div>
+
+                        <div class="selected-hint" id="selectedStudentHint"></div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>الكورس</label>
+
+                        <div class="search-select">
+                            <input type="text" id="courseSearchInput" placeholder="ابحث باسم الكورس..."
+                                autocomplete="off">
+                        </div>
+
+                        <div class="search-results" id="courseSearchResults"></div>
+
+                        <div class="selected-hint" id="selectedCourseHint"></div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>حالة الاشتراك</label>
+
+                        <select id="status">
+                            <option value="active">مفعل</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="cancelled">ملغي</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn">
+                        حفظ الاشتراك
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        let enrollments = [];
+        let students = [];
+        let courses = [];
+
+        const modal = document.getElementById("enrollmentModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const enrollmentForm = document.getElementById("enrollmentForm");
+
+        const searchInput = document.getElementById("searchInput");
+        const courseFilter = document.getElementById("courseFilter");
+        const studentFilter = document.getElementById("studentFilter");
+        const statusFilter = document.getElementById("statusFilter");
+
+        const enrollmentIdInput = document.getElementById("enrollmentId");
+        const userIdInput = document.getElementById("userId");
+        const courseIdInput = document.getElementById("courseId");
+        const statusInput = document.getElementById("status");
+
+        const studentSearchInput = document.getElementById("studentSearchInput");
+        const courseSearchInput = document.getElementById("courseSearchInput");
+        const studentSearchResults = document.getElementById("studentSearchResults");
+        const courseSearchResults = document.getElementById("courseSearchResults");
+        const selectedStudentHint = document.getElementById("selectedStudentHint");
+        const selectedCourseHint = document.getElementById("selectedCourseHint");
+
+        function formatDate(dateValue) {
+            if (!dateValue) return "-";
+
+            const date = new Date(dateValue);
+
+            return date.toLocaleDateString("ar-EG", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        function getStatusText(status) {
+            if (status === "pending") return "قيد الانتظار";
+            if (status === "cancelled") return "ملغي";
+            return "مفعل";
+        }
+
+        function getStatusClass(status) {
+            if (status === "pending") return "badge-pending";
+            if (status === "cancelled") return "badge-cancelled";
+            return "badge-active";
+        }
+
+        function getStudentName(userId) {
+            const student = students.find(item => item.id === userId);
+            return student ? student.full_name : "طالب غير محدد";
+        }
+
+        function getStudentPhone(userId) {
+            const student = students.find(item => item.id === userId);
+            return student ? student.phone : "";
+        }
+
+        function getCourseTitle(courseId) {
+            const course = courses.find(item => Number(item.id) === Number(courseId));
+            return course ? course.title : "كورس غير محدد";
+        }
+
+        function getCoursePrice(courseId) {
+            const course = courses.find(item => Number(item.id) === Number(courseId));
+            return course ? course.price : 0;
+        }
+
+        function getStudentLabel(student) {
+            return `${student.full_name || "بدون اسم"}${student.phone ? " - " + student.phone : ""}`;
+        }
+
+        function getCourseLabel(course) {
+            return `${course.title || "بدون عنوان"} - ${course.price || 0} ج`;
+        }
+
+        async function checkAdmin() {
+            const {
+                data: { session }
+            } = await db.auth.getSession();
+
+            if (!session) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            const { data: profile, error } = await db
+                .from("profiles")
+                .select("id, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error || !profile) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            if (profile.role !== "admin") {
+                window.location.href = "../index.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function loadStudents() {
+            const { data, error } = await db
+                .from("profiles")
+                .select("id, full_name, phone, role")
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (error) {
+                console.error(error);
+                alert("فشل تحميل الطلاب");
+                return;
+            }
+
+            students = data || [];
+
+            studentFilter.innerHTML = `
+            <option value="">كل الطلاب</option>
+        `;
+
+            students.forEach(student => {
+                const filterOption = document.createElement("option");
+                filterOption.value = student.id;
+                filterOption.textContent = student.full_name || "بدون اسم";
+                studentFilter.appendChild(filterOption);
+            });
+        }
+
+        async function loadCourses() {
+            const { data, error } = await db
+                .from("courses")
+                .select("id, title, price, is_active")
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (error) {
+                console.error(error);
+                alert("فشل تحميل الكورسات");
+                return;
+            }
+
+            courses = data || [];
+
+            courseFilter.innerHTML = `
+            <option value="">كل الكورسات</option>
+        `;
+
+            courses.forEach(course => {
+                const filterOption = document.createElement("option");
+                filterOption.value = course.id;
+                filterOption.textContent = course.title;
+                courseFilter.appendChild(filterOption);
+            });
+        }
+
+        async function loadEnrollments() {
+            try {
+                const { data, error } = await db
+                    .from("course_enrollments")
+                    .select("*")
+                    .order("created_at", {
+                        ascending: false
+                    });
+
+                if (error) throw error;
+
+                enrollments = data || [];
+
+                renderEnrollments(enrollments);
+                updateStats();
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل تحميل الاشتراكات");
+            }
+        }
+
+        function updateStats() {
+            const total = enrollments.length;
+
+            const active = enrollments.filter(item =>
+                item.status === "active"
+            ).length;
+
+            const pending = enrollments.filter(item =>
+                item.status === "pending"
+            ).length;
+
+            const cancelled = enrollments.filter(item =>
+                item.status === "cancelled"
+            ).length;
+
+            document.getElementById("totalEnrollmentsCount").textContent = total;
+            document.getElementById("activeEnrollmentsCount").textContent = active;
+            document.getElementById("pendingEnrollmentsCount").textContent = pending;
+            document.getElementById("cancelledEnrollmentsCount").textContent = cancelled;
+        }
+
+        function renderEnrollments(data) {
+            const table = document.getElementById("enrollmentsTable");
+
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        لا توجد اشتراكات
+                    </td>
+                </tr>
+            `;
+
+                return;
+            }
+
+            data.forEach(enrollment => {
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        <div class="student-name">
+                            ${getStudentName(enrollment.user_id)}
+                        </div>
+
+                        <div class="student-phone">
+                            ${getStudentPhone(enrollment.user_id) || "-"}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="course-title">
+                            ${getCourseTitle(enrollment.course_id)}
+                        </div>
+
+                        <div class="course-price">
+                            ${getCoursePrice(enrollment.course_id) || 0} ج
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="badge ${getStatusClass(enrollment.status)}">
+                            ${getStatusText(enrollment.status)}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${formatDate(enrollment.created_at)}
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <button
+                                class="edit-btn"
+                                onclick="editEnrollment(${enrollment.id})">
+                                تعديل
+                            </button>
+
+                            <button
+                                class="status-btn"
+                                onclick="quickActivate(${enrollment.id})">
+                                تفعيل
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteEnrollment(${enrollment.id})">
+                                حذف
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedCourse = courseFilter.value;
+            const selectedStudent = studentFilter.value;
+            const selectedStatus = statusFilter.value;
+
+            const filtered = enrollments.filter(enrollment => {
+                const studentName = getStudentName(enrollment.user_id).toLowerCase();
+                const studentPhone = (getStudentPhone(enrollment.user_id) || "").toLowerCase();
+                const courseTitle = getCourseTitle(enrollment.course_id).toLowerCase();
+
+                const matchesSearch =
+                    studentName.includes(keyword) ||
+                    studentPhone.includes(keyword) ||
+                    courseTitle.includes(keyword);
+
+                const matchesCourse =
+                    !selectedCourse ||
+                    String(enrollment.course_id) === String(selectedCourse);
+
+                const matchesStudent =
+                    !selectedStudent ||
+                    enrollment.user_id === selectedStudent;
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    enrollment.status === selectedStatus;
+
+                return matchesSearch && matchesCourse && matchesStudent && matchesStatus;
+            });
+
+            renderEnrollments(filtered);
+        }
+
+        function renderStudentSearchResults(keyword = "") {
+            const cleanKeyword = keyword.trim().toLowerCase();
+
+            const filteredStudents = students.filter(student => {
+                const name = (student.full_name || "").toLowerCase();
+                const phone = (student.phone || "").toLowerCase();
+
+                return !cleanKeyword ||
+                    name.includes(cleanKeyword) ||
+                    phone.includes(cleanKeyword);
+            });
+
+            studentSearchResults.innerHTML = "";
+
+            if (!filteredStudents.length) {
+                studentSearchResults.innerHTML = `
+                <div class="search-option">
+                    <strong>لا يوجد طلاب مطابقين</strong>
+                    <span>جرب اسم أو رقم مختلف</span>
+                </div>
+            `;
+                studentSearchResults.classList.add("show");
+                return;
+            }
+
+            filteredStudents.forEach(student => {
+                const option = document.createElement("div");
+                option.className = "search-option";
+
+                option.innerHTML = `
+                <strong>${student.full_name || "بدون اسم"}</strong>
+                <span>${student.phone || "لا يوجد رقم هاتف"}</span>
+            `;
+
+                option.addEventListener("click", () => {
+                    selectStudent(student);
+                });
+
+                studentSearchResults.appendChild(option);
+            });
+
+            studentSearchResults.classList.add("show");
+        }
+
+        function renderCourseSearchResults(keyword = "") {
+            const cleanKeyword = keyword.trim().toLowerCase();
+
+            const filteredCourses = courses.filter(course => {
+                const title = (course.title || "").toLowerCase();
+
+                return !cleanKeyword ||
+                    title.includes(cleanKeyword);
+            });
+
+            courseSearchResults.innerHTML = "";
+
+            if (!filteredCourses.length) {
+                courseSearchResults.innerHTML = `
+                <div class="search-option">
+                    <strong>لا يوجد كورسات مطابقة</strong>
+                    <span>جرب اسم كورس مختلف</span>
+                </div>
+            `;
+                courseSearchResults.classList.add("show");
+                return;
+            }
+
+            filteredCourses.forEach(course => {
+                const option = document.createElement("div");
+                option.className = "search-option";
+
+                option.innerHTML = `
+                <strong>${course.title || "بدون عنوان"}</strong>
+                <span>${course.price || 0} ج</span>
+            `;
+
+                option.addEventListener("click", () => {
+                    selectCourse(course);
+                });
+
+                courseSearchResults.appendChild(option);
+            });
+
+            courseSearchResults.classList.add("show");
+        }
+
+        function selectStudent(student) {
+            userIdInput.value = student.id;
+
+            studentSearchInput.value = getStudentLabel(student);
+
+            selectedStudentHint.textContent = `تم اختيار الطالب: ${getStudentLabel(student)}`;
+            selectedStudentHint.classList.add("show");
+
+            studentSearchResults.classList.remove("show");
+        }
+
+        function selectCourse(course) {
+            courseIdInput.value = course.id;
+
+            courseSearchInput.value = getCourseLabel(course);
+
+            selectedCourseHint.textContent = `تم اختيار الكورس: ${getCourseLabel(course)}`;
+            selectedCourseHint.classList.add("show");
+
+            courseSearchResults.classList.remove("show");
+        }
+
+        function resetSearchSelects() {
+            userIdInput.value = "";
+            courseIdInput.value = "";
+
+            studentSearchInput.value = "";
+            courseSearchInput.value = "";
+
+            selectedStudentHint.textContent = "";
+            selectedCourseHint.textContent = "";
+
+            selectedStudentHint.classList.remove("show");
+            selectedCourseHint.classList.remove("show");
+
+            studentSearchResults.innerHTML = "";
+            courseSearchResults.innerHTML = "";
+
+            studentSearchResults.classList.remove("show");
+            courseSearchResults.classList.remove("show");
+        }
+
+        async function saveEnrollment(e) {
+            e.preventDefault();
+
+            const enrollmentId = enrollmentIdInput.value;
+
+            const payload = {
+                user_id: userIdInput.value,
+                course_id: courseIdInput.value ? Number(courseIdInput.value) : null,
+                status: statusInput.value
+            };
+
+            if (!payload.user_id) {
+                alert("لازم تختار الطالب من نتائج البحث");
+                return;
+            }
+
+            if (!payload.course_id) {
+                alert("لازم تختار الكورس من نتائج البحث");
+                return;
+            }
+
+            try {
+                if (enrollmentId) {
+                    const { error } = await db
+                        .from("course_enrollments")
+                        .update(payload)
+                        .eq("id", enrollmentId);
+
+                    if (error) throw error;
+                }
+
+                else {
+                    const existingEnrollment = enrollments.find(item =>
+                        item.user_id === payload.user_id &&
+                        Number(item.course_id) === Number(payload.course_id)
+                    );
+
+                    if (existingEnrollment) {
+                        alert("الطالب مشترك بالفعل في هذا الكورس. يمكنك تعديل حالة الاشتراك بدل إضافة اشتراك جديد.");
+                        return;
+                    }
+
+                    const { error } = await db
+                        .from("course_enrollments")
+                        .insert(payload);
+
+                    if (error) throw error;
+                }
+
+                modal.classList.remove("show");
+
+                enrollmentForm.reset();
+
+                enrollmentIdInput.value = "";
+                statusInput.value = "active";
+
+                resetSearchSelects();
+
+                await loadEnrollments();
+
+                showToast("تم حفظ الاشتراك بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل حفظ الاشتراك");
+            }
+        }
+
+        function editEnrollment(id) {
+            const enrollment = enrollments.find(item => item.id === id);
+
+            if (!enrollment) return;
+
+            enrollmentIdInput.value = enrollment.id;
+            statusInput.value = enrollment.status || "active";
+
+            const student = students.find(item => item.id === enrollment.user_id);
+            const course = courses.find(item => Number(item.id) === Number(enrollment.course_id));
+
+            if (student) {
+                selectStudent(student);
+            }
+            else {
+                userIdInput.value = enrollment.user_id || "";
+                studentSearchInput.value = "طالب غير محدد";
+            }
+
+            if (course) {
+                selectCourse(course);
+            }
+            else {
+                courseIdInput.value = enrollment.course_id || "";
+                courseSearchInput.value = "كورس غير محدد";
+            }
+
+            document.getElementById("modalTitle").innerText = "تعديل الاشتراك";
+
+            modal.classList.add("show");
+        }
+
+        async function quickActivate(id) {
+            const { error } = await db
+                .from("course_enrollments")
+                .update({
+                    status: "active"
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل تفعيل الاشتراك");
+                return;
+            }
+
+            await loadEnrollments();
+
+            showToast("تم تفعيل الاشتراك");
+        }
+
+        async function deleteEnrollment(id) {
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف الاشتراك؟"
+            );
+
+            if (!confirmed) return;
+
+            const { error } = await db
+                .from("course_enrollments")
+                .delete()
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل حذف الاشتراك");
+                return;
+            }
+
+            await loadEnrollments();
+
+            showToast("تم حذف الاشتراك");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        openModalBtn.addEventListener("click", () => {
+            enrollmentForm.reset();
+
+            enrollmentIdInput.value = "";
+            statusInput.value = "active";
+
+            resetSearchSelects();
+
+            document.getElementById("modalTitle").innerText = "إضافة اشتراك جديد";
+
+            modal.classList.add("show");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        searchInput.addEventListener("input", applyFilters);
+        courseFilter.addEventListener("change", applyFilters);
+        studentFilter.addEventListener("change", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+
+        studentSearchInput.addEventListener("focus", () => {
+            renderStudentSearchResults(studentSearchInput.value);
+        });
+
+        studentSearchInput.addEventListener("input", () => {
+            userIdInput.value = "";
+            selectedStudentHint.classList.remove("show");
+            renderStudentSearchResults(studentSearchInput.value);
+        });
+
+        courseSearchInput.addEventListener("focus", () => {
+            renderCourseSearchResults(courseSearchInput.value);
+        });
+
+        courseSearchInput.addEventListener("input", () => {
+            courseIdInput.value = "";
+            selectedCourseHint.classList.remove("show");
+            renderCourseSearchResults(courseSearchInput.value);
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                !studentSearchInput.contains(e.target) &&
+                !studentSearchResults.contains(e.target)
+            ) {
+                studentSearchResults.classList.remove("show");
+            }
+
+            if (
+                !courseSearchInput.contains(e.target) &&
+                !courseSearchResults.contains(e.target)
+            ) {
+                courseSearchResults.classList.remove("show");
+            }
+        });
+
+        enrollmentForm.addEventListener("submit", saveEnrollment);
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await db.auth.signOut();
+            window.location.href = "../login.html";
+        });
+
+        async function initPage() {
+            const isAdmin = await checkAdmin();
+
+            if (!isAdmin) return;
+
+            await loadStudents();
+            await loadCourses();
+            await loadEnrollments();
+        }
+
+        initPage();
+    </script>
+
+
+</body>
+
+</html>

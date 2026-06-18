@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الطلاب | البكالورينجية</title>
+
+    ```
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #10b981;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px;
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            border: none;
+            background: var(--danger);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            flex: 1;
+            min-width: 240px;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--soft-shadow);
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 8px;
+            color: var(--primary);
+            font-size: 34px;
+            font-weight: 900;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .student-name {
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .student-id {
+            font-size: 12px;
+            color: var(--muted);
+            direction: ltr;
+        }
+
+        .role {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            display: inline-flex;
+        }
+
+        .role-student {
+            background: rgba(11, 182, 214, .12);
+            color: var(--primary);
+        }
+
+        .role-admin {
+            background: rgba(255, 183, 3, .22);
+            color: #8a5d00;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn,
+        .delete-btn,
+        .role-btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+        }
+
+        .edit-btn {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+        }
+
+        .role-btn {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 720px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-modal {
+            border: none;
+            background: var(--danger);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99999;
+        }
+
+        @media(max-width:1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:992px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <span>ب</span> البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li>
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li>
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li class="active">
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+
+                <li>
+                    <a href="enrollments.html">💳 الاشتراكات</a>
+                </li>
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>إدارة الطلاب</h1>
+                    <p>عرض الطلاب وتعديل بياناتهم وصلاحياتهم</p>
+                </div>
+
+                <button class="logout-btn" id="logoutBtn">
+                    خروج
+                </button>
+            </div>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span>إجمالي الحسابات</span>
+                    <strong id="totalUsersCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>الطلاب</span>
+                    <strong id="studentsCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>الأدمن</span>
+                    <strong id="adminsCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>الاشتراكات المفعلة</span>
+                    <strong id="activeEnrollmentsCount">0</strong>
+                </div>
+            </section>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الطالب أو رقم الهاتف...">
+
+                <select id="roleFilter">
+                    <option value="">كل الأدوار</option>
+                    <option value="student">طلاب</option>
+                    <option value="admin">أدمن</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>الهاتف</th>
+                            <th>الدور</th>
+                            <th>عدد الاشتراكات</th>
+                            <th>دروس مكتملة</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentsTable"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div class="modal" id="studentModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    تعديل بيانات الطالب
+                </h2>
+
+                <button class="close-modal" id="closeModalBtn">
+                    ✕
+                </button>
+            </div>
+
+            <form id="studentForm">
+
+                <input type="hidden" id="studentId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>اسم الطالب</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="text" id="phone">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>الدور</label>
+
+                        <select id="role">
+                            <option value="student">طالب</option>
+                            <option value="admin">أدمن</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn">
+                        حفظ البيانات
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        let students = [];
+        let enrollments = [];
+        let progressRows = [];
+
+        const modal = document.getElementById("studentModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const studentForm = document.getElementById("studentForm");
+
+        const searchInput = document.getElementById("searchInput");
+        const roleFilter = document.getElementById("roleFilter");
+
+        const studentIdInput = document.getElementById("studentId");
+        const fullNameInput = document.getElementById("fullName");
+        const phoneInput = document.getElementById("phone");
+        const roleInput = document.getElementById("role");
+
+        function formatDate(dateValue) {
+            if (!dateValue) return "-";
+
+            const date = new Date(dateValue);
+
+            return date.toLocaleDateString("ar-EG", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        function getRoleText(role) {
+            if (role === "admin") return "أدمن";
+            return "طالب";
+        }
+
+        function getEnrollmentsCount(userId) {
+            return enrollments.filter(item =>
+                item.user_id === userId &&
+                item.status === "active"
+            ).length;
+        }
+
+        function getCompletedLessonsCount(userId) {
+            return progressRows.filter(item =>
+                item.user_id === userId &&
+                item.is_completed === true
+            ).length;
+        }
+
+        async function checkAdmin() {
+            const {
+                data: { session }
+            } = await db.auth.getSession();
+
+            if (!session) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            const { data: profile, error } = await db
+                .from("profiles")
+                .select("id, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error || !profile) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            if (profile.role !== "admin") {
+                window.location.href = "../index.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function loadStudents() {
+            try {
+                const { data, error } = await db
+                    .from("profiles")
+                    .select("*")
+                    .order("created_at", {
+                        ascending: false
+                    });
+
+                if (error) throw error;
+
+                students = data || [];
+
+                renderStudents(students);
+                updateStats();
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل تحميل الطلاب");
+            }
+        }
+
+        async function loadEnrollments() {
+            const { data, error } = await db
+                .from("course_enrollments")
+                .select("id, user_id, course_id, status, created_at");
+
+            if (error) {
+                console.error(error);
+                enrollments = [];
+                return;
+            }
+
+            enrollments = data || [];
+        }
+
+        async function loadProgress() {
+            const { data, error } = await db
+                .from("lesson_progress")
+                .select("id, user_id, lesson_id, is_completed");
+
+            if (error) {
+                console.error(error);
+                progressRows = [];
+                return;
+            }
+
+            progressRows = data || [];
+        }
+
+        function updateStats() {
+            const totalUsers = students.length;
+
+            const studentsOnly = students.filter(item =>
+                item.role === "student" || !item.role
+            ).length;
+
+            const adminsOnly = students.filter(item =>
+                item.role === "admin"
+            ).length;
+
+            const activeEnrollments = enrollments.filter(item =>
+                item.status === "active"
+            ).length;
+
+            document.getElementById("totalUsersCount").textContent = totalUsers;
+            document.getElementById("studentsCount").textContent = studentsOnly;
+            document.getElementById("adminsCount").textContent = adminsOnly;
+            document.getElementById("activeEnrollmentsCount").textContent = activeEnrollments;
+        }
+
+        function renderStudents(data) {
+            const table = document.getElementById("studentsTable");
+
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        لا يوجد طلاب
+                    </td>
+                </tr>
+            `;
+
+                return;
+            }
+
+            data.forEach(student => {
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        <div class="student-name">
+                            ${student.full_name || "-"}
+                        </div>
+
+                        <div class="student-id">
+                            ${student.id}
+                        </div>
+                    </td>
+
+                    <td>
+                        ${student.phone || "-"}
+                    </td>
+
+                    <td>
+                        <span class="role ${student.role === "admin" ? "role-admin" : "role-student"}">
+                            ${getRoleText(student.role)}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${getEnrollmentsCount(student.id)}
+                    </td>
+
+                    <td>
+                        ${getCompletedLessonsCount(student.id)}
+                    </td>
+
+                    <td>
+                        ${formatDate(student.created_at)}
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <button
+                                class="edit-btn"
+                                onclick="editStudent('${student.id}')">
+                                تعديل
+                            </button>
+
+                            <button
+                                class="role-btn"
+                                onclick="toggleRole('${student.id}')">
+                                ${student.role === "admin" ? "جعله طالب" : "جعله أدمن"}
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteProfile('${student.id}')">
+                                حذف Profile
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedRole = roleFilter.value;
+
+            const filtered = students.filter(student => {
+                const matchesSearch =
+                    (student.full_name || "")
+                        .toLowerCase()
+                        .includes(keyword)
+                    ||
+                    (student.phone || "")
+                        .toLowerCase()
+                        .includes(keyword);
+
+                const matchesRole =
+                    !selectedRole ||
+                    student.role === selectedRole;
+
+                return matchesSearch && matchesRole;
+            });
+
+            renderStudents(filtered);
+        }
+
+        async function saveStudent(e) {
+            e.preventDefault();
+
+            const studentId = studentIdInput.value;
+
+            const payload = {
+                full_name: fullNameInput.value.trim(),
+                phone: phoneInput.value.trim() || null,
+                role: roleInput.value
+            };
+
+            if (!payload.full_name) {
+                alert("اسم الطالب مطلوب");
+                return;
+            }
+
+            try {
+                const { error } = await db
+                    .from("profiles")
+                    .update(payload)
+                    .eq("id", studentId);
+
+                if (error) throw error;
+
+                modal.classList.remove("show");
+
+                await loadStudents();
+
+                showToast("تم تعديل بيانات الطالب بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل حفظ بيانات الطالب");
+            }
+        }
+
+        function editStudent(id) {
+            const student = students.find(item => item.id === id);
+
+            if (!student) return;
+
+            studentIdInput.value = student.id;
+            fullNameInput.value = student.full_name || "";
+            phoneInput.value = student.phone || "";
+            roleInput.value = student.role || "student";
+
+            document.getElementById("modalTitle").innerText = "تعديل بيانات الطالب";
+
+            modal.classList.add("show");
+        }
+
+        async function toggleRole(id) {
+            const student = students.find(item => item.id === id);
+
+            if (!student) return;
+
+            const newRole = student.role === "admin" ? "student" : "admin";
+
+            const confirmed = confirm(
+                `هل تريد تغيير دور الحساب إلى ${getRoleText(newRole)}؟`
+            );
+
+            if (!confirmed) return;
+
+            const { error } = await db
+                .from("profiles")
+                .update({
+                    role: newRole
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل تغيير الدور");
+                return;
+            }
+
+            await loadStudents();
+
+            showToast("تم تغيير الدور بنجاح");
+        }
+
+        async function deleteProfile(id) {
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف بيانات الطالب من profiles؟\nمهم: هذا لا يحذف حسابه من Authentication، فقط يحذف بياناته من جدول profiles."
+            );
+
+            if (!confirmed) return;
+
+            const { error } = await db
+                .from("profiles")
+                .delete()
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل حذف بيانات الطالب");
+                return;
+            }
+
+            await loadStudents();
+
+            showToast("تم حذف بيانات الطالب من profiles");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        searchInput.addEventListener("input", applyFilters);
+        roleFilter.addEventListener("change", applyFilters);
+
+        studentForm.addEventListener("submit", saveStudent);
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await db.auth.signOut();
+            window.location.href = "../login.html";
+        });
+
+        async function initPage() {
+            const isAdmin = await checkAdmin();
+
+            if (!isAdmin) return;
+
+            await loadEnrollments();
+            await loadProgress();
+            await loadStudents();
+
+            updateStats();
+        }
+
+        initPage();
+    </script>
+
+</body>
+
+</html>

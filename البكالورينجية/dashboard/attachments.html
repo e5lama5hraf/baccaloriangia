@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الملفات | البكالورينجية</title>
+
+    ```
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #10b981;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px;
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-btn,
+        .logout-btn {
+            border: none;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .add-btn {
+            background: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--soft-shadow);
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 8px;
+            color: var(--primary);
+            font-size: 34px;
+            font-weight: 900;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            flex: 1;
+            min-width: 230px;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-title,
+        .course-title {
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .file-meta {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            display: inline-flex;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, .15);
+            color: var(--success);
+        }
+
+        .badge-inactive {
+            background: rgba(255, 77, 109, .15);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn,
+        .delete-btn,
+        .status-btn,
+        .view-btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .edit-btn {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+        }
+
+        .status-btn {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .view-btn {
+            background: var(--primary);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 820px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: visible;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-modal {
+            border: none;
+            background: var(--danger);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+            width: 100%;
+        }
+
+        .search-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-select input {
+            padding-left: 45px;
+            background: white;
+        }
+
+        .search-select::after {
+            content: "⌄";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            left: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: var(--soft-shadow);
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-option {
+            padding: 13px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .search-option:last-child {
+            border-bottom: none;
+        }
+
+        .search-option:hover {
+            background: var(--light);
+        }
+
+        .search-option strong {
+            display: block;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .search-option span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .selected-hint {
+            margin-top: 8px;
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 800;
+            display: none;
+        }
+
+        .selected-hint.show {
+            display: block;
+        }
+
+        .file-box {
+            border: 2px dashed rgba(18, 60, 140, .25);
+            background: #f8fbff;
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .file-hint {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        .current-file {
+            margin-top: 12px;
+            display: none;
+            background: rgba(16, 185, 129, .1);
+            color: var(--success);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+        }
+
+        .current-file.show {
+            display: block;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .save-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99999;
+        }
+
+        @media(max-width:1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:992px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <span>ب</span> البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li>
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li>
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li class="active">
+                    <a href="attachments.html">📎 الملفات</a>
+                </li>
+
+                <li>
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+
+                <li>
+                    <a href="enrollments.html">💳 الاشتراكات</a>
+                </li>
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>إدارة الملفات</h1>
+                    <p>رفع ملفات الكورسات من الجهاز وإدارتها</p>
+                </div>
+
+                <div class="header-actions">
+                    <button class="add-btn" id="openModalBtn">
+                        + إضافة ملف
+                    </button>
+
+                    <button class="logout-btn" id="logoutBtn">
+                        خروج
+                    </button>
+                </div>
+            </div>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span>إجمالي الملفات</span>
+                    <strong id="totalFilesCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>ملفات ظاهرة</span>
+                    <strong id="activeFilesCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>ملفات مخفية</span>
+                    <strong id="inactiveFilesCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>عدد الكورسات</span>
+                    <strong id="coursesCount">0</strong>
+                </div>
+            </section>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الملف أو الكورس...">
+
+                <select id="courseFilter">
+                    <option value="">كل الكورسات</option>
+                </select>
+
+                <select id="typeFilter">
+                    <option value="">كل الأنواع</option>
+                    <option value="PDF">PDF</option>
+                    <option value="Word">Word</option>
+                    <option value="PowerPoint">PowerPoint</option>
+                    <option value="Excel">Excel</option>
+                    <option value="Image">Image</option>
+                    <option value="ZIP">ZIP</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">كل الحالات</option>
+                    <option value="active">ظاهر</option>
+                    <option value="inactive">مخفي</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الملف</th>
+                            <th>الكورس</th>
+                            <th>النوع</th>
+                            <th>الحجم</th>
+                            <th>الترتيب</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الإضافة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="filesTable"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div class="modal" id="fileModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    إضافة ملف جديد
+                </h2>
+
+                <button class="close-modal" id="closeModalBtn">
+                    ✕
+                </button>
+            </div>
+
+            <form id="fileForm">
+
+                <input type="hidden" id="fileId">
+                <input type="hidden" id="fileUrl">
+                <input type="hidden" id="oldFilePath">
+                <input type="hidden" id="courseId">
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+                        <label>عنوان الملف</label>
+                        <input type="text" id="title" required placeholder="مثال: ملزمة الوحدة الأولى">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>الكورس</label>
+
+                        <div class="search-select">
+                            <input type="text" id="courseSearchInput" placeholder="ابحث باسم الكورس..."
+                                autocomplete="off">
+                        </div>
+
+                        <div class="search-results" id="courseSearchResults"></div>
+
+                        <div class="selected-hint" id="selectedCourseHint"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نوع الملف</label>
+
+                        <select id="fileType">
+                            <option value="PDF">PDF</option>
+                            <option value="Word">Word</option>
+                            <option value="PowerPoint">PowerPoint</option>
+                            <option value="Excel">Excel</option>
+                            <option value="Image">Image</option>
+                            <option value="ZIP">ZIP</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ترتيب الملف</label>
+                        <input type="number" id="attachmentOrder" min="1" value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>حالة الظهور</label>
+
+                        <select id="isActive">
+                            <option value="true">ظاهر</option>
+                            <option value="false">مخفي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>حجم الملف</label>
+                        <input type="text" id="fileSize" placeholder="هيتم حسابه تلقائيًا" readonly>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>رفع الملف من الجهاز</label>
+
+                        <div class="file-box">
+                            <input type="file" id="attachmentFile">
+
+                            <div class="file-hint">
+                                يمكنك رفع PDF / Word / PowerPoint / Excel / Images / ZIP. الحد الأقصى المقترح 25MB.
+                            </div>
+
+                            <div class="current-file" id="currentFileBox"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn" id="saveBtn">
+                        حفظ الملف
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        const FILES_BUCKET = "course-files";
+
+        let files = [];
+        let courses = [];
+
+        const modal = document.getElementById("fileModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const fileForm = document.getElementById("fileForm");
+        const saveBtn = document.getElementById("saveBtn");
+
+        const searchInput = document.getElementById("searchInput");
+        const courseFilter = document.getElementById("courseFilter");
+        const typeFilter = document.getElementById("typeFilter");
+        const statusFilter = document.getElementById("statusFilter");
+
+        const fileIdInput = document.getElementById("fileId");
+        const fileUrlInput = document.getElementById("fileUrl");
+        const oldFilePathInput = document.getElementById("oldFilePath");
+        const titleInput = document.getElementById("title");
+        const courseIdInput = document.getElementById("courseId");
+        const courseSearchInput = document.getElementById("courseSearchInput");
+        const courseSearchResults = document.getElementById("courseSearchResults");
+        const selectedCourseHint = document.getElementById("selectedCourseHint");
+        const fileTypeInput = document.getElementById("fileType");
+        const fileSizeInput = document.getElementById("fileSize");
+        const attachmentOrderInput = document.getElementById("attachmentOrder");
+        const isActiveInput = document.getElementById("isActive");
+        const attachmentFileInput = document.getElementById("attachmentFile");
+        const currentFileBox = document.getElementById("currentFileBox");
+
+        function formatDate(dateValue) {
+            if (!dateValue) return "-";
+
+            const date = new Date(dateValue);
+
+            return date.toLocaleDateString("ar-EG", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return "";
+
+            const kb = bytes / 1024;
+            const mb = kb / 1024;
+
+            if (mb >= 1) {
+                return `${mb.toFixed(2)} MB`;
+            }
+
+            return `${kb.toFixed(1)} KB`;
+        }
+
+        function getFileTypeFromName(fileName) {
+            const extension = fileName.split(".").pop().toLowerCase();
+
+            if (extension === "pdf") return "PDF";
+
+            if (["doc", "docx"].includes(extension)) return "Word";
+
+            if (["ppt", "pptx"].includes(extension)) return "PowerPoint";
+
+            if (["xls", "xlsx", "csv"].includes(extension)) return "Excel";
+
+            if (["jpg", "jpeg", "png", "webp", "gif"].includes(extension)) return "Image";
+
+            if (["zip", "rar", "7z"].includes(extension)) return "ZIP";
+
+            return "Other";
+        }
+
+        function sanitizeFileName(fileName) {
+            const extension = fileName.split(".").pop();
+
+            const nameWithoutExtension = fileName
+                .replace(`.${extension}`, "")
+                .replace(/[^\w\u0600-\u06FF-]+/g, "-")
+                .replace(/-+/g, "-");
+
+            return `${nameWithoutExtension}-${Date.now()}.${extension}`;
+        }
+
+        function getStoragePathFromPublicUrl(url) {
+            if (!url) return "";
+
+            const marker = `/storage/v1/object/public/${FILES_BUCKET}/`;
+
+            if (!url.includes(marker)) return "";
+
+            return decodeURIComponent(url.split(marker)[1]);
+        }
+
+        function getCourseTitle(courseId) {
+            const course = courses.find(item =>
+                Number(item.id) === Number(courseId)
+            );
+
+            return course ? course.title : "كورس غير محدد";
+        }
+
+        function getCourseLabel(course) {
+            return `${course.title || "بدون عنوان"}`;
+        }
+
+        async function checkAdmin() {
+            const {
+                data: { session }
+            } = await db.auth.getSession();
+
+            if (!session) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            const { data: profile, error } = await db
+                .from("profiles")
+                .select("id, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error || !profile) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            if (profile.role !== "admin") {
+                window.location.href = "../index.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function loadCourses() {
+            const { data, error } = await db
+                .from("courses")
+                .select("id, title, is_active")
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (error) {
+                console.error(error);
+                alert("فشل تحميل الكورسات");
+                return;
+            }
+
+            courses = data || [];
+
+            courseFilter.innerHTML = `
+            <option value="">كل الكورسات</option>
+        `;
+
+            courses.forEach(course => {
+                const filterOption = document.createElement("option");
+                filterOption.value = course.id;
+                filterOption.textContent = course.title;
+                courseFilter.appendChild(filterOption);
+            });
+
+            document.getElementById("coursesCount").textContent = courses.length;
+        }
+
+        async function loadFiles() {
+            try {
+                const { data, error } = await db
+                    .from("course_attachments")
+                    .select(`
+                    *,
+                    courses (
+                        id,
+                        title
+                    )
+                `)
+                    .order("attachment_order", {
+                        ascending: true
+                    })
+                    .order("created_at", {
+                        ascending: false
+                    });
+
+                if (error) throw error;
+
+                files = data || [];
+
+                renderFiles(files);
+                updateStats();
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل تحميل الملفات");
+            }
+        }
+
+        function updateStats() {
+            const total = files.length;
+
+            const active = files.filter(item =>
+                item.is_active === true
+            ).length;
+
+            const inactive = files.filter(item =>
+                item.is_active === false
+            ).length;
+
+            document.getElementById("totalFilesCount").textContent = total;
+            document.getElementById("activeFilesCount").textContent = active;
+            document.getElementById("inactiveFilesCount").textContent = inactive;
+        }
+
+        function renderFiles(data) {
+            const table = document.getElementById("filesTable");
+
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+                <tr>
+                    <td colspan="8">
+                        لا توجد ملفات
+                    </td>
+                </tr>
+            `;
+
+                return;
+            }
+
+            data.forEach(file => {
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        <div class="file-title">
+                            ${file.title || "-"}
+                        </div>
+
+                        <div class="file-meta">
+                            ${file.file_url ? "تم رفع الملف" : "لا يوجد ملف"}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="course-title">
+                            ${file.courses?.title || getCourseTitle(file.course_id)}
+                        </div>
+                    </td>
+
+                    <td>
+                        ${file.file_type || "-"}
+                    </td>
+
+                    <td>
+                        ${file.file_size || "-"}
+                    </td>
+
+                    <td>
+                        ${file.attachment_order || 1}
+                    </td>
+
+                    <td>
+                        <span class="badge ${file.is_active ? 'badge-active' : 'badge-inactive'}">
+                            ${file.is_active ? "ظاهر" : "مخفي"}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${formatDate(file.created_at)}
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            ${file.file_url ? `
+                                <a class="view-btn" href="${file.file_url}" target="_blank">
+                                    فتح
+                                </a>
+                            ` : ""}
+
+                            <button
+                                class="edit-btn"
+                                onclick="editFile(${file.id})">
+                                تعديل
+                            </button>
+
+                            <button
+                                class="status-btn"
+                                onclick="toggleFileStatus(${file.id})">
+                                ${file.is_active ? "إخفاء" : "إظهار"}
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteFile(${file.id})">
+                                حذف
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedCourse = courseFilter.value;
+            const selectedType = typeFilter.value;
+            const selectedStatus = statusFilter.value;
+
+            const filtered = files.filter(file => {
+                const fileTitle = (file.title || "").toLowerCase();
+                const courseTitle = (file.courses?.title || getCourseTitle(file.course_id) || "").toLowerCase();
+
+                const matchesSearch =
+                    fileTitle.includes(keyword) ||
+                    courseTitle.includes(keyword);
+
+                const matchesCourse =
+                    !selectedCourse ||
+                    String(file.course_id) === String(selectedCourse);
+
+                const matchesType =
+                    !selectedType ||
+                    file.file_type === selectedType;
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    (
+                        selectedStatus === "active" &&
+                        file.is_active === true
+                    )
+                    ||
+                    (
+                        selectedStatus === "inactive" &&
+                        file.is_active === false
+                    );
+
+                return matchesSearch && matchesCourse && matchesType && matchesStatus;
+            });
+
+            renderFiles(filtered);
+        }
+
+        function renderCourseSearchResults(keyword = "") {
+            const cleanKeyword = keyword.trim().toLowerCase();
+
+            const filteredCourses = courses.filter(course => {
+                const title = (course.title || "").toLowerCase();
+
+                return !cleanKeyword || title.includes(cleanKeyword);
+            });
+
+            courseSearchResults.innerHTML = "";
+
+            if (!filteredCourses.length) {
+                courseSearchResults.innerHTML = `
+                <div class="search-option">
+                    <strong>لا يوجد كورسات مطابقة</strong>
+                    <span>جرب اسم كورس مختلف</span>
+                </div>
+            `;
+
+                courseSearchResults.classList.add("show");
+                return;
+            }
+
+            filteredCourses.forEach(course => {
+                const option = document.createElement("div");
+                option.className = "search-option";
+
+                option.innerHTML = `
+                <strong>${course.title || "بدون عنوان"}</strong>
+                <span>اضغط لاختيار الكورس</span>
+            `;
+
+                option.addEventListener("click", () => {
+                    selectCourse(course);
+                });
+
+                courseSearchResults.appendChild(option);
+            });
+
+            courseSearchResults.classList.add("show");
+        }
+
+        function selectCourse(course) {
+            courseIdInput.value = course.id;
+
+            courseSearchInput.value = getCourseLabel(course);
+
+            selectedCourseHint.textContent = `تم اختيار الكورس: ${getCourseLabel(course)}`;
+            selectedCourseHint.classList.add("show");
+
+            courseSearchResults.classList.remove("show");
+        }
+
+        function resetCourseSearch() {
+            courseIdInput.value = "";
+            courseSearchInput.value = "";
+            selectedCourseHint.textContent = "";
+            selectedCourseHint.classList.remove("show");
+            courseSearchResults.innerHTML = "";
+            courseSearchResults.classList.remove("show");
+        }
+
+        async function uploadCourseFile(file, courseId) {
+            if (!file) {
+                return {
+                    publicUrl: fileUrlInput.value || null,
+                    fileSize: fileSizeInput.value || null,
+                    fileType: fileTypeInput.value || "Other",
+                    filePath: oldFilePathInput.value || ""
+                };
+            }
+
+            const maxSizeInMB = 25;
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+            if (file.size > maxSizeInBytes) {
+                throw new Error(`حجم الملف كبير. الحد الأقصى ${maxSizeInMB}MB.`);
+            }
+
+            const fileName = sanitizeFileName(file.name);
+            const filePath = `course-${courseId}/${fileName}`;
+
+            const { error: uploadError } = await db.storage
+                .from(FILES_BUCKET)
+                .upload(filePath, file, {
+                    cacheControl: "3600",
+                    upsert: false
+                });
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            const { data } = db.storage
+                .from(FILES_BUCKET)
+                .getPublicUrl(filePath);
+
+            return {
+                publicUrl: data.publicUrl,
+                fileSize: formatFileSize(file.size),
+                fileType: getFileTypeFromName(file.name),
+                filePath
+            };
+        }
+
+        async function saveFile(e) {
+            e.preventDefault();
+
+            const selectedFile = attachmentFileInput.files[0];
+            const attachmentId = fileIdInput.value;
+            const courseId = courseIdInput.value;
+
+            if (!titleInput.value.trim()) {
+                alert("عنوان الملف مطلوب");
+                return;
+            }
+
+            if (!courseId) {
+                alert("لازم تختار الكورس من نتائج البحث");
+                return;
+            }
+
+            if (!attachmentId && !selectedFile) {
+                alert("لازم تختار ملف من الجهاز");
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = "جاري الحفظ...";
+
+            try {
+                const uploadedFile = await uploadCourseFile(
+                    selectedFile,
+                    courseId
+                );
+
+                const payload = {
+                    course_id: Number(courseId),
+                    title: titleInput.value.trim(),
+                    file_url: uploadedFile.publicUrl,
+                    file_type: selectedFile ? uploadedFile.fileType : fileTypeInput.value,
+                    file_size: uploadedFile.fileSize,
+                    attachment_order: Number(attachmentOrderInput.value) || 1,
+                    is_active: isActiveInput.value === "true"
+                };
+
+                if (attachmentId) {
+                    const { error } = await db
+                        .from("course_attachments")
+                        .update(payload)
+                        .eq("id", attachmentId);
+
+                    if (error) throw error;
+
+                    const oldPath = oldFilePathInput.value;
+
+                    if (selectedFile && oldPath) {
+                        await db.storage
+                            .from(FILES_BUCKET)
+                            .remove([oldPath]);
+                    }
+                }
+
+                else {
+                    const { error } = await db
+                        .from("course_attachments")
+                        .insert(payload);
+
+                    if (error) throw error;
+                }
+
+                modal.classList.remove("show");
+
+                resetForm();
+
+                await loadFiles();
+
+                showToast("تم حفظ الملف بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert(error.message || "فشل حفظ الملف");
+            }
+
+            finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "حفظ الملف";
+            }
+        }
+
+        function editFile(id) {
+            const file = files.find(item => item.id === id);
+
+            if (!file) return;
+
+            fileIdInput.value = file.id;
+            titleInput.value = file.title || "";
+            fileUrlInput.value = file.file_url || "";
+            fileTypeInput.value = file.file_type || "PDF";
+            fileSizeInput.value = file.file_size || "";
+            attachmentOrderInput.value = file.attachment_order || 1;
+            isActiveInput.value = String(file.is_active);
+
+            oldFilePathInput.value = getStoragePathFromPublicUrl(file.file_url);
+
+            const course = courses.find(item =>
+                Number(item.id) === Number(file.course_id)
+            );
+
+            if (course) {
+                selectCourse(course);
+            }
+
+            else {
+                courseIdInput.value = file.course_id || "";
+                courseSearchInput.value = getCourseTitle(file.course_id);
+                selectedCourseHint.textContent = `تم اختيار الكورس: ${getCourseTitle(file.course_id)}`;
+                selectedCourseHint.classList.add("show");
+            }
+
+            attachmentFileInput.value = "";
+
+            if (file.file_url) {
+                currentFileBox.innerHTML = `
+                الملف الحالي موجود:
+                <a href="${file.file_url}" target="_blank">فتح الملف</a>
+                <br>
+                لو اخترت ملف جديد، سيتم استبداله.
+            `;
+
+                currentFileBox.classList.add("show");
+            }
+
+            else {
+                currentFileBox.innerHTML = "";
+                currentFileBox.classList.remove("show");
+            }
+
+            document.getElementById("modalTitle").innerText = "تعديل الملف";
+
+            modal.classList.add("show");
+        }
+
+        async function toggleFileStatus(id) {
+            const file = files.find(item => item.id === id);
+
+            if (!file) return;
+
+            const { error } = await db
+                .from("course_attachments")
+                .update({
+                    is_active: !file.is_active
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل تغيير حالة الملف");
+                return;
+            }
+
+            await loadFiles();
+
+            showToast("تم تغيير حالة الملف");
+        }
+
+        async function deleteFile(id) {
+            const file = files.find(item => item.id === id);
+
+            if (!file) return;
+
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف الملف؟ سيتم حذف بيانات الملف من الداتا بيز ومحاولة حذف الملف من Storage."
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const { error } = await db
+                    .from("course_attachments")
+                    .delete()
+                    .eq("id", id);
+
+                if (error) throw error;
+
+                const filePath = getStoragePathFromPublicUrl(file.file_url);
+
+                if (filePath) {
+                    await db.storage
+                        .from(FILES_BUCKET)
+                        .remove([filePath]);
+                }
+
+                await loadFiles();
+
+                showToast("تم حذف الملف");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل حذف الملف");
+            }
+        }
+
+        function resetForm() {
+            fileForm.reset();
+
+            fileIdInput.value = "";
+            fileUrlInput.value = "";
+            oldFilePathInput.value = "";
+
+            resetCourseSearch();
+
+            fileTypeInput.value = "PDF";
+            fileSizeInput.value = "";
+            attachmentOrderInput.value = 1;
+            isActiveInput.value = "true";
+            attachmentFileInput.value = "";
+
+            currentFileBox.innerHTML = "";
+            currentFileBox.classList.remove("show");
+
+            document.getElementById("modalTitle").innerText = "إضافة ملف جديد";
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        openModalBtn.addEventListener("click", () => {
+            resetForm();
+            modal.classList.add("show");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        searchInput.addEventListener("input", applyFilters);
+        courseFilter.addEventListener("change", applyFilters);
+        typeFilter.addEventListener("change", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+
+        courseSearchInput.addEventListener("focus", () => {
+            renderCourseSearchResults(courseSearchInput.value);
+        });
+
+        courseSearchInput.addEventListener("input", () => {
+            courseIdInput.value = "";
+            selectedCourseHint.classList.remove("show");
+            renderCourseSearchResults(courseSearchInput.value);
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                !courseSearchInput.contains(e.target) &&
+                !courseSearchResults.contains(e.target)
+            ) {
+                courseSearchResults.classList.remove("show");
+            }
+        });
+
+        attachmentFileInput.addEventListener("change", function () {
+            const file = this.files[0];
+
+            if (!file) return;
+
+            fileSizeInput.value = formatFileSize(file.size);
+            fileTypeInput.value = getFileTypeFromName(file.name);
+
+            currentFileBox.innerHTML = `
+            تم اختيار ملف جديد: ${file.name}
+        `;
+
+            currentFileBox.classList.add("show");
+        });
+
+        fileForm.addEventListener("submit", saveFile);
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await db.auth.signOut();
+            window.location.href = "../login.html";
+        });
+
+        async function initPage() {
+            const isAdmin = await checkAdmin();
+
+            if (!isAdmin) return;
+
+            await loadCourses();
+            await loadFiles();
+        }
+
+        initPage();
+    </script>
+
+
+</body>
+
+</html>

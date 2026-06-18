@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الوحدات | البكالورينجية</title>
+
+    ```
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #10b981;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px;
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .add-btn:hover {
+            opacity: .9;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            flex: 1;
+            min-width: 250px;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: center;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .status {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .active-status {
+            background: rgba(16, 185, 129, .15);
+            color: var(--success);
+        }
+
+        .inactive-status {
+            background: rgba(255, 77, 109, .15);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .edit-btn {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+        }
+
+        .status-toggle {
+            background: var(--accent);
+            border: none;
+            color: var(--dark);
+            padding: 9px 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 720px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-modal {
+            border: none;
+            background: var(--danger);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99999;
+        }
+
+        @media(max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+
+        @media(max-width:992px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <span>ب</span> البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li class="active">
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li>
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li>
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>إدارة الوحدات</h1>
+                    <p>إضافة وتعديل وحذف وحدات الكورسات</p>
+                </div>
+
+                <button class="add-btn" id="openModalBtn">
+                    + إضافة وحدة
+                </button>
+            </div>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الوحدة...">
+
+                <select id="courseFilter">
+                    <option value="">كل الكورسات</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">كل الحالات</option>
+                    <option value="active">ظاهر</option>
+                    <option value="inactive">مخفي</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الوحدة</th>
+                            <th>الكورس</th>
+                            <th>ترتيب الوحدة</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="unitsTable"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div class="modal" id="unitModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    إضافة وحدة جديدة
+                </h2>
+
+                <button class="close-modal" id="closeModalBtn">
+                    ✕
+                </button>
+            </div>
+
+            <form id="unitForm">
+
+                <input type="hidden" id="unitId">
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+                        <label>اسم الوحدة</label>
+                        <input type="text" id="title" required placeholder="مثال: الوحدة الأولى - أساسيات الجبر">
+                    </div>
+
+                    <div class="form-group">
+                        <label>الكورس</label>
+
+                        <select id="courseId" required>
+                            <option value="">اختر الكورس</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ترتيب الوحدة</label>
+                        <input type="number" id="unitOrder" min="1" value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>حالة الظهور</label>
+
+                        <select id="isActive">
+                            <option value="true">ظاهر</option>
+                            <option value="false">مخفي</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn">
+                        حفظ البيانات
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        let units = [];
+        let courses = [];
+
+        const modal = document.getElementById("unitModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const unitForm = document.getElementById("unitForm");
+
+        const searchInput = document.getElementById("searchInput");
+        const courseFilter = document.getElementById("courseFilter");
+        const statusFilter = document.getElementById("statusFilter");
+
+        const unitIdInput = document.getElementById("unitId");
+        const titleInput = document.getElementById("title");
+        const courseIdInput = document.getElementById("courseId");
+        const unitOrderInput = document.getElementById("unitOrder");
+        const isActiveInput = document.getElementById("isActive");
+
+        function getCourseTitle(courseId) {
+            const course = courses.find(item =>
+                Number(item.id) === Number(courseId)
+            );
+
+            return course ? course.title : "غير محدد";
+        }
+
+        async function checkAdmin() {
+            const {
+                data: { session }
+            } = await db.auth.getSession();
+
+            if (!session) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            const { data: profile, error } = await db
+                .from("profiles")
+                .select("id, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error || !profile) {
+                window.location.href = "../login.html";
+                return false;
+            }
+
+            if (profile.role !== "admin") {
+                window.location.href = "../index.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function loadCourses() {
+            const { data, error } = await db
+                .from("courses")
+                .select("id, title, is_active")
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (error) {
+                console.error(error);
+                alert("فشل تحميل الكورسات");
+                return;
+            }
+
+            courses = data || [];
+
+            courseIdInput.innerHTML = `
+            <option value="">اختر الكورس</option>
+        `;
+
+            courseFilter.innerHTML = `
+            <option value="">كل الكورسات</option>
+        `;
+
+            courses.forEach(course => {
+                const option = document.createElement("option");
+                option.value = course.id;
+                option.textContent = course.title;
+                courseIdInput.appendChild(option);
+
+                const filterOption = document.createElement("option");
+                filterOption.value = course.id;
+                filterOption.textContent = course.title;
+                courseFilter.appendChild(filterOption);
+            });
+        }
+
+        async function loadUnits() {
+            try {
+                const { data, error } = await db
+                    .from("course_units")
+                    .select(`
+                    *,
+                    courses (
+                        id,
+                        title
+                    )
+                `)
+                    .order("unit_order", {
+                        ascending: true
+                    });
+
+                if (error) throw error;
+
+                units = data || [];
+
+                renderUnits(units);
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل تحميل الوحدات");
+            }
+        }
+
+        function renderUnits(data) {
+            const table = document.getElementById("unitsTable");
+
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        لا توجد وحدات
+                    </td>
+                </tr>
+            `;
+
+                return;
+            }
+
+            data.forEach(unit => {
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        ${unit.title || "-"}
+                    </td>
+
+                    <td>
+                        ${unit.courses?.title || getCourseTitle(unit.course_id)}
+                    </td>
+
+                    <td>
+                        ${unit.unit_order || 1}
+                    </td>
+
+                    <td>
+                        <span class="status ${unit.is_active ? 'active-status' : 'inactive-status'}">
+                            ${unit.is_active ? 'ظاهر' : 'مخفي'}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <button
+                                class="edit-btn"
+                                onclick="editUnit(${unit.id})">
+                                تعديل
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteUnit(${unit.id})">
+                                حذف
+                            </button>
+
+                            <button
+                                class="status-toggle"
+                                onclick="toggleUnitStatus(${unit.id})">
+                                ${unit.is_active ? "إخفاء" : "إظهار"}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedCourse = courseFilter.value;
+            const selectedStatus = statusFilter.value;
+
+            const filtered = units.filter(unit => {
+                const matchesSearch =
+                    (unit.title || "")
+                        .toLowerCase()
+                        .includes(keyword);
+
+                const matchesCourse =
+                    !selectedCourse ||
+                    String(unit.course_id) === String(selectedCourse);
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    (
+                        selectedStatus === "active" &&
+                        unit.is_active === true
+                    )
+                    ||
+                    (
+                        selectedStatus === "inactive" &&
+                        unit.is_active === false
+                    );
+
+                return matchesSearch && matchesCourse && matchesStatus;
+            });
+
+            renderUnits(filtered);
+        }
+
+        async function saveUnit(e) {
+            e.preventDefault();
+
+            const unitId = unitIdInput.value;
+
+            const unitData = {
+                title: titleInput.value.trim(),
+                course_id: courseIdInput.value ? Number(courseIdInput.value) : null,
+                unit_order: Number(unitOrderInput.value) || 1,
+                is_active: isActiveInput.value === "true"
+            };
+
+            if (!unitData.title) {
+                alert("اسم الوحدة مطلوب");
+                return;
+            }
+
+            if (!unitData.course_id) {
+                alert("لازم تختار الكورس");
+                return;
+            }
+
+            try {
+                if (unitId) {
+                    const { error } = await db
+                        .from("course_units")
+                        .update(unitData)
+                        .eq("id", unitId);
+
+                    if (error) throw error;
+                }
+
+                else {
+                    const { error } = await db
+                        .from("course_units")
+                        .insert(unitData);
+
+                    if (error) throw error;
+                }
+
+                modal.classList.remove("show");
+
+                unitForm.reset();
+
+                unitIdInput.value = "";
+                unitOrderInput.value = 1;
+                isActiveInput.value = "true";
+
+                await loadUnits();
+
+                showToast("تم حفظ الوحدة بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل حفظ الوحدة");
+            }
+        }
+
+        function editUnit(id) {
+            const unit = units.find(item => item.id === id);
+
+            if (!unit) return;
+
+            unitIdInput.value = unit.id;
+            titleInput.value = unit.title || "";
+            courseIdInput.value = unit.course_id || "";
+            unitOrderInput.value = unit.unit_order || 1;
+            isActiveInput.value = String(unit.is_active);
+
+            document.getElementById("modalTitle").innerText = "تعديل الوحدة";
+
+            modal.classList.add("show");
+        }
+
+        async function deleteUnit(id) {
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف الوحدة؟\nلو الوحدة مرتبطة بدروس، الأفضل تستخدم إخفاء بدل الحذف."
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const { error } = await db
+                    .from("course_units")
+                    .delete()
+                    .eq("id", id);
+
+                if (error) throw error;
+
+                await loadUnits();
+
+                showToast("تم حذف الوحدة بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل الحذف. غالبًا الوحدة مرتبطة بدروس، استخدم إخفاء بدل الحذف.");
+            }
+        }
+
+        async function toggleUnitStatus(id) {
+            const unit = units.find(item => item.id === id);
+
+            if (!unit) return;
+
+            const { error } = await db
+                .from("course_units")
+                .update({
+                    is_active: !unit.is_active
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل تغيير حالة الوحدة");
+                return;
+            }
+
+            await loadUnits();
+
+            showToast("تم تغيير حالة الوحدة");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        openModalBtn.addEventListener("click", () => {
+            unitForm.reset();
+
+            unitIdInput.value = "";
+            unitOrderInput.value = 1;
+            isActiveInput.value = "true";
+
+            document.getElementById("modalTitle").innerText = "إضافة وحدة جديدة";
+
+            modal.classList.add("show");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        searchInput.addEventListener("input", applyFilters);
+        courseFilter.addEventListener("change", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+
+        unitForm.addEventListener("submit", saveUnit);
+
+        async function initPage() {
+            const isAdmin = await checkAdmin();
+
+            if (!isAdmin) return;
+
+            await loadCourses();
+            await loadUnits();
+        }
+
+        initPage();
+    </script>
+
+
+</body>
+
+</html>

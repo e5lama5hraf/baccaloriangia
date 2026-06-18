@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المدرسين | البكالورينجية</title>
+
+    ```
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #123c8c;
+            --secondary: #0bb6d6;
+            --accent: #ffb703;
+            --dark: #071a3d;
+            --light: #f4f8ff;
+            --white: #ffffff;
+            --text: #1d2b45;
+            --muted: #6c7890;
+            --danger: #ff4d6d;
+            --success: #10b981;
+            --radius: 24px;
+            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Cairo", sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 14px;
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active a {
+            background: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .add-btn:hover {
+            opacity: .9;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            flex: 1;
+            min-width: 250px;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--soft-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: center;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .teacher-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .active-status {
+            background: rgba(16, 185, 129, .15);
+            color: var(--success);
+        }
+
+        .inactive-status {
+            background: rgba(255, 77, 109, .15);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .edit-btn {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+        }
+
+        .status-toggle {
+            background: var(--accent);
+            border: none;
+            color: var(--dark);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 900px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-modal {
+            border: none;
+            background: var(--danger);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .save-btn:hover {
+            opacity: .9;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99999;
+        }
+
+        @media(max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:992px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <span>ب</span> البكالورينجية
+            </div>
+
+            <ul>
+                <li>
+                    <a href="index.html">🏠 الرئيسية</a>
+                </li>
+
+                <li class="active">
+                    <a href="teachers.html">👨‍🏫 المدرسين</a>
+                </li>
+
+                <li>
+                    <a href="courses.html">📚 الكورسات</a>
+                </li>
+
+                <li>
+                    <a href="units.html">📖 الوحدات</a>
+                </li>
+
+                <li>
+                    <a href="lessons.html">🎥 الدروس</a>
+                </li>
+
+                <li>
+                    <a href="students.html">👨‍🎓 الطلاب</a>
+                </li>
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>إدارة المدرسين</h1>
+                    <p>إضافة وتعديل وحذف المدرسين</p>
+                </div>
+
+                <button class="add-btn" id="openModalBtn">
+                    + إضافة مدرس
+                </button>
+            </div>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="ابحث باسم المدرس أو المادة...">
+
+                <select id="stageFilter">
+                    <option value="">كل المراحل</option>
+                    <option value="first">أولى ثانوي</option>
+                    <option value="second">ثانية ثانوي</option>
+                </select>
+
+                <select id="pathFilter">
+                    <option value="">كل المسارات</option>
+                    <option value="medicine">طب</option>
+                    <option value="engineering">هندسة</option>
+                    <option value="arts">أدبي</option>
+                    <option value="business">إدارة أعمال</option>
+                </select>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>المادة</th>
+                            <th>المرحلة</th>
+                            <th>المسار</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="teachersTable"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div class="modal" id="teacherModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    إضافة مدرس جديد
+                </h2>
+
+                <button class="close-modal" id="closeModalBtn">
+                    ✕
+                </button>
+            </div>
+
+            <form id="teacherForm">
+
+                <input type="hidden" id="teacherId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>اسم المدرس</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>المادة</label>
+                        <input type="text" id="subject" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>المرحلة</label>
+
+                        <select id="stage" required>
+                            <option value="">اختر المرحلة</option>
+                            <option value="first">أولى ثانوي</option>
+                            <option value="second">ثانية ثانوي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>المسارات</label>
+
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" value="medicine" class="path-checkbox">
+                                طب
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="engineering" class="path-checkbox">
+                                هندسة
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="arts" class="path-checkbox">
+                                أدبي
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="business" class="path-checkbox">
+                                إدارة أعمال
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>صورة المدرس</label>
+
+                        <img id="imagePreview" src="" style="
+                        width:120px;
+                        height:120px;
+                        object-fit:cover;
+                        border-radius:20px;
+                        display:none;
+                        margin-bottom:15px;
+                    ">
+
+                        <input type="file" id="imageFile" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label>وصف الصورة</label>
+                        <input type="text" id="photo_label">
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط فيسبوك</label>
+                        <input type="url" id="facebook_url">
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط واتساب</label>
+                        <input type="url" id="whatsapp_url">
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط تيليجرام</label>
+                        <input type="url" id="telegram_url">
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط يوتيوب</label>
+                        <input type="url" id="youtube_url">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>نبذة عن المدرس</label>
+                    <textarea id="bio" rows="5"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn">
+                        حفظ البيانات
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+        const db = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        let teachers = [];
+
+        const modal = document.getElementById("teacherModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const teacherForm = document.getElementById("teacherForm");
+        const imageFileInput = document.getElementById("imageFile");
+        const imagePreview = document.getElementById("imagePreview");
+        const searchInput = document.getElementById("searchInput");
+        const stageFilter = document.getElementById("stageFilter");
+        const pathFilter = document.getElementById("pathFilter");
+
+        function getSelectedPaths() {
+            return [
+                ...document.querySelectorAll(".path-checkbox:checked")
+            ].map(item => item.value);
+        }
+
+        function setSelectedPaths(paths) {
+            document
+                .querySelectorAll(".path-checkbox")
+                .forEach(item => {
+                    item.checked = false;
+                });
+
+            if (!Array.isArray(paths)) return;
+
+            paths.forEach(path => {
+                const checkbox = document.querySelector(
+                    `.path-checkbox[value="${path}"]`
+                );
+
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        function getPathsText(path) {
+            if (!path || !Array.isArray(path) || !path.length) {
+                return "-";
+            }
+
+            const pathsMap = {
+                medicine: "طب",
+                engineering: "هندسة",
+                arts: "أدبي",
+                business: "إدارة أعمال"
+            };
+
+            return path
+                .map(item => pathsMap[item] || item)
+                .join(" - ");
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.toLowerCase();
+            const selectedStage = stageFilter.value;
+            const selectedPath = pathFilter.value;
+
+            const filtered = teachers.filter(teacher => {
+                const matchesSearch =
+                    (teacher.name || "")
+                        .toLowerCase()
+                        .includes(keyword)
+                    ||
+                    (teacher.subject || "")
+                        .toLowerCase()
+                        .includes(keyword);
+
+                const matchesStage =
+                    !selectedStage ||
+                    teacher.stage === selectedStage;
+
+                const matchesPath =
+                    !selectedPath ||
+                    (
+                        Array.isArray(teacher.path) &&
+                        teacher.path.includes(selectedPath)
+                    );
+
+                return matchesSearch && matchesStage && matchesPath;
+            });
+
+            renderTeachers(filtered);
+        }
+
+        async function loadTeachers() {
+            try {
+                const { data, error } = await db
+                    .from("teachers")
+                    .select("*")
+                    .order("id", {
+                        ascending: false
+                    });
+
+                if (error) throw error;
+
+                teachers = data || [];
+
+                renderTeachers(teachers);
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل تحميل المدرسين");
+            }
+        }
+
+        function renderTeachers(data) {
+            const table = document.getElementById("teachersTable");
+
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        لا يوجد مدرسين
+                    </td>
+                </tr>
+            `;
+
+                return;
+            }
+
+            data.forEach(teacher => {
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        <img
+                            class="teacher-image"
+                            src="${teacher.image || 'https://placehold.co/60'}">
+                    </td>
+
+                    <td>
+                        ${teacher.name || '-'}
+                    </td>
+
+                    <td>
+                        ${teacher.subject || '-'}
+                    </td>
+
+                    <td>
+                        ${teacher.stage || '-'}
+                    </td>
+
+                    <td>
+                        ${getPathsText(teacher.path)}
+                    </td>
+
+                    <td>
+                        <span class="status ${teacher.is_active ? 'active-status' : 'inactive-status'}">
+                            ${teacher.is_active ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <button
+                                class="edit-btn"
+                                onclick="editTeacher(${teacher.id})">
+                                تعديل
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteTeacher(${teacher.id})">
+                                حذف
+                            </button>
+
+                            <button
+                                class="status-toggle"
+                                onclick="toggleTeacherStatus(${teacher.id})">
+                                ${teacher.is_active ? "تعطيل" : "تفعيل"}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+        }
+
+        async function saveTeacher(e) {
+            e.preventDefault();
+
+            const imageFile = imageFileInput.files[0];
+
+            let imageUrl = undefined;
+
+            const teacherId = document.getElementById("teacherId").value;
+
+            if (imageFile) {
+                imageUrl = await uploadTeacherImage(imageFile);
+            }
+
+            const selectedPaths = getSelectedPaths();
+
+            const teacherData = {
+                ...(imageUrl !== undefined && {
+                    image: imageUrl
+                }),
+
+                name: document.getElementById("name").value.trim(),
+
+                subject: document.getElementById("subject").value.trim(),
+
+                stage: document.getElementById("stage").value,
+
+                path: selectedPaths.length ? selectedPaths : null,
+
+                bio: document.getElementById("bio").value.trim() || null,
+
+                facebook_url: document.getElementById("facebook_url").value.trim() || null,
+
+                whatsapp_url: document.getElementById("whatsapp_url").value.trim() || null,
+
+                telegram_url: document.getElementById("telegram_url").value.trim() || null,
+
+                youtube_url: document.getElementById("youtube_url").value.trim() || null,
+
+                photo_label: document.getElementById("photo_label").value.trim() || null,
+
+                is_active: true
+            };
+
+            try {
+                if (teacherId) {
+                    const { error } = await db
+                        .from("teachers")
+                        .update(teacherData)
+                        .eq("id", teacherId);
+
+                    if (error) throw error;
+                }
+
+                else {
+                    const { error } = await db
+                        .from("teachers")
+                        .insert(teacherData);
+
+                    if (error) throw error;
+                }
+
+                modal.classList.remove("show");
+
+                teacherForm.reset();
+
+                imagePreview.style.display = "none";
+                imagePreview.src = "";
+
+                document.getElementById("teacherId").value = "";
+
+                setSelectedPaths([]);
+
+                await loadTeachers();
+
+                showToast("تم حفظ بيانات المدرس بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل حفظ البيانات");
+            }
+        }
+
+        function editTeacher(id) {
+            const teacher = teachers.find(t => t.id === id);
+
+            if (!teacher) return;
+
+            document.getElementById("teacherId").value = teacher.id;
+
+            document.getElementById("name").value = teacher.name || "";
+
+            document.getElementById("subject").value = teacher.subject || "";
+
+            document.getElementById("stage").value = teacher.stage || "";
+
+            document.getElementById("bio").value = teacher.bio || "";
+
+            document.getElementById("facebook_url").value = teacher.facebook_url || "";
+
+            document.getElementById("whatsapp_url").value = teacher.whatsapp_url || "";
+
+            document.getElementById("telegram_url").value = teacher.telegram_url || "";
+
+            document.getElementById("youtube_url").value = teacher.youtube_url || "";
+
+            document.getElementById("photo_label").value = teacher.photo_label || "";
+
+            document.getElementById("modalTitle").innerText = "تعديل المدرس";
+
+            setSelectedPaths(teacher.path);
+
+            if (teacher.image) {
+                imagePreview.src = teacher.image;
+                imagePreview.style.display = "block";
+            }
+
+            else {
+                imagePreview.src = "";
+                imagePreview.style.display = "none";
+            }
+
+            imageFileInput.value = "";
+
+            modal.classList.add("show");
+        }
+
+        async function deleteTeacher(id) {
+            const confirmed = confirm(
+                "هل أنت متأكد من حذف المدرس ؟"
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const { error } = await db
+                    .from("teachers")
+                    .delete()
+                    .eq("id", id);
+
+                if (error) throw error;
+
+                await loadTeachers();
+
+                showToast("تم حذف المدرس بنجاح");
+            }
+
+            catch (error) {
+                console.error(error);
+                alert("فشل الحذف");
+            }
+        }
+
+        async function uploadTeacherImage(file) {
+            if (!file) return null;
+
+            const fileName = Date.now() + "-" + file.name;
+
+            const { error } = await db.storage
+                .from("teacher-images")
+                .upload(fileName, file);
+
+            if (error) {
+                throw error;
+            }
+
+            const { data } = db.storage
+                .from("teacher-images")
+                .getPublicUrl(fileName);
+
+            return data.publicUrl;
+        }
+
+        async function toggleTeacherStatus(id) {
+            const teacher = teachers.find(
+                t => t.id === id
+            );
+
+            if (!teacher) return;
+
+            const { error } = await db
+                .from("teachers")
+                .update({
+                    is_active: !teacher.is_active
+                })
+                .eq("id", id);
+
+            if (error) {
+                console.error(error);
+                alert("فشل تغيير حالة المدرس");
+                return;
+            }
+
+            await loadTeachers();
+
+            showToast("تم تغيير حالة المدرس");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        stageFilter.addEventListener("change", applyFilters);
+        pathFilter.addEventListener("change", applyFilters);
+
+        openModalBtn.addEventListener("click", () => {
+            teacherForm.reset();
+
+            document.getElementById("teacherId").value = "";
+
+            document.getElementById("modalTitle").innerText = "إضافة مدرس جديد";
+
+            imagePreview.src = "";
+            imagePreview.style.display = "none";
+
+            imageFileInput.value = "";
+
+            setSelectedPaths([]);
+
+            modal.classList.add("show");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        imageFileInput.addEventListener("change", function () {
+            const file = this.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = "block";
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        teacherForm.addEventListener("submit", saveTeacher);
+
+        loadTeachers();
+    </script>
+    ```
+
+</body>
+
+</html>
