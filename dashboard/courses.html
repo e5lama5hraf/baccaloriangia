@@ -198,7 +198,7 @@
             box-shadow: var(--soft-shadow);
             margin-bottom: 24px;
             display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
             gap: 14px;
         }
 
@@ -451,6 +451,34 @@
             font-weight: 900;
         }
 
+
+        .featured-box {
+            display: grid;
+            gap: 8px;
+            justify-items: center;
+        }
+
+        .featured-order-input {
+            width: 78px;
+            text-align: center;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(18, 60, 140, 0.14);
+            font-weight: 900;
+            color: var(--dark);
+            outline: none;
+        }
+
+        .featured-order-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(11, 182, 214, 0.12);
+        }
+
+        .badge-featured {
+            background: rgba(255, 183, 3, 0.2);
+            color: #8a5d00;
+        }
+
         @media(max-width: 1100px) {
             .filters-box {
                 grid-template-columns: 1fr 1fr;
@@ -574,6 +602,12 @@
                 <select id="teacherFilter" class="select">
                     <option value="">كل المدرسين</option>
                 </select>
+
+                <select id="featuredFilter" class="select">
+                    <option value="">كل الكورسات</option>
+                    <option value="featured">كورسات مميزة فقط</option>
+                    <option value="not_featured">غير مميزة</option>
+                </select>
             </div>
 
             <div class="table-box">
@@ -593,13 +627,14 @@
                             <th>المستوى</th>
                             <th>الساعات</th>
                             <th>الحالة</th>
+                            <th>مميز / الترتيب</th>
                             <th>التحكم</th>
                         </tr>
                     </thead>
 
                     <tbody id="coursesTable">
                         <tr>
-                            <td colspan="9">جاري تحميل الكورسات...</td>
+                            <td colspan="10">جاري تحميل الكورسات...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -713,6 +748,20 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="isFeatured">عرض في الصفحة الرئيسية</label>
+                        <select id="isFeatured" class="select">
+                            <option value="false">لا</option>
+                            <option value="true">نعم - كورس مميز</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featuredOrder">ترتيب الظهور في الرئيسية</label>
+                        <input type="number" id="featuredOrder" class="input" min="1" step="1" value="1"
+                            placeholder="مثال: 1">
+                    </div>
+
                 </div>
 
                 <div class="form-actions">
@@ -758,6 +807,7 @@
         const stageFilter = document.getElementById("stageFilter");
         const statusFilter = document.getElementById("statusFilter");
         const teacherFilter = document.getElementById("teacherFilter");
+        const featuredFilter = document.getElementById("featuredFilter");
 
         const courseIdInput = document.getElementById("courseId");
         const titleInput = document.getElementById("title");
@@ -771,6 +821,8 @@
         const descriptionInput = document.getElementById("description");
         const videoUrlInput = document.getElementById("videoUrl");
         const isActiveInput = document.getElementById("isActive");
+        const isFeaturedInput = document.getElementById("isFeatured");
+        const featuredOrderInput = document.getElementById("featuredOrder");
 
         /*
             عناصر الصورة الجديدة
@@ -883,7 +935,7 @@
         async function loadCourses() {
             coursesTable.innerHTML = `
             <tr>
-                <td colspan="9">جاري تحميل الكورسات...</td>
+                <td colspan="10">جاري تحميل الكورسات...</td>
             </tr>
         `;
 
@@ -895,6 +947,11 @@
                     id,
                     name,
                     subject
+                ),
+                featured_courses (
+                    id,
+                    display_order,
+                    is_active
                 )
             `)
                 .order("created_at", { ascending: false });
@@ -904,7 +961,7 @@
 
                 coursesTable.innerHTML = `
                 <tr>
-                    <td colspan="9">حدث خطأ أثناء تحميل الكورسات: ${error.message}</td>
+                    <td colspan="10">حدث خطأ أثناء تحميل الكورسات: ${error.message}</td>
                 </tr>
             `;
 
@@ -920,6 +977,7 @@
             const selectedStage = stageFilter.value;
             const selectedStatus = statusFilter.value;
             const selectedTeacher = teacherFilter.value;
+            const selectedFeatured = featuredFilter.value;
 
             let filteredCourses = [...allCourses];
 
@@ -953,12 +1011,24 @@
                 );
             }
 
+            if (selectedFeatured === "featured") {
+                filteredCourses = filteredCourses.filter(course =>
+                    course.featured_courses?.[0]?.is_active === true
+                );
+            }
+
+            if (selectedFeatured === "not_featured") {
+                filteredCourses = filteredCourses.filter(course =>
+                    course.featured_courses?.[0]?.is_active !== true
+                );
+            }
+
             coursesCountLabel.textContent = `${filteredCourses.length} كورس`;
 
             if (!filteredCourses.length) {
                 coursesTable.innerHTML = `
                 <tr>
-                    <td colspan="9">
+                    <td colspan="10">
                         <div class="empty-state">
                             لا توجد كورسات مطابقة
                         </div>
@@ -968,7 +1038,12 @@
                 return;
             }
 
-            coursesTable.innerHTML = filteredCourses.map(course => `
+            coursesTable.innerHTML = filteredCourses.map(course => {
+                const featuredData = course.featured_courses?.[0];
+                const isFeatured = featuredData?.is_active === true;
+                const featuredOrder = featuredData?.display_order || 1;
+
+                return `
             <tr>
                 <td>
                     <div class="course-cell">
@@ -1008,6 +1083,22 @@
                 </td>
 
                 <td>
+                    <div class="featured-box">
+                        <span class="badge ${isFeatured ? "badge-featured" : "badge-hidden"}">
+                            ${isFeatured ? "مميز" : "غير مميز"}
+                        </span>
+
+                        <input
+                            class="featured-order-input"
+                            type="number"
+                            min="1"
+                            value="${featuredOrder}"
+                            onchange="updateFeaturedOrder(${course.id}, this.value)"
+                            ${isFeatured ? "" : "disabled"}>
+                    </div>
+                </td>
+
+                <td>
                     <div class="actions">
                         <button class="btn btn-light small-btn" onclick="editCourse(${course.id})">
                             تعديل
@@ -1018,13 +1109,19 @@
                             ${course.is_active ? "إخفاء" : "إظهار"}
                         </button>
 
+                        <button class="btn ${isFeatured ? "btn-warning" : "btn-success"} small-btn"
+                            onclick="toggleFeaturedCourse(${course.id}, ${isFeatured}, ${featuredOrder})">
+                            ${isFeatured ? "إلغاء التمييز" : "تمييز"}
+                        </button>
+
                         <button class="btn btn-danger small-btn" onclick="deleteCourse(${course.id})">
                             حذف
                         </button>
                     </div>
                 </td>
             </tr>
-        `).join("");
+        `;
+            }).join("");
         }
 
         function openModal() {
@@ -1045,6 +1142,8 @@
             stageInput.value = "first";
             pathInput.value = "";
             isActiveInput.value = "true";
+            isFeaturedInput.value = "false";
+            featuredOrderInput.value = 1;
 
             imageInput.value = "";
             courseImageFileInput.value = "";
@@ -1170,21 +1269,34 @@
                 }
 
                 let response;
+                let savedCourseId = courseId ? Number(courseId) : null;
 
                 if (courseId) {
                     response = await db
                         .from("courses")
                         .update(payload)
-                        .eq("id", courseId);
+                        .eq("id", courseId)
+                        .select("id")
+                        .single();
                 } else {
                     response = await db
                         .from("courses")
-                        .insert(payload);
+                        .insert(payload)
+                        .select("id")
+                        .single();
                 }
 
                 if (response.error) {
                     throw response.error;
                 }
+
+                savedCourseId = response.data?.id || savedCourseId;
+
+                await saveFeaturedSettings(
+                    savedCourseId,
+                    isFeaturedInput.value === "true",
+                    Number(featuredOrderInput.value) || 1
+                );
 
                 showSuccess(
                     courseId
@@ -1229,6 +1341,10 @@
             videoUrlInput.value = course.video_url || "";
             isActiveInput.value = String(course.is_active);
 
+            const featuredData = course.featured_courses?.[0];
+            isFeaturedInput.value = String(featuredData?.is_active === true);
+            featuredOrderInput.value = featuredData?.display_order || 1;
+
             imageInput.value = course.image || "";
 
             if (course.image) {
@@ -1242,6 +1358,67 @@
             courseImageFileInput.value = "";
 
             openModal();
+        };
+
+
+        async function saveFeaturedSettings(courseId, isFeatured, displayOrder) {
+            if (!courseId) return;
+
+            const safeOrder = Math.max(1, Number(displayOrder) || 1);
+
+            if (isFeatured) {
+                const { error } = await db
+                    .from("featured_courses")
+                    .upsert({
+                        course_id: Number(courseId),
+                        display_order: safeOrder,
+                        is_active: true
+                    }, {
+                        onConflict: "course_id"
+                    });
+
+                if (error) throw error;
+                return;
+            }
+
+            const { error } = await db
+                .from("featured_courses")
+                .upsert({
+                    course_id: Number(courseId),
+                    display_order: safeOrder,
+                    is_active: false
+                }, {
+                    onConflict: "course_id"
+                });
+
+            if (error) throw error;
+        }
+
+        window.toggleFeaturedCourse = async function (id, currentFeatured, currentOrder) {
+            const actionText = currentFeatured ? "إلغاء تمييز" : "تمييز";
+            const confirmed = confirm(`هل تريد ${actionText} هذا الكورس في الصفحة الرئيسية؟`);
+
+            if (!confirmed) return;
+
+            try {
+                await saveFeaturedSettings(id, !currentFeatured, currentOrder || 1);
+                await loadCourses();
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "حدث خطأ أثناء تعديل حالة الكورس المميز");
+            }
+        };
+
+        window.updateFeaturedOrder = async function (id, newOrder) {
+            const orderValue = Math.max(1, Number(newOrder) || 1);
+
+            try {
+                await saveFeaturedSettings(id, true, orderValue);
+                await loadCourses();
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "حدث خطأ أثناء تعديل ترتيب الكورس");
+            }
         };
 
         window.toggleCourseStatus = async function (id, currentStatus) {
@@ -1274,6 +1451,11 @@
 
             if (!confirmed) return;
 
+            await db
+                .from("featured_courses")
+                .delete()
+                .eq("course_id", id);
+
             const { error } = await db
                 .from("courses")
                 .delete()
@@ -1292,6 +1474,7 @@
         stageFilter.addEventListener("change", renderCourses);
         statusFilter.addEventListener("change", renderCourses);
         teacherFilter.addEventListener("change", renderCourses);
+        featuredFilter.addEventListener("change", renderCourses);
 
         document.getElementById("logoutBtn").addEventListener("click", async () => {
             await db.auth.signOut();

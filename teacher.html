@@ -679,14 +679,9 @@
   <main class="hero">
     <div class="container hero-grid">
       <div class="hero-text">
-        <div class="badge" id="teacherBadge">
-          🎓 مدرس الرياضيات - أولى بكالوريا
-        </div>
-        <h1 id="teacherName">أ / أحمد محمود</h1>
-        <p id="teacherDescription">
-          شرح مبسط ومنظم يساعدك تفهم الرياضيات خطوة بخطوة، مع تدريبات بعد كل درس
-          واختبارات قصيرة تتابع مستواك طول السنة.
-        </p>
+        <div class="badge" id="teacherBadge"></div>
+        <h1 id="teacherName"></h1>
+        <p id="teacherDescription"></p>
 
         <div class="social-links" aria-label="روابط منصات المدرس">
           <a href="#" class="social-link" title="يوتيوب">▶</a>
@@ -702,7 +697,7 @@
 
       <div class="profile-card">
         <div class="teacher-photo" id="teacherPhoto">
-          <div class="photo-label">رياضيات ببساطة</div>
+          <div class="photo-label"></div>
         </div>
       </div>
     </div>
@@ -859,7 +854,7 @@
         rgba(7,26,61,.22) 70%,
         rgba(7,26,61,.78) 100%
       ),
-      url('${teacher.image || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80"}')
+      url('${teacher.image}')
     `;
 
       teacherPhoto.style.backgroundSize = "cover";

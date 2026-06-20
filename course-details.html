@@ -635,7 +635,7 @@
             font-weight: 900;
         }
 
-        .course-progress {
+        /* .course-progress {
             background: #f8fbff;
             border: 1px solid rgba(18, 60, 140, 0.08);
             border-radius: 20px;
@@ -686,7 +686,7 @@
             color: var(--success);
             font-weight: 900;
             margin-left: 8px;
-        }
+        } */
 
         .sidebar-card .btn {
             width: 100%;
@@ -929,7 +929,7 @@
 
             <div class="course-hero-text">
 
-                <h1 id="courseTitle">كورس الرياضيات التأسيسي</h1>
+                <h1 id="courseTitle"></h1>
 
                 <div class="hero-actions">
                     <a href="#content" class="btn btn-primary">شوف محتوى الكورس</a>
@@ -944,14 +944,8 @@
                         allowfullscreen>
                     </iframe>
 
-                    <div class="video-label">فيديو تعريفي بالكورس</div>
+                    <!-- <div class="video-label">فيديو تعريفي بالكورس</div> -->
                 </div>
-                <!-- <div class="video-preview">
-                    <video controls autoplay id="courseVideo">
-                        <source id="courseVideoSource" src="" type="video/mp4">
-                    </video>
-                    <div class="video-label">فيديو تعريفي بالكورس</div>
-                </div> -->
             </div>
 
         </div>
@@ -991,7 +985,7 @@
                     <strong id="coursePrice">199 ج</strong>
                 </div>
 
-                <div class="course-progress">
+                <!-- <div class="course-progress">
                     <div class="progress-head">
                         <span>نسبة الإنجاز</span>
                         <span id="progressPercent">0%</span>
@@ -1007,7 +1001,7 @@
                     <li>الدخول حسب الإيميل المفعّل</li>
                     <li>ملفات ومرفقات للتحميل</li>
                     <li>اختبارات بعد كل وحدة</li>
-                </ul>
+                </ul> -->
 
                 <button class="btn btn-primary" id="subscribeBtn">
                     اشترك في الكورس
@@ -1076,8 +1070,8 @@
         const examsContainer = document.getElementById("examsContainer");
         const attachmentsContainer = document.getElementById("attachmentsContainer");
 
-        const progressPercent = document.getElementById("progressPercent");
-        const progressFill = document.getElementById("progressFill");
+        // const progressPercent = document.getElementById("progressPercent");
+        // const progressFill = document.getElementById("progressFill");
 
         const subscribeBtn = document.getElementById("subscribeBtn");
         const subscribeModal = document.getElementById("subscribeModal");
@@ -1325,7 +1319,7 @@
 
             initUnitButtons();
             initWatchButtons();
-            updateProgress();
+            // updateProgress();
         }
 
         async function loadExams() {
@@ -1441,20 +1435,20 @@
             });
         }
 
-        function updateProgress() {
-            const completedLessonsKey = `${courseId}-completed-lessons`;
-            const completedLessons = JSON.parse(localStorage.getItem(completedLessonsKey)) || [];
+        // function updateProgress() {
+        //     const completedLessonsKey = `${courseId}-completed-lessons`;
+        //     const completedLessons = JSON.parse(localStorage.getItem(completedLessonsKey)) || [];
 
-            const totalLessons = allLessons.length;
-            const completedCount = completedLessons.length;
+        //     const totalLessons = allLessons.length;
+        //     const completedCount = completedLessons.length;
 
-            const percentage = totalLessons === 0
-                ? 0
-                : Math.round((completedCount / totalLessons) * 100);
+        //     const percentage = totalLessons === 0
+        //         ? 0
+        //         : Math.round((completedCount / totalLessons) * 100);
 
-            progressPercent.textContent = percentage + "%";
-            progressFill.style.width = percentage + "%";
-        }
+        //     progressPercent.textContent = percentage + "%";
+        //     progressFill.style.width = percentage + "%";
+        // }
 
         function generateWhatsAppMessage() {
             const email = currentUser?.email || "زائر لم يسجل الدخول";

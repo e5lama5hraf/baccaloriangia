@@ -214,7 +214,7 @@
     }
 
     .hero h1 {
-      font-size: clamp(38px, 5vw, 66px);
+      font-size: clamp(24px, 3vw, 60px);
       line-height: 1.18;
       color: var(--dark);
       font-weight: 900;
@@ -222,6 +222,7 @@
     }
 
     .hero h1 span {
+      font-size: clamp(38px, 5vw, 66px);
       color: var(--secondary);
       position: relative;
     }
@@ -1151,7 +1152,7 @@
   <main id="home" class="hero">
     <div class="container hero-content">
       <div class="hero-text">
-        <div class="badge">🎓 منصة تعليمية متخصصة في نظام البكالوريا</div>
+        <div class="badge">🎓 المنصة التعليمية الأفضل لطلاب البكالوريا</div>
 
         <h1>
           ابدأ رحلتك مع
@@ -1159,7 +1160,7 @@
         </h1>
 
         <p>
-          منصة تعليمية حديثة لطلاب أولى وتانية بكالوريا. بتجمع لك أفضل المدرسين،
+              جمعنالك أفضل المدرسين،
           شرح مبسط، كورسات منظمة، اختبارات، ومتابعة تساعدك تذاكر بذكاء.
         </p>
       </div>
@@ -1194,9 +1195,6 @@
       <div class="section-heading">
         <span class="tag">مدرسين المنصة</span>
         <h2>اختار المرحلة وشوف المدرسين</h2>
-        <p>
-          اختار المرحلة الدراسية، ولو اخترت تانية بكالوريا حدد المسار المناسب ليك عشان يظهر المدرسين المتخصصين.
-        </p>
       </div>
 
       <div class="teachers-control-box">
@@ -1538,17 +1536,26 @@
     async function loadCourses() {
       popularCoursesGrid.innerHTML = "<p>جاري تحميل الكورسات...</p>";
 
-      const { data: courses, error } = await supabaseClient
-        .from("courses")
+      const { data: featuredRows, error } = await supabaseClient
+        .from("featured_courses")
         .select(`
-        *,
-        teachers (
-          name
-        )
-      `)
+          id,
+          display_order,
+          is_active,
+          courses (
+            *,
+            teachers (
+              name
+            )
+          )
+        `)
         .eq("is_active", true)
-        .order("id", { ascending: true })
-        .limit(6);
+        .eq("courses.is_active", true)
+        .order("display_order", { ascending: true });
+
+      const courses = (featuredRows || [])
+        .map(row => row.courses)
+        .filter(course => course && course.is_active === true);
 
       if (error) {
         console.error(error);
@@ -1557,7 +1564,7 @@
       }
 
       if (!courses || courses.length === 0) {
-        popularCoursesGrid.innerHTML = "<p>لا توجد كورسات متاحة حاليًا.</p>";
+        popularCoursesGrid.innerHTML = "<p>لا توجد كورسات مميزة متاحة حاليًا.</p>";
         return;
       }
 
