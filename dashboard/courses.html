@@ -934,44 +934,68 @@
 
         async function loadCourses() {
             coursesTable.innerHTML = `
-            <tr>
-                <td colspan="10">جاري تحميل الكورسات...</td>
-            </tr>
-        `;
+        <tr>
+            <td colspan="10">جاري تحميل الكورسات...</td>
+        </tr>
+    `;
 
-            const { data, error } = await db
+            const { data: coursesData, error: coursesError } = await db
                 .from("courses")
                 .select(`
-                *,
-                teachers (
-                    id,
-                    name,
-                    subject
-                ),
-                featured_courses (
-                    id,
-                    display_order,
-                    is_active
-                )
-            `)
+            *,
+            teachers (
+                id,
+                name,
+                subject
+            )
+        `)
                 .order("created_at", { ascending: false });
 
-            if (error) {
-                console.error(error);
+            if (coursesError) {
+                console.error(coursesError);
 
                 coursesTable.innerHTML = `
-                <tr>
-                    <td colspan="10">حدث خطأ أثناء تحميل الكورسات: ${error.message}</td>
-                </tr>
-            `;
+            <tr>
+                <td colspan="10">حدث خطأ أثناء تحميل الكورسات: ${coursesError.message}</td>
+            </tr>
+        `;
 
                 return;
             }
 
-            allCourses = data || [];
+            const { data: featuredData, error: featuredError } = await db
+                .from("featured_courses")
+                .select("id, course_id, display_order, is_active");
+
+            if (featuredError) {
+                console.error(featuredError);
+
+                coursesTable.innerHTML = `
+            <tr>
+                <td colspan="10">حدث خطأ أثناء تحميل الكورسات المميزة: ${featuredError.message}</td>
+            </tr>
+        `;
+
+                return;
+            }
+
+            const featuredMap = {};
+
+            (featuredData || []).forEach(item => {
+                featuredMap[String(item.course_id)] = item;
+            });
+
+            allCourses = (coursesData || []).map(course => {
+                const featuredItem = featuredMap[String(course.id)];
+
+                return {
+                    ...course,
+                    featured_courses: featuredItem ? [featuredItem] : []
+                };
+            });
+
             renderCourses();
         }
-
         function renderCourses() {
             const searchValue = searchInput.value.trim().toLowerCase();
             const selectedStage = stageFilter.value;
@@ -1366,16 +1390,24 @@
 
             const safeOrder = Math.max(1, Number(displayOrder) || 1);
 
-            if (isFeatured) {
+            const { data: existingItem, error: selectError } = await db
+                .from("featured_courses")
+                .select("id")
+                .eq("course_id", Number(courseId))
+                .maybeSingle();
+
+            if (selectError) {
+                throw selectError;
+            }
+
+            if (existingItem) {
                 const { error } = await db
                     .from("featured_courses")
-                    .upsert({
-                        course_id: Number(courseId),
+                    .update({
                         display_order: safeOrder,
-                        is_active: true
-                    }, {
-                        onConflict: "course_id"
-                    });
+                        is_active: isFeatured
+                    })
+                    .eq("course_id", Number(courseId));
 
                 if (error) throw error;
                 return;
@@ -1383,17 +1415,14 @@
 
             const { error } = await db
                 .from("featured_courses")
-                .upsert({
+                .insert({
                     course_id: Number(courseId),
                     display_order: safeOrder,
-                    is_active: false
-                }, {
-                    onConflict: "course_id"
+                    is_active: isFeatured
                 });
 
             if (error) throw error;
         }
-
         window.toggleFeaturedCourse = async function (id, currentFeatured, currentOrder) {
             const actionText = currentFeatured ? "إلغاء تمييز" : "تمييز";
             const confirmed = confirm(`هل تريد ${actionText} هذا الكورس في الصفحة الرئيسية؟`);

@@ -114,6 +114,38 @@
       box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
     }
 
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .student-profile-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: rgba(18, 60, 140, 0.08);
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(7, 26, 61, 0.06);
+    }
+
+    .student-profile-icon:hover {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(18, 60, 140, 0.22);
+    }
+
+    .student-profile-icon.show {
+      display: flex;
+    }
+
     nav ul {
       display: flex;
       align-items: center;
@@ -377,6 +409,26 @@
       font-size: 14px;
     }
 
+    .course-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn-details {
+      background: #f8fbff;
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+    }
+
+    .btn-details:hover {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
     .lessons-toggle {
       width: 100%;
       margin-top: 16px;
@@ -634,6 +686,26 @@
         height: 44px;
       }
 
+      .student-profile-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        font-size: 20px;
+      }
+
+      .course-footer {
+        align-items: flex-start;
+      }
+
+      .course-buttons {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .course-buttons .btn {
+        flex: 1;
+      }
+
       .courses-grid {
         grid-template-columns: 1fr;
       }
@@ -661,10 +733,16 @@
 <body>
   <header>
     <div class="container navbar">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">ب</span>
-        البكالورينجية
-      </a>
+      <div class="brand-area">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">ب</span>
+          البكالورينجية
+        </a>
+
+        <a href="student-profile.html" class="student-profile-icon" id="studentProfileIcon" title="بروفايل الطالب">
+          👤
+        </a>
+      </div>
 
       <nav id="navMenu">
         <ul>
@@ -753,6 +831,36 @@
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
+
+    const studentProfileIcon = document.getElementById("studentProfileIcon");
+
+    async function handleStudentProfileIcon() {
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (!session || !session.user) {
+        studentProfileIcon.classList.remove("show");
+        return;
+      }
+
+      const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("id, role")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error || !profile) {
+        studentProfileIcon.classList.remove("show");
+        return;
+      }
+
+      if (profile.role === "student") {
+        studentProfileIcon.classList.add("show");
+      } else {
+        studentProfileIcon.classList.remove("show");
+      }
+    }
 
     const menuBtn = document.getElementById("menuBtn");
     const navMenu = document.getElementById("navMenu");
@@ -977,11 +1085,19 @@
                 <strong>${course.price} ج</strong>
               </div>
 
-              <button
-                class="btn btn-primary subscribe-btn"
-                data-course="${course.title}">
-                اشترك
-              </button>
+              <div class="course-buttons">
+                <a
+                  href="course-details.html?id=${course.id}"
+                  class="btn btn-details">
+                  تفاصيل الكورس
+                </a>
+
+                <button
+                  class="btn btn-primary subscribe-btn"
+                  data-course="${course.title}">
+                  اشترك
+                </button>
+              </div>
             </div>
 
             <button class="btn lessons-toggle">
@@ -1041,6 +1157,7 @@
       }
     });
 
+    handleStudentProfileIcon();
     loadTeacherProfile();
     loadTeacherCourses();
   </script>

@@ -134,6 +134,40 @@
       box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
     }
 
+
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-link {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      box-shadow: var(--soft-shadow);
+      font-size: 20px;
+      transition: 0.3s;
+      flex-shrink: 0;
+    }
+
+    .profile-link:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
+    }
+
+    .profile-link.logged-in {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+    }
+
     nav ul {
       display: flex;
       align-items: center;
@@ -1125,10 +1159,16 @@
   <!-- Header -->
   <header>
     <div class="container navbar">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">ب</span>
-        البكالورينجية
-      </a>
+      <div class="brand-area">
+        <a href="student-profile.html" class="profile-link" id="studentProfileLink" title="بروفايل الطالب" aria-label="بروفايل الطالب">
+          👤
+        </a>
+
+        <a href="index.html" class="logo">
+          <span class="logo-icon">ب</span>
+          البكالورينجية
+        </a>
+      </div>
 
       <nav id="navMenu">
         <ul>
@@ -1428,6 +1468,9 @@
     const teachersTitle = document.getElementById("teachersTitle");
     const teachersCount = document.getElementById("teachersCount");
     const popularCoursesGrid = document.getElementById("popularCoursesGrid");
+    const studentProfileLink = document.getElementById("studentProfileLink");
+    const loginBtn = document.querySelector('.nav-actions a[href="login.html"]');
+    const registerBtn = document.querySelector('.nav-actions a[href="register.html"]');
 
     let currentStage = "first";
     let currentPath = "medicine";
@@ -1443,6 +1486,25 @@
         menuBtn.textContent = "☰";
       });
     });
+
+
+    async function setupStudentProfileLink() {
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        studentProfileLink.classList.add("logged-in");
+        studentProfileLink.href = "student-profile.html";
+
+        if (loginBtn) loginBtn.style.display = "none";
+        if (registerBtn) registerBtn.textContent = "بروفايلي";
+        if (registerBtn) registerBtn.href = "student-profile.html";
+      } else {
+        studentProfileLink.classList.remove("logged-in");
+        studentProfileLink.href = "login.html?redirect=student-profile.html";
+      }
+    }
 
     function getStageArabic(stage) {
       if (stage === "first") {
@@ -1624,6 +1686,7 @@
       loadTeachers();
     });
 
+    setupStudentProfileLink();
     updatePathVisibility();
     loadTeachers();
     loadCourses();

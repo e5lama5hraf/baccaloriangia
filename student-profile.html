@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بروفايل الطالب | البكالورينجية</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #123c8c;
+      --secondary: #0bb6d6;
+      --accent: #ffb703;
+      --dark: #071a3d;
+      --light: #f4f8ff;
+      --white: #ffffff;
+      --text: #1d2b45;
+      --muted: #6c7890;
+      --danger: #ff4d6d;
+      --success: #0f9f6e;
+      --radius: 24px;
+      --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
+      --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Cairo", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(11, 182, 214, 0.14), transparent 26%),
+        radial-gradient(circle at 85% 8%, rgba(255, 183, 3, 0.18), transparent 24%),
+        var(--light);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 900;
+      transition: 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      box-shadow: 0 14px 30px rgba(18, 60, 140, 0.22);
+    }
+
+    .btn-primary:hover,
+    .btn-light:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-light {
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      box-shadow: var(--soft-shadow);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(18, 60, 140, 0.08);
+    }
+
+    .navbar {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-icon,
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+      flex-shrink: 0;
+    }
+
+    .profile-icon {
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      box-shadow: var(--soft-shadow);
+      font-size: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .page-hero {
+      padding: 52px 0 28px;
+    }
+
+    .profile-hero-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      border-radius: 34px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .profile-hero-card::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(11, 182, 214, 0.12);
+      left: -80px;
+      top: -90px;
+    }
+
+    .student-info,
+    .student-avatar {
+      position: relative;
+      z-index: 2;
+    }
+
+    .student-info .tag {
+      display: inline-flex;
+      background: rgba(11, 182, 214, 0.12);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .student-info h1 {
+      color: var(--dark);
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .student-info p {
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .student-avatar {
+      width: 126px;
+      height: 126px;
+      border-radius: 34px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      font-size: 48px;
+      font-weight: 900;
+      box-shadow: 0 18px 38px rgba(18, 60, 140, 0.28);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 24px;
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      padding: 20px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-weight: 800;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stat-card strong {
+      color: var(--primary);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    section {
+      padding: 28px 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-title h2 {
+      color: var(--dark);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .continue-card {
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      color: var(--white);
+      border-radius: 32px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 170px 1fr auto;
+      gap: 22px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .continue-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 183, 3, 0.18);
+      left: -80px;
+      top: -80px;
+    }
+
+    .continue-thumb,
+    .continue-content,
+    .continue-actions {
+      position: relative;
+      z-index: 2;
+    }
+
+    .continue-thumb {
+      height: 115px;
+      border-radius: 24px;
+      background: var(--course-image);
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+    }
+
+    .continue-content small {
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
+    }
+
+    .continue-content h3 {
+      font-size: 25px;
+      font-weight: 900;
+      margin: 6px 0 12px;
+    }
+
+    .progress-wrap {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.22);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: var(--progress);
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    .progress-label {
+      color: rgba(255,255,255,.78);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .course-card,
+    .certificate-card,
+    .empty-card {
+      background: var(--white);
+      border-radius: 28px;
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+    }
+
+    .course-thumb {
+      height: 170px;
+      background: var(--course-image);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .course-body,
+    .certificate-card,
+    .empty-card {
+      padding: 22px;
+    }
+
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .course-body h3,
+    .certificate-card h3 {
+      color: var(--dark);
+      font-size: 21px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .course-body p,
+    .certificate-card p,
+    .empty-card p {
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .certificate-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 183, 3, 0.16);
+      color: #8a5d00;
+      font-size: 30px;
+      margin-bottom: 14px;
+    }
+
+    .empty-card {
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    .loading {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 900;
+      background: var(--white);
+      border-radius: 24px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    @media (max-width: 992px) {
+      .profile-hero-card,
+      .continue-card {
+        grid-template-columns: 1fr;
+      }
+
+      .student-avatar {
+        width: 96px;
+        height: 96px;
+        font-size: 38px;
+      }
+
+      .grid,
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .navbar {
+        height: auto;
+        padding: 16px 0;
+        align-items: flex-start;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .header-actions {
+        justify-content: flex-end;
+      }
+
+      .grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-hero-card,
+      .continue-card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container navbar">
+      <div class="brand-area">
+        <div class="profile-icon">👤</div>
+        <a href="index.html" class="logo">
+          <span class="logo-icon">ب</span>
+          البكالورينجية
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-light">الرئيسية</a>
+        <button class="btn btn-primary" id="logoutBtn" type="button">تسجيل الخروج</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="profile-hero-card">
+          <div class="student-info">
+            <span class="tag">بروفايل الطالب</span>
+            <h1 id="studentName">جاري التحميل...</h1>
+            <p id="studentEmail">بنجهز بيانات حسابك وكورساتك.</p>
+          </div>
+
+          <div class="student-avatar" id="studentAvatar">ط</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span>كورساتي المشتركة</span>
+            <strong id="coursesCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>الشهادات</span>
+            <strong id="certificatesCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>آخر تقدم</span>
+            <strong id="lastProgressPercent">0%</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>كمل آخر كورس فتحته</h2>
+            <p>ارجع بسرعة لنفس الكورس أو آخر درس كنت بتذاكره.</p>
+          </div>
+        </div>
+
+        <div id="continueCourseBox" class="loading">جاري تحميل آخر كورس...</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>كورساتي</h2>
+            <p>كل الكورسات اللي أنت مشترك فيها.</p>
+          </div>
+        </div>
+
+        <div class="grid" id="myCoursesGrid">
+          <div class="loading">جاري تحميل الكورسات...</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>شهاداتي</h2>
+            <p>الشهادات اللي اترفعتلك بعد إتمام الكورسات.</p>
+          </div>
+        </div>
+
+        <div class="grid" id="certificatesGrid">
+          <div class="loading">جاري تحميل الشهادات...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const supabaseUrl = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const studentName = document.getElementById("studentName");
+    const studentEmail = document.getElementById("studentEmail");
+    const studentAvatar = document.getElementById("studentAvatar");
+    const coursesCount = document.getElementById("coursesCount");
+    const certificatesCount = document.getElementById("certificatesCount");
+    const lastProgressPercent = document.getElementById("lastProgressPercent");
+    const continueCourseBox = document.getElementById("continueCourseBox");
+    const myCoursesGrid = document.getElementById("myCoursesGrid");
+    const certificatesGrid = document.getElementById("certificatesGrid");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const fallbackCourseImage = "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=900&q=80";
+
+    function getStageArabic(stage) {
+      if (stage === "first") return "أولى بكالوريا";
+      if (stage === "second") return "تانية بكالوريا";
+      return "";
+    }
+
+    function getNameFromProfile(profile, session) {
+      return profile?.full_name || profile?.name || profile?.username || session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "طالب البكالورينجية";
+    }
+
+    function getInitials(name) {
+      return (name || "ط").trim().charAt(0).toUpperCase();
+    }
+
+    function safePercent(value) {
+      const number = Number(value || 0);
+      if (Number.isNaN(number)) return 0;
+      return Math.min(100, Math.max(0, Math.round(number)));
+    }
+
+    async function requireStudentSession() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.href = "login.html?redirect=student-profile.html";
+        return null;
+      }
+
+      return session;
+    }
+
+    async function loadProfile(session) {
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      const name = getNameFromProfile(profile, session);
+      studentName.textContent = name;
+      studentEmail.textContent = session.user.email || "";
+      studentAvatar.textContent = getInitials(name);
+    }
+
+    async function loadStudentCourses(userId) {
+      const selectors = [
+        { column: "user_id", query: `id, user_id, course_id, status, created_at, courses (*, teachers (name))` },
+        { column: "student_id", query: `id, student_id, course_id, status, created_at, courses (*, teachers (name))` },
+        { column: "profile_id", query: `id, profile_id, course_id, status, created_at, courses (*, teachers (name))` }
+      ];
+
+      for (const item of selectors) {
+        const { data, error } = await supabaseClient
+          .from("enrollments")
+          .select(item.query)
+          .eq(item.column, userId)
+          .order("created_at", { ascending: false });
+
+        if (!error) return data || [];
+      }
+
+      return [];
+    }
+
+    async function loadLastProgress(userId) {
+      const { data, error } = await supabaseClient
+        .from("student_course_progress")
+        .select(`
+          id,
+          user_id,
+          course_id,
+          lesson_id,
+          progress_percent,
+          last_opened_at,
+          courses (*, teachers (name))
+        `)
+        .eq("user_id", userId)
+        .order("last_opened_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        return null;
+      }
+
+      return data;
+    }
+
+    async function loadCertificates(userId) {
+      const { data, error } = await supabaseClient
+        .from("student_certificates")
+        .select(`
+          id,
+          title,
+          certificate_url,
+          issued_at,
+          is_active,
+          courses (id, title)
+        `)
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("issued_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    function renderContinueCourse(progress) {
+      if (!progress || !progress.courses) {
+        continueCourseBox.className = "empty-card";
+        continueCourseBox.innerHTML = `
+          <p>لسه مفيش كورس مفتوح مؤخرًا. ابدأ من كورساتك، وأول كورس تفتحه هيظهر هنا تلقائيًا.</p>
+          <a href="#myCoursesGrid" class="btn btn-primary">شوف كورساتي</a>
+        `;
+        lastProgressPercent.textContent = "0%";
+        return;
+      }
+
+      const course = progress.courses;
+      const percent = safePercent(progress.progress_percent);
+      lastProgressPercent.textContent = `${percent}%`;
+
+      continueCourseBox.className = "continue-card";
+      continueCourseBox.innerHTML = `
+        <div class="continue-thumb" style="--course-image:url('${course.image || fallbackCourseImage}')"></div>
+        <div class="continue-content">
+          <small>${getStageArabic(course.stage)} - ${course.teachers?.name || "مدرس المنصة"}</small>
+          <h3>${course.title}</h3>
+          <div class="progress-wrap"><div class="progress-bar" style="--progress:${percent}%"></div></div>
+          <div class="progress-label">أنجزت ${percent}% من الكورس</div>
+        </div>
+        <div class="continue-actions">
+          <a href="course-details.html?id=${course.id}" class="btn btn-primary">كمل الكورس</a>
+        </div>
+      `;
+    }
+
+    function renderCourses(enrollments) {
+      const visibleEnrollments = (enrollments || []).filter(item => item.courses);
+      coursesCount.textContent = visibleEnrollments.length;
+
+      if (!visibleEnrollments.length) {
+        myCoursesGrid.innerHTML = `
+          <div class="empty-card">
+            <p>لسه مفيش كورسات مشتركة في حسابك.</p>
+            <a href="index.html#popularCourses" class="btn btn-primary">تصفح الكورسات</a>
+          </div>
+        `;
+        return;
+      }
+
+      myCoursesGrid.innerHTML = visibleEnrollments.map(item => {
+        const course = item.courses;
+        return `
+          <div class="course-card">
+            <a href="course-details.html?id=${course.id}">
+              <div class="course-thumb" style="--course-image:url('${course.image || fallbackCourseImage}')"></div>
+            </a>
+            <div class="course-body">
+              <div class="course-meta">
+                <span>${getStageArabic(course.stage)}</span>
+                <span>${course.teachers?.name || "مدرس المنصة"}</span>
+              </div>
+              <h3>${course.title}</h3>
+              <p>${course.description || ""}</p>
+              <a href="course-details.html?id=${course.id}" class="btn btn-primary">دخول الكورس</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderCertificates(certificates) {
+      certificatesCount.textContent = certificates.length;
+
+      if (!certificates.length) {
+        certificatesGrid.innerHTML = `
+          <div class="empty-card">
+            <p>لسه مفيش شهادات مرفوعة لحسابك. الشهادات هتظهر هنا بعد ما الإدارة ترفعها لك.</p>
+          </div>
+        `;
+        return;
+      }
+
+      certificatesGrid.innerHTML = certificates.map(certificate => `
+        <div class="certificate-card">
+          <div class="certificate-icon">🏆</div>
+          <h3>${certificate.title || certificate.courses?.title || "شهادة إتمام كورس"}</h3>
+          <p>${certificate.courses?.title ? `خاصة بكورس: ${certificate.courses.title}` : "شهادة مرفوعة من إدارة المنصة"}</p>
+          <a href="${certificate.certificate_url}" target="_blank" class="btn btn-primary">عرض الشهادة</a>
+        </div>
+      `).join("");
+    }
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    });
+
+    async function initProfilePage() {
+      const session = await requireStudentSession();
+      if (!session) return;
+
+      await loadProfile(session);
+
+      const [enrollments, progress, certificates] = await Promise.all([
+        loadStudentCourses(session.user.id),
+        loadLastProgress(session.user.id),
+        loadCertificates(session.user.id)
+      ]);
+
+      renderContinueCourse(progress);
+      renderCourses(enrollments);
+      renderCertificates(certificates);
+    }
+
+    initProfilePage();
+  </script>
+</body>
+
+</html>
