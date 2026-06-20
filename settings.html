@@ -158,39 +158,10 @@
             gap: 12px;
         }
 
-        nav ul {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            list-style: none;
-            font-weight: 800;
-            color: var(--dark);
-        }
-
-        nav a {
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--secondary);
-        }
-
         .nav-actions {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .menu-btn {
-            display: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
         }
 
         /* Student profile avatar + dropdown menu (same component used on index.html) */
@@ -517,6 +488,39 @@
             font-weight: 700;
         }
 
+        /* Password show/hide toggle */
+        .password-field {
+            position: relative;
+        }
+
+        .password-field input {
+            padding-left: 46px;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 18px;
+            line-height: 1;
+            transition: 0.2s;
+        }
+
+        .password-toggle-btn:hover {
+            background: #eef4ff;
+            color: var(--primary);
+        }
+
         .form-actions {
             display: flex;
             align-items: center;
@@ -616,31 +620,6 @@
 
         /* Responsive */
         @media (max-width: 992px) {
-            nav {
-                position: fixed;
-                top: 82px;
-                right: -100%;
-                width: 78%;
-                height: calc(100vh - 82px);
-                background: var(--white);
-                box-shadow: -10px 0 30px rgba(7, 26, 61, 0.12);
-                transition: 0.35s;
-                padding: 35px;
-            }
-
-            nav.active {
-                right: 0;
-            }
-
-            nav ul {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .menu-btn {
-                display: block;
-            }
-
             .settings-grid {
                 grid-template-columns: 1fr;
             }
@@ -654,29 +633,117 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .page-hero {
+                padding: 120px 0 36px;
+            }
+
+            .settings-section {
+                padding: 22px 0 70px;
+            }
+
+            .settings-grid {
+                gap: 18px;
+            }
+
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 620px) {
             .navbar {
                 height: 76px;
             }
 
             .page-hero {
-                padding-top: 125px;
+                padding-top: 108px;
             }
 
             .logo {
-                font-size: 22px;
+                font-size: 20px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .breadcrumb {
+                font-size: 13px;
             }
 
             .settings-card {
-                padding: 22px;
+                padding: 20px;
+                border-radius: 22px;
             }
 
-            .form-grid-2 {
-                grid-template-columns: 1fr;
+            .settings-card h3 {
+                font-size: 19px;
+            }
+
+            .avatar-preview-wrap {
+                width: 120px;
+                height: 120px;
+            }
+
+            .avatar-preview {
+                width: 120px;
+                height: 120px;
+                font-size: 38px;
+            }
+
+            .avatar-upload-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .status-msg {
+                text-align: center;
+                justify-content: center;
             }
 
             .footer-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .container {
+                width: 94%;
+            }
+
+            .page-hero h1 {
+                font-size: 24px;
+            }
+
+            .page-hero p {
+                font-size: 15px;
+            }
+
+            .settings-card {
+                padding: 16px;
+            }
+
+            .avatar-preview-wrap {
+                width: 104px;
+                height: 104px;
+            }
+
+            .avatar-preview {
+                width: 104px;
+                height: 104px;
+                font-size: 32px;
             }
         }
     </style>
@@ -697,16 +764,6 @@
                 </a>
             </div>
 
-            <nav id="navMenu">
-                <ul>
-                    <li><a href="index.html#home">الرئيسية</a></li>
-                    <li><a href="index.html#teachers">المدرسين</a></li>
-                    <li><a href="index.html#popularCourses">أشهر الكورسات</a></li>
-                    <li><a href="index.html#about">عن المنصة</a></li>
-                    <li><a href="index.html#reviews">آراء الطلاب</a></li>
-                </ul>
-            </nav>
-
             <div class="nav-actions">
                 <div class="profile-menu" id="profileMenu">
                     <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
@@ -720,8 +777,6 @@
                         <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
                     </ul>
                 </div>
-
-                <button class="menu-btn" id="menuBtn">☰</button>
             </div>
         </div>
     </header>
@@ -788,7 +843,7 @@
                             <div class="form-group">
                                 <label for="emailInput">البريد الإلكتروني</label>
                                 <input type="email" id="emailInput" placeholder="example@email.com" required>
-                                <span class="field-note">لو غيّرت الإيميل هيتبعتلك لينك تأكيد على الإيميل الجديد.</span>
+                                <!-- <span class="field-note">لو غيّرت الإيميل هيتبعتلك لينك تأكيد على الإيميل الجديد.</span> -->
                             </div>
 
                             <div class="form-group">
@@ -811,14 +866,22 @@
                         <div class="form-grid-2">
                             <div class="form-group">
                                 <label for="newPasswordInput">كلمة المرور الجديدة</label>
-                                <input type="password" id="newPasswordInput" placeholder="●●●●●●●●" minlength="6"
-                                    required>
+                                <div class="password-field">
+                                    <input type="password" id="newPasswordInput" placeholder="●●●●●●●●" minlength="6"
+                                        required>
+                                    <button type="button" class="password-toggle-btn" data-target="newPasswordInput"
+                                        aria-label="إظهار كلمة المرور">👁️</button>
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="confirmPasswordInput">تأكيد كلمة المرور</label>
-                                <input type="password" id="confirmPasswordInput" placeholder="●●●●●●●●" minlength="6"
-                                    required>
+                                <div class="password-field">
+                                    <input type="password" id="confirmPasswordInput" placeholder="●●●●●●●●"
+                                        minlength="6" required>
+                                    <button type="button" class="password-toggle-btn" data-target="confirmPasswordInput"
+                                        aria-label="إظهار كلمة المرور">👁️</button>
+                                </div>
                             </div>
                         </div>
 
@@ -887,27 +950,12 @@
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ---------- Header (logo menu + profile dropdown) ----------
-        const menuBtn = document.getElementById("menuBtn");
-        const navMenu = document.getElementById("navMenu");
-
+        // ---------- Header (profile dropdown) ----------
         const profileMenu = document.getElementById("profileMenu");
         const profileAvatarBtn = document.getElementById("profileAvatarBtn");
         const profileAvatarImg = document.getElementById("profileAvatarImg");
         const profileDropdown = document.getElementById("profileDropdown");
         const logoutBtn = document.getElementById("logoutBtn");
-
-        menuBtn.addEventListener("click", () => {
-            navMenu.classList.toggle("active");
-            menuBtn.textContent = navMenu.classList.contains("active") ? "×" : "☰";
-        });
-
-        document.querySelectorAll("nav a").forEach(link => {
-            link.addEventListener("click", () => {
-                navMenu.classList.remove("active");
-                menuBtn.textContent = "☰";
-            });
-        });
 
         profileAvatarBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -1144,6 +1192,18 @@
         });
 
         // ---------- Password form ----------
+        // ---------- Password show/hide toggle ----------
+        document.querySelectorAll(".password-toggle-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetInput = document.getElementById(btn.getAttribute("data-target"));
+                const isHidden = targetInput.type === "password";
+
+                targetInput.type = isHidden ? "text" : "password";
+                btn.textContent = isHidden ? "🙈" : "👁️";
+                btn.setAttribute("aria-label", isHidden ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
+            });
+        });
+
         passwordForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 

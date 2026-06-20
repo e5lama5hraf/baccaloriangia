@@ -75,6 +75,26 @@
       transform: translateY(-3px);
     }
 
+    .btn-outline {
+      border: 2px solid rgba(18, 60, 140, 0.14);
+      color: var(--primary);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-light {
+      background: #eef2f8;
+      color: var(--dark);
+    }
+
+    .btn-light:hover {
+      background: #e2e8f4;
+    }
+
     header {
       position: fixed;
       top: 0;
@@ -112,6 +132,7 @@
       display: grid;
       place-items: center;
       box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+      flex-shrink: 0;
     }
 
     .brand-area {
@@ -120,59 +141,130 @@
       gap: 14px;
     }
 
-    .student-profile-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
-      background: rgba(18, 60, 140, 0.08);
-      color: var(--primary);
-      border: 1px solid rgba(18, 60, 140, 0.12);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      transition: 0.3s;
-      box-shadow: 0 8px 20px rgba(7, 26, 61, 0.06);
-    }
-
-    .student-profile-icon:hover {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: var(--white);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 26px rgba(18, 60, 140, 0.22);
-    }
-
-    .student-profile-icon.show {
-      display: flex;
-    }
-
-    nav ul {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      list-style: none;
+    nav a {
       font-weight: 800;
       color: var(--dark);
-    }
-
-    nav a {
       transition: 0.3s;
+      white-space: nowrap;
     }
 
     nav a:hover {
       color: var(--secondary);
     }
 
-    .menu-btn {
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Student profile avatar + dropdown menu (نفس الكومبوننت اللي في باقي الموقع) */
+    .profile-menu {
+      position: relative;
       display: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: var(--primary);
-      color: var(--white);
-      border: none;
-      font-size: 24px;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      background: var(--white);
+      box-shadow: var(--soft-shadow);
       cursor: pointer;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      transition: 0.3s;
+      flex-shrink: 0;
+    }
+
+    .profile-avatar-btn:hover,
+    .profile-avatar-btn[aria-expanded="true"] {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
+    }
+
+    .profile-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-size: cover;
+      background-position: center;
+      color: var(--white);
+      font-weight: 900;
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 0;
+      min-width: 210px;
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid rgba(18, 60, 140, 0.1);
+      box-shadow: var(--shadow);
+      list-style: none;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+      display: flex;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .profile-dropdown li a,
+    .profile-dropdown li button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--dark);
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: right;
+      transition: 0.2s;
+    }
+
+    .profile-dropdown li a:hover,
+    .profile-dropdown li button:hover {
+      background: #f0f6ff;
+      color: var(--primary);
+    }
+
+    .profile-dropdown li:last-child button {
+      color: var(--danger);
+    }
+
+    .profile-dropdown li:last-child button:hover {
+      background: rgba(255, 77, 109, 0.08);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .hero {
@@ -202,7 +294,7 @@
     }
 
     h1 {
-      font-size: clamp(38px, 5vw, 62px);
+      font-size: clamp(32px, 5vw, 62px);
       line-height: 1.18;
       color: var(--dark);
       font-weight: 900;
@@ -304,7 +396,7 @@
 
     .section-heading h2 {
       color: var(--dark);
-      font-size: clamp(30px, 4vw, 42px);
+      font-size: clamp(28px, 4vw, 42px);
       font-weight: 900;
       margin-bottom: 10px;
     }
@@ -429,6 +521,20 @@
       transform: translateY(-2px);
     }
 
+    .enrolled-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 159, 110, 0.12);
+      color: #0f9f6e;
+      border: 1px solid rgba(15, 159, 110, 0.25);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 900;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
     .lessons-toggle {
       width: 100%;
       margin-top: 16px;
@@ -522,6 +628,26 @@
       color: var(--danger);
     }
 
+    .lesson-meta .lesson-watch-link {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      border: none;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.25s;
+    }
+
+    .lesson-meta .lesson-watch-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(18, 60, 140, 0.28);
+    }
+
     .lesson-number {
       color: var(--primary);
       font-size: 13px;
@@ -567,6 +693,7 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      padding: 16px;
     }
 
     .modal.active {
@@ -612,33 +739,9 @@
       font-weight: 600;
     }
 
+    /* Responsive */
     @media (max-width: 992px) {
-      nav {
-        position: fixed;
-        top: 82px;
-        right: -100%;
-        width: 78%;
-        height: calc(100vh - 82px);
-        background: var(--white);
-        box-shadow: -10px 0 30px rgba(7, 26, 61, 0.12);
-        transition: 0.35s;
-        padding: 35px;
-      }
-
-      nav.active {
-        right: 0;
-      }
-
-      nav ul {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .menu-btn {
-        display: block;
-      }
-
-      .navbar>.btn {
+      .nav-actions .btn-outline {
         display: none;
       }
 
@@ -662,22 +765,22 @@
       }
 
       .logo {
-        font-size: 22px;
+        font-size: 21px;
       }
 
       .hero {
-        padding-top: 122px;
+        padding-top: 116px;
       }
 
       .teacher-photo {
-        height: 320px;
+        height: 300px;
       }
 
       .hero-actions {
-        flex-direction: column;
+        flex-wrap: wrap;
       }
 
-      .btn {
+      .hero-actions .btn {
         width: 100%;
       }
 
@@ -686,15 +789,10 @@
         height: 44px;
       }
 
-      .student-profile-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 14px;
-        font-size: 20px;
-      }
-
       .course-footer {
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
       }
 
       .course-buttons {
@@ -702,8 +800,10 @@
         justify-content: stretch;
       }
 
-      .course-buttons .btn {
+      .course-buttons .btn,
+      .course-buttons .enrolled-badge {
         flex: 1;
+        justify-content: center;
       }
 
       .courses-grid {
@@ -719,12 +819,40 @@
       }
 
       section {
-        padding: 58px 0;
+        padding: 50px 0;
       }
 
       .profile-card,
       .cta-box {
         padding: 22px;
+      }
+
+      .modal-box {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text {
+        display: none;
+      }
+
+      .nav-courses-link {
+        display: none;
+      }
+
+      .nav-actions .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+
+      .badge {
+        font-size: 13px;
+        padding: 8px 14px;
+      }
+
+      .section-heading p {
+        font-size: 15px;
       }
     }
   </style>
@@ -736,21 +864,31 @@
       <div class="brand-area">
         <a href="index.html" class="logo">
           <span class="logo-icon">ب</span>
-          البكالورينجية
-        </a>
-
-        <a href="student-profile.html" class="student-profile-icon" id="studentProfileIcon" title="بروفايل الطالب">
-          👤
+          <span class="logo-text">البكالورينجية</span>
         </a>
       </div>
 
-      <nav id="navMenu">
-        <ul>
-          <li><a href="#courses">الكورسات</a></li>
-        </ul>
+      <nav>
+        <a href="#courses" class="nav-courses-link">الكورسات</a>
       </nav>
 
-      <button class="menu-btn" id="menuBtn">☰</button>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline" id="loginBtn">تسجيل الدخول</a>
+        <a href="register.html" class="btn btn-primary" id="registerBtn">إنشاء حساب</a>
+
+        <div class="profile-menu" id="profileMenu">
+          <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
+            aria-expanded="false" title="حسابي">
+            <span class="profile-avatar-img" id="profileAvatarImg">👤</span>
+          </button>
+
+          <ul class="profile-dropdown" id="profileDropdown">
+            <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
+            <li><a href="settings.html">⚙️ الإعدادات</a></li>
+            <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -815,6 +953,31 @@
     </div>
   </div>
 
+  <!-- Login Required Modal -->
+  <div id="loginRequiredModal" class="modal">
+    <div class="modal-box">
+      <h2>سجّل دخولك الأول</h2>
+
+      <p class="modal-note">
+        لازم يكون عندك حساب وتكون مسجل دخول عشان تقدر تشترك في الكورسات.
+      </p>
+
+      <div class="modal-actions">
+        <a id="loginRequiredRegisterLink" href="register.html" class="btn btn-primary">
+          إنشاء حساب جديد
+        </a>
+
+        <a id="loginRequiredLoginLink" href="login.html" class="btn btn-details">
+          عندي حساب بالفعل - تسجيل دخول
+        </a>
+
+        <button id="closeLoginRequiredModal" class="btn btn-light">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
       <p>© 2026 جميع الحقوق محفوظة لمنصة البكالورينجية</p>
@@ -832,39 +995,59 @@
       SUPABASE_ANON_KEY
     );
 
-    const studentProfileIcon = document.getElementById("studentProfileIcon");
+    // ---------- Header: profile avatar + dropdown (نفس كومبوننت باقي الموقع) ----------
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const profileMenu = document.getElementById("profileMenu");
+    const profileAvatarBtn = document.getElementById("profileAvatarBtn");
+    const profileAvatarImg = document.getElementById("profileAvatarImg");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    async function handleStudentProfileIcon() {
-      const {
-        data: { session }
-      } = await supabaseClient.auth.getSession();
+    profileAvatarBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = profileDropdown.classList.toggle("show");
+      profileAvatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
 
-      if (!session || !session.user) {
-        studentProfileIcon.classList.remove("show");
+    document.addEventListener("click", (e) => {
+      if (!profileMenu.contains(e.target)) {
+        profileDropdown.classList.remove("show");
+        profileAvatarBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.reload();
+    });
+
+    function renderHeaderAvatar(user) {
+      if (!user) {
+        loginBtn.style.display = "";
+        registerBtn.style.display = "";
+        profileMenu.style.display = "none";
         return;
       }
 
-      const { data: profile, error } = await supabaseClient
-        .from("profiles")
-        .select("id, role")
-        .eq("id", session.user.id)
-        .single();
+      loginBtn.style.display = "none";
+      registerBtn.style.display = "none";
+      profileMenu.style.display = "inline-flex";
 
-      if (error || !profile) {
-        studentProfileIcon.classList.remove("show");
-        return;
-      }
+      const meta = user.user_metadata || {};
+      const displayName = meta.full_name || user.email || "";
 
-      if (profile.role === "student") {
-        studentProfileIcon.classList.add("show");
+      if (meta.avatar_url) {
+        profileAvatarImg.style.backgroundImage = `url('${meta.avatar_url}')`;
+        profileAvatarImg.textContent = "";
       } else {
-        studentProfileIcon.classList.remove("show");
+        // مهم: نمسح الـ inline style مش نحطه "none" عشان الخلفية المتدرجة تفضل ظاهرة ورا الحرف
+        profileAvatarImg.style.backgroundImage = "";
+        profileAvatarImg.textContent = displayName ? displayName.trim().charAt(0).toUpperCase() : "👤";
       }
     }
 
-    const menuBtn = document.getElementById("menuBtn");
-    const navMenu = document.getElementById("navMenu");
-
+    // ---------- Page elements ----------
     const teacherBadge = document.getElementById("teacherBadge");
     const teacherName = document.getElementById("teacherName");
     const teacherDescription = document.getElementById("teacherDescription");
@@ -876,22 +1059,23 @@
     const whatsappLink = document.getElementById("whatsappLink");
     const closeModal = document.getElementById("closeModal");
 
+    const loginRequiredModal = document.getElementById("loginRequiredModal");
+    const closeLoginRequiredModal = document.getElementById("closeLoginRequiredModal");
+    const loginRequiredRegisterLink = document.getElementById("loginRequiredRegisterLink");
+    const loginRequiredLoginLink = document.getElementById("loginRequiredLoginLink");
+
     const adminPhone = "201154593804";
 
     const params = new URLSearchParams(window.location.search);
     const teacherId = Number(params.get("id"));
 
-    menuBtn.addEventListener("click", () => {
-      navMenu.classList.toggle("active");
-      menuBtn.textContent = navMenu.classList.contains("active") ? "×" : "☰";
-    });
+    let currentUser = null;
+    let enrolledCourseIds = new Set();
 
-    document.querySelectorAll("nav a").forEach(link => {
-      link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
-        menuBtn.textContent = "☰";
-      });
-    });
+    // لو الطالب يدوس "اشترك" وهو مش مسجل دخول، بعد ما يسجل/يعمل حساب نرجعه لنفس صفحة المدرس دي
+    const returnUrl = window.location.pathname + window.location.search;
+    loginRequiredRegisterLink.href = `register.html?redirect=${encodeURIComponent(returnUrl)}`;
+    loginRequiredLoginLink.href = `login.html?redirect=${encodeURIComponent(returnUrl)}`;
 
     function getStageArabic(stage) {
       if (stage === "first") {
@@ -924,6 +1108,55 @@
         text: "مقفول",
         className: "locked"
       };
+    }
+
+    // بيحدد شكل الجزء الخاص بحالة الدرس: مقفول / مجاني / متاح للمشاهدة
+    function renderLessonMeta(lesson, isEnrolled, courseId) {
+      const status = getLessonStatus(lesson.status);
+      const watchLink = `<a href="lesson-details.html?id=${lesson.id}&course=${courseId}" class="lesson-watch-link">▶ مشاهدة</a>`;
+
+      if (isEnrolled) {
+        // الطالب مشترك فعلاً في الكورس ده: كل الدروس بقت متاحة له
+        return watchLink;
+      }
+
+      if (lesson.status === "free") {
+        // درس مجاني: نوريله إنه مجاني وكمان نتيحله يشاهده فورًا
+        return `<span class="${status.className}">${status.text}</span>${watchLink}`;
+      }
+
+      // درس مقفول أو كويز ومش مشترك في الكورس
+      return `<span class="${status.className}">${status.text}</span>`;
+    }
+
+    async function loadHeaderSession() {
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      currentUser = session?.user || null;
+      renderHeaderAvatar(currentUser);
+    }
+
+    async function loadEnrollments() {
+      if (!currentUser) {
+        enrolledCourseIds = new Set();
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("enrollments")
+          .select("course_id")
+          .eq("student_id", currentUser.id);
+
+        if (error) throw error;
+
+        enrolledCourseIds = new Set((data || []).map(row => row.course_id));
+      } catch (err) {
+        console.error(err);
+        enrolledCourseIds = new Set();
+      }
     }
 
     async function loadTeacherProfile() {
@@ -1031,12 +1264,14 @@
       coursesGrid.innerHTML = "";
 
       courses.forEach(course => {
+        const isEnrolled = enrolledCourseIds.has(course.id);
+
         const activeLessons = (course.lessons || [])
           .filter(lesson => lesson.is_active)
           .sort((a, b) => a.lesson_order - b.lesson_order);
 
         const lessonsHTML = activeLessons.map((lesson, index) => {
-          const status = getLessonStatus(lesson.status);
+          const metaHTML = renderLessonMeta(lesson, isEnrolled, course.id);
 
           return `
           <div class="lesson-item">
@@ -1047,9 +1282,7 @@
 
               <div class="lesson-meta">
                 <span>${lesson.duration || ""}</span>
-                <span class="${status.className}">
-                  ${status.text}
-                </span>
+                ${metaHTML}
               </div>
             </div>
 
@@ -1059,6 +1292,18 @@
           </div>
         `;
         }).join("");
+
+        // زرار "اشترك" يتشال خالص لو الطالب مشترك بالفعل، وبدالها شارة "مشترك بالفعل"
+        const subscribeAreaHTML = isEnrolled
+          ? `<span class="enrolled-badge">✅ مشترك بالفعل</span>`
+          : `
+            <button
+              class="btn btn-primary subscribe-btn"
+              data-course="${course.title}"
+              data-course-id="${course.id}">
+              اشترك
+            </button>
+          `;
 
         coursesGrid.innerHTML += `
         <div class="course-card">
@@ -1092,11 +1337,7 @@
                   تفاصيل الكورس
                 </a>
 
-                <button
-                  class="btn btn-primary subscribe-btn"
-                  data-course="${course.title}">
-                  اشترك
-                </button>
+                ${subscribeAreaHTML}
               </div>
             </div>
 
@@ -1139,6 +1380,13 @@
 
     document.addEventListener("click", (e) => {
       if (e.target.classList.contains("subscribe-btn")) {
+        // الطالب مش مسجل دخول: نوريله رسالة إنه يسجل دخول/يعمل حساب الأول
+        if (!currentUser) {
+          loginRequiredModal.classList.add("active");
+          return;
+        }
+
+        // الطالب مسجل دخول ومكنش مشترك في الكورس ده قبل كده: نفتحله طريقة التواصل عبر واتساب
         const courseName = e.target.getAttribute("data-course");
 
         modalCourseName.textContent = courseName;
@@ -1155,11 +1403,20 @@
       if (e.target === closeModal || e.target === modal) {
         modal.classList.remove("active");
       }
+
+      if (e.target === closeLoginRequiredModal || e.target === loginRequiredModal) {
+        loginRequiredModal.classList.remove("active");
+      }
     });
 
-    handleStudentProfileIcon();
-    loadTeacherProfile();
-    loadTeacherCourses();
+    async function init() {
+      await loadHeaderSession();
+      await loadEnrollments();
+      await loadTeacherProfile();
+      await loadTeacherCourses();
+    }
+
+    init();
   </script>
 
 </body>
