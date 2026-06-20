@@ -141,31 +141,101 @@
       gap: 12px;
     }
 
-    .profile-link {
+    /* Student profile avatar + dropdown menu */
+    .profile-menu {
+      position: relative;
+      display: none;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
       width: 46px;
       height: 46px;
       border-radius: 50%;
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      background: var(--white);
+      box-shadow: var(--soft-shadow);
+      cursor: pointer;
+      padding: 0;
       display: grid;
       place-items: center;
-      background: var(--white);
-      color: var(--primary);
-      border: 1px solid rgba(18, 60, 140, 0.12);
-      box-shadow: var(--soft-shadow);
-      font-size: 20px;
       transition: 0.3s;
       flex-shrink: 0;
     }
 
-    .profile-link:hover {
+    .profile-avatar-btn:hover,
+    .profile-avatar-btn[aria-expanded="true"] {
       transform: translateY(-3px);
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: var(--white);
       box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
     }
 
-    .profile-link.logged-in {
+    .profile-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-size: cover;
+      background-position: center;
       color: var(--white);
+      font-weight: 900;
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 0;
+      min-width: 210px;
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid rgba(18, 60, 140, 0.1);
+      box-shadow: var(--shadow);
+      list-style: none;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+      display: flex;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .profile-dropdown li a,
+    .profile-dropdown li button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--dark);
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: right;
+      transition: 0.2s;
+    }
+
+    .profile-dropdown li a:hover,
+    .profile-dropdown li button:hover {
+      background: #f0f6ff;
+      color: var(--primary);
+    }
+
+    .profile-dropdown li:last-child button {
+      color: var(--danger);
+    }
+
+    .profile-dropdown li:last-child button:hover {
+      background: rgba(255, 77, 109, 0.08);
     }
 
     nav ul {
@@ -1160,10 +1230,6 @@
   <header>
     <div class="container navbar">
       <div class="brand-area">
-        <a href="student-profile.html" class="profile-link" id="studentProfileLink" title="بروفايل الطالب" aria-label="بروفايل الطالب">
-          👤
-        </a>
-
         <a href="index.html" class="logo">
           <span class="logo-icon">ب</span>
           البكالورينجية
@@ -1181,8 +1247,22 @@
       </nav>
 
       <div class="nav-actions">
-        <a href="login.html" class="btn btn-outline">تسجيل الدخول</a>
-        <a href="register.html" class="btn btn-primary">إنشاء حساب</a>
+        <a href="login.html" class="btn btn-outline" id="loginBtn">تسجيل الدخول</a>
+        <a href="register.html" class="btn btn-primary" id="registerBtn">إنشاء حساب</a>
+
+        <div class="profile-menu" id="profileMenu">
+          <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
+            aria-expanded="false" title="حسابي">
+            <span class="profile-avatar-img" id="profileAvatarImg">👤</span>
+          </button>
+
+          <ul class="profile-dropdown" id="profileDropdown">
+            <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
+            <li><a href="settings.html">⚙️ الإعدادات</a></li>
+            <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
+          </ul>
+        </div>
+
         <button class="menu-btn" id="menuBtn">☰</button>
       </div>
     </div>
@@ -1200,7 +1280,7 @@
         </h1>
 
         <p>
-              جمعنالك أفضل المدرسين،
+          جمعنالك أفضل المدرسين،
           شرح مبسط، كورسات منظمة، اختبارات، ومتابعة تساعدك تذاكر بذكاء.
         </p>
       </div>
@@ -1273,10 +1353,7 @@
       <div class="popular-top">
         <div class="section-heading">
           <span class="tag">أشهر الكورسات</span>
-          <h2>كورسات مختارة تبدأ بيها</h2>
-          <p>
-            كورسات عليها إقبال من الطلاب، بتجمع بين الشرح المنظم والتدريبات والاختبارات.
-          </p>
+          <h2>الكورسات الأكثر مشاهدة</h2>
         </div>
 
       </div>
@@ -1468,9 +1545,13 @@
     const teachersTitle = document.getElementById("teachersTitle");
     const teachersCount = document.getElementById("teachersCount");
     const popularCoursesGrid = document.getElementById("popularCoursesGrid");
-    const studentProfileLink = document.getElementById("studentProfileLink");
-    const loginBtn = document.querySelector('.nav-actions a[href="login.html"]');
-    const registerBtn = document.querySelector('.nav-actions a[href="register.html"]');
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const profileMenu = document.getElementById("profileMenu");
+    const profileAvatarBtn = document.getElementById("profileAvatarBtn");
+    const profileAvatarImg = document.getElementById("profileAvatarImg");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const logoutBtn = document.getElementById("logoutBtn");
 
     let currentStage = "first";
     let currentPath = "medicine";
@@ -1488,23 +1569,57 @@
     });
 
 
-    async function setupStudentProfileLink() {
+    async function setupProfileMenu() {
       const {
         data: { session }
       } = await supabaseClient.auth.getSession();
 
       if (session) {
-        studentProfileLink.classList.add("logged-in");
-        studentProfileLink.href = "student-profile.html";
-
+        // الطالب مسجل دخول: نخبي زراير الدخول/التسجيل ونظهر الصورة
         if (loginBtn) loginBtn.style.display = "none";
-        if (registerBtn) registerBtn.textContent = "بروفايلي";
-        if (registerBtn) registerBtn.href = "student-profile.html";
+        if (registerBtn) registerBtn.style.display = "none";
+        profileMenu.style.display = "inline-flex";
+
+        const user = session.user;
+        const avatarUrl = user?.user_metadata?.avatar_url;
+        const displayName = user?.user_metadata?.full_name || user?.email || "";
+
+        if (avatarUrl) {
+          // عنده صورة بروفايل محفوظة
+          profileAvatarImg.style.backgroundImage = `url('${avatarUrl}')`;
+          profileAvatarImg.textContent = "";
+        } else {
+          // مفيش صورة لسه: نعرض أول حرف من الاسم كبديل
+          // مهم: لازم نمسح الـ inline style بتاع الصورة (مش نحطه "none")
+          // عشان نسيب الخلفية المتدرجة بتاعة الـ CSS تظهر تاني وتدي تباين كافي للحرف الأبيض
+          profileAvatarImg.style.backgroundImage = "";
+          profileAvatarImg.textContent = displayName ? displayName.trim().charAt(0).toUpperCase() : "👤";
+        }
       } else {
-        studentProfileLink.classList.remove("logged-in");
-        studentProfileLink.href = "login.html?redirect=student-profile.html";
+        if (loginBtn) loginBtn.style.display = "";
+        if (registerBtn) registerBtn.style.display = "";
+        profileMenu.style.display = "none";
+        profileDropdown.classList.remove("show");
       }
     }
+
+    profileAvatarBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = profileDropdown.classList.toggle("show");
+      profileAvatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!profileMenu.contains(e.target)) {
+        profileDropdown.classList.remove("show");
+        profileAvatarBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    });
 
     function getStageArabic(stage) {
       if (stage === "first") {
@@ -1686,7 +1801,7 @@
       loadTeachers();
     });
 
-    setupStudentProfileLink();
+    setupProfileMenu();
     updatePathVisibility();
     loadTeachers();
     loadCourses();
