@@ -302,23 +302,8 @@
         // ---------- مكان الرجوع بعد التسجيل (نفس فكرة login.html بالظبط) ----------
         const urlParams = new URLSearchParams(window.location.search);
 
-        function getSafeRedirect() {
-            const target = urlParams.get("redirect");
-
-            if (!target) {
-                return "index.html";
-            }
-
-            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس
-            // if (
-            //     target.startsWith("http://") ||
-            //     target.startsWith("https://") ||
-            //     target.startsWith("//")
-            // ) {
-            //     return "index.html";
-            // }
-
-            return target;
+        function getRedirectTarget() {
+            return urlParams.get("redirect") || "index.html";
         }
 
         function togglePassword(id, btn) {
@@ -414,7 +399,7 @@
                     submitBtn.textContent = "جاري التحويل...";
 
                     setTimeout(() => {
-                        window.location.href = getSafeRedirect();
+                        window.location.href = getRedirectTarget();
                     }, 1200);
                 } else {
                     // تأكيد الإيميل مفعّل: لازم يفتح بريده الأول قبل ما يقدر يدخل
@@ -422,7 +407,7 @@
                     submitBtn.textContent = "تم الإرسال...";
 
                     setTimeout(() => {
-                        window.location.href = `login.html?redirect=${encodeURIComponent(getSafeRedirect())}`;
+                        window.location.href = `login.html?redirect=${encodeURIComponent(getRedirectTarget())}`;
                     }, 1800);
                 }
 

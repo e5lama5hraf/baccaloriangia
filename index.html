@@ -1143,11 +1143,35 @@
         grid-template-columns: 1fr;
       }
 
-      .teachers-grid,
+      /* .teachers-grid, */
       .popular-grid,
       .about-grid,
       .reviews-grid {
         grid-template-columns: 1fr 1fr;
+      }
+
+      .teachers-grid {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .teachers-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .teachers-grid {
+        scrollbar-width: none;
+      }
+
+      .teacher-card {
+        min-width: 300px;
+        flex-shrink: 0;
+        scroll-snap-align: start;
       }
 
       .footer-grid {

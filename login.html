@@ -219,7 +219,8 @@
 
             <div class="password-field">
                 <input type="password" id="password" class="input" placeholder="كلمة المرور" required>
-                <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="إظهار كلمة المرور">👁️</button>
+                <button type="button" class="password-toggle-btn" id="togglePassword"
+                    aria-label="إظهار كلمة المرور">👁️</button>
             </div>
 
             <div class="message error" id="errorMessage">من فضلك أدخل بيانات صحيحة</div>
@@ -267,24 +268,8 @@
         // الصفحات التانية في الموقع بتبعت login.html?redirect=... وهنا لازم نقراها وننفذها فعليًا
         const urlParams = new URLSearchParams(window.location.search);
 
-        function getSafeRedirect() {
-            const target = urlParams.get("redirect");
-
-            if (!target) {
-                return "index.html";
-            }
-
-            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس،
-            // مش لينكات لمواقع خارجية حد ممكن يحط في الرابط
-            // if (
-            //     target.startsWith("http://") ||
-            //     target.startsWith("https://") ||
-            //     target.startsWith("//")
-            // ) {
-            //     return "index.html";
-            // }
-
-            return target;
+        function getRedirectTarget() {
+            return urlParams.get("redirect") || "index.html";
         }
 
         // لو الطالب أصلاً مسجل دخول وفتح صفحة الدخول تاني، نوديه على طول لمكانه
@@ -292,7 +277,7 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (session) {
-                window.location.href = getSafeRedirect();
+                window.location.href = getRedirectTarget();
             }
         }
 
@@ -353,7 +338,7 @@
                 loginBtn.textContent = "جاري التحويل...";
 
                 setTimeout(() => {
-                    window.location.href = getSafeRedirect();
+                    window.location.href = getRedirectTarget();
                 }, 800);
 
             } catch (err) {
