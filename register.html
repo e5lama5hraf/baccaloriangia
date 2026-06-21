@@ -300,26 +300,26 @@
         const submitBtn = document.getElementById("submitBtn");
 
         // ---------- مكان الرجوع بعد التسجيل (نفس فكرة login.html بالظبط) ----------
-        const urlParams = new URLSearchParams(window.location.search);
+        // const urlParams = new URLSearchParams(window.location.search);
 
-        function getSafeRedirect() {
-            const target = urlParams.get("redirect");
+        // function getSafeRedirect() {
+        //     const target = urlParams.get("redirect");
 
-            if (!target) {
-                return "index.html";
-            }
+        //     if (!target) {
+        //         return "index.html";
+        //     }
 
-            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس
-            // if (
-            //     target.startsWith("http://") ||
-            //     target.startsWith("https://") ||
-            //     target.startsWith("//")
-            // ) {
-            //     return "index.html";
-            // }
+        //     // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس
+        //     // if (
+        //     //     target.startsWith("http://") ||
+        //     //     target.startsWith("https://") ||
+        //     //     target.startsWith("//")
+        //     // ) {
+        //     //     return "index.html";
+        //     // }
 
-            return target;
-        }
+        //     return target;
+        // }
 
         function togglePassword(id, btn) {
             const input = document.getElementById(id);
