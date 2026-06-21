@@ -80,6 +80,17 @@
             transform: translateY(-3px);
         }
 
+        .btn-outline {
+            border: 2px solid rgba(18, 60, 140, 0.14);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
         .btn-light {
             background: var(--white);
             color: var(--primary);
@@ -111,13 +122,14 @@
 
         .navbar {
             height: 82px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            justify-content: space-between;
             gap: 18px;
         }
 
         .logo {
+            justify-self: start;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -135,31 +147,138 @@
             display: grid;
             place-items: center;
             box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+            flex-shrink: 0;
         }
 
-        nav ul {
-            display: flex;
-            align-items: center;
-            gap: 22px;
-            list-style: none;
+        nav {
+            justify-self: center;
+        }
+
+        nav a {
             font-weight: 800;
             color: var(--dark);
+            transition: 0.3s;
+            white-space: nowrap;
         }
 
         nav a:hover {
             color: var(--secondary);
         }
 
-        .menu-btn {
+        .nav-actions {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Student profile avatar + dropdown menu (نفس الكومبوننت اللي في باقي الموقع) */
+        .profile-menu {
+            position: relative;
             display: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            font-size: 24px;
+            align-items: center;
+        }
+
+        .profile-avatar-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid rgba(18, 60, 140, 0.12);
+            background: var(--white);
+            box-shadow: var(--soft-shadow);
             cursor: pointer;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-btn:hover,
+        .profile-avatar-btn[aria-expanded="true"] {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
+        }
+
+        .profile-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            font-weight: 900;
+            font-size: 18px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 14px);
+            left: 0;
+            min-width: 210px;
+            background: var(--white);
+            border-radius: 18px;
+            border: 1px solid rgba(18, 60, 140, 0.1);
+            box-shadow: var(--shadow);
+            list-style: none;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: flex;
+            animation: fadeUp 0.25s ease;
+        }
+
+        .profile-dropdown li a,
+        .profile-dropdown li button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: var(--dark);
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: right;
+            transition: 0.2s;
+        }
+
+        .profile-dropdown li a:hover,
+        .profile-dropdown li button:hover {
+            background: #f0f6ff;
+            color: var(--primary);
+        }
+
+        .profile-dropdown li:last-child button {
+            color: var(--danger);
+        }
+
+        .profile-dropdown li:last-child button:hover {
+            background: rgba(255, 77, 109, 0.08);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .course-hero {
@@ -606,6 +725,73 @@
             font-size: 15px;
         }
 
+        /* ===== شهادة إتمام الكورس ===== */
+        .certificate-box {
+            background: var(--white);
+            border-radius: 26px;
+            padding: 40px 28px;
+            box-shadow: var(--soft-shadow);
+            border: 1px solid rgba(18, 60, 140, 0.08);
+            text-align: center;
+        }
+
+        .certificate-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 18px;
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .certificate-icon.locked {
+            background: rgba(108, 120, 144, 0.12);
+            color: var(--muted);
+        }
+
+        .certificate-icon.pending {
+            background: rgba(255, 183, 3, 0.18);
+            color: var(--accent);
+        }
+
+        .certificate-icon.ready {
+            background: rgba(15, 159, 110, 0.12);
+            color: var(--success);
+        }
+
+        .certificate-box h3 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .certificate-box p {
+            color: var(--muted);
+            line-height: 1.8;
+            font-weight: 700;
+            margin: 0 auto 20px;
+            max-width: 440px;
+        }
+
+        .certificate-progress-track {
+            max-width: 320px;
+            margin: 0 auto 22px;
+            height: 10px;
+            border-radius: 999px;
+            background: #e8eef8;
+            overflow: hidden;
+        }
+
+        .certificate-progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: width 0.35s ease;
+        }
+
         .sidebar-card {
             background: var(--white);
             border-radius: 28px;
@@ -635,7 +821,7 @@
             font-weight: 900;
         }
 
-        /* .course-progress {
+        .course-progress {
             background: #f8fbff;
             border: 1px solid rgba(18, 60, 140, 0.08);
             border-radius: 20px;
@@ -667,30 +853,25 @@
             transition: width 0.35s ease;
         }
 
-        .features {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 22px;
-        }
-
-        .features li {
-            color: var(--dark);
-            font-weight: 800;
-            line-height: 1.7;
-        }
-
-        .features li::before {
-            content: "✓";
-            color: var(--success);
-            font-weight: 900;
-            margin-left: 8px;
-        } */
-
         .sidebar-card .btn {
             width: 100%;
             margin-bottom: 10px;
+        }
+
+        .enrolled-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+            background: rgba(15, 159, 110, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(15, 159, 110, 0.25);
+            border-radius: 999px;
+            padding: 12px 22px;
+            font-weight: 900;
+            font-size: 14px;
         }
 
         .teacher-box {
@@ -809,32 +990,7 @@
         }
 
         @media (max-width: 992px) {
-            nav {
-                position: fixed;
-                top: 82px;
-                right: -100%;
-                width: 78%;
-                height: calc(100vh - 82px);
-                background: var(--white);
-                box-shadow: -10px 0 30px rgba(7, 26, 61, 0.12);
-                transition: 0.35s;
-                padding: 35px;
-            }
-
-            nav.active {
-                right: 0;
-            }
-
-            nav ul {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .menu-btn {
-                display: block;
-            }
-
-            .navbar>.btn {
+            .nav-actions .btn-outline {
                 display: none;
             }
 
@@ -862,7 +1018,7 @@
             }
 
             .course-hero {
-                padding-top: 122px;
+                padding-top: 116px;
             }
 
             .video-preview {
@@ -902,6 +1058,21 @@
                 padding: 58px 0;
             }
         }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+
+            nav a {
+                font-size: 14px;
+            }
+
+            .nav-actions .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 
@@ -911,16 +1082,30 @@
         <div class="container navbar">
             <a href="index.html" class="logo">
                 <span class="logo-icon">ب</span>
-                البكالورينجية
+                <span class="logo-text">البكالورينجية</span>
             </a>
 
-            <nav id="navMenu">
-                <ul>
-                    <li><a href="#content">محتوى الكورس</a></li>
-                </ul>
+            <nav>
+                <a href="#content">محتوى الكورس</a>
             </nav>
 
-            <button class="menu-btn" id="menuBtn" type="button">☰</button>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-outline" id="loginBtn">تسجيل الدخول</a>
+                <a href="register.html" class="btn btn-primary" id="registerBtn">إنشاء حساب</a>
+
+                <div class="profile-menu" id="profileMenu">
+                    <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
+                        aria-expanded="false" title="حسابي">
+                        <span class="profile-avatar-img" id="profileAvatarImg">👤</span>
+                    </button>
+
+                    <ul class="profile-dropdown" id="profileDropdown">
+                        <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
+                        <li><a href="settings.html">⚙️ الإعدادات</a></li>
+                        <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -964,6 +1149,7 @@
                     <button class="tab-btn active" type="button" data-tab="lessons">الدروس</button>
                     <button class="tab-btn" type="button" data-tab="exams">الامتحانات</button>
                     <button class="tab-btn" type="button" data-tab="attachments">الملفات والمرفقات</button>
+                    <button class="tab-btn" type="button" data-tab="certificate">شهادة الكورس</button>
                 </div>
 
                 <div class="tab-content active" id="lessons">
@@ -977,6 +1163,10 @@
                 <div class="tab-content" id="attachments">
                     <div class="attachments-grid" id="attachmentsContainer"></div>
                 </div>
+
+                <div class="tab-content" id="certificate">
+                    <div class="certificate-box" id="certificateContainer"></div>
+                </div>
             </div>
 
             <aside class="sidebar-card" id="subscribe">
@@ -985,7 +1175,7 @@
                     <strong id="coursePrice">199 ج</strong>
                 </div>
 
-                <!-- <div class="course-progress">
+                <div class="course-progress" id="courseProgressBox" style="display:none;">
                     <div class="progress-head">
                         <span>نسبة الإنجاز</span>
                         <span id="progressPercent">0%</span>
@@ -995,13 +1185,6 @@
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
-
-                <ul class="features">
-                    <li>إتمام المشاهدة يتم تلقائيًا بعد 70%</li>
-                    <li>الدخول حسب الإيميل المفعّل</li>
-                    <li>ملفات ومرفقات للتحميل</li>
-                    <li>اختبارات بعد كل وحدة</li>
-                </ul> -->
 
                 <button class="btn btn-primary" id="subscribeBtn">
                     اشترك في الكورس
@@ -1058,9 +1241,58 @@
         const params = new URLSearchParams(window.location.search);
         const courseId = Number(params.get("id"));
 
-        const menuBtn = document.getElementById("menuBtn");
-        const navMenu = document.getElementById("navMenu");
+        // ---------- Header: profile avatar + dropdown (نفس كومبوننت باقي الموقع) ----------
+        const loginBtn = document.getElementById("loginBtn");
+        const registerBtn = document.getElementById("registerBtn");
+        const profileMenu = document.getElementById("profileMenu");
+        const profileAvatarBtn = document.getElementById("profileAvatarBtn");
+        const profileAvatarImg = document.getElementById("profileAvatarImg");
+        const profileDropdown = document.getElementById("profileDropdown");
+        const logoutBtn = document.getElementById("logoutBtn");
 
+        profileAvatarBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = profileDropdown.classList.toggle("show");
+            profileAvatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!profileMenu.contains(e.target)) {
+                profileDropdown.classList.remove("show");
+                profileAvatarBtn.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        });
+
+        function renderHeaderAvatar(user, profile) {
+            if (!user) {
+                loginBtn.style.display = "";
+                registerBtn.style.display = "";
+                profileMenu.style.display = "none";
+                return;
+            }
+
+            loginBtn.style.display = "none";
+            registerBtn.style.display = "none";
+            profileMenu.style.display = "inline-flex";
+
+            const displayName = profile?.full_name || user.email || "";
+
+            if (profile?.avatar_url) {
+                profileAvatarImg.style.backgroundImage = `url('${profile.avatar_url}')`;
+                profileAvatarImg.textContent = "";
+            } else {
+                // مهم: نمسح الـ inline style مش نحطه "none" عشان الخلفية المتدرجة تفضل ظاهرة ورا الحرف
+                profileAvatarImg.style.backgroundImage = "";
+                profileAvatarImg.textContent = displayName ? displayName.trim().charAt(0).toUpperCase() : "👤";
+            }
+        }
+
+        // ---------- Page elements ----------
         const courseTitle = document.getElementById("courseTitle");
         const coursePrice = document.getElementById("coursePrice");
         const courseVideoBox = document.getElementById("courseVideoBox");
@@ -1069,9 +1301,11 @@
         const curriculum = document.getElementById("curriculum");
         const examsContainer = document.getElementById("examsContainer");
         const attachmentsContainer = document.getElementById("attachmentsContainer");
+        const certificateContainer = document.getElementById("certificateContainer");
 
-        // const progressPercent = document.getElementById("progressPercent");
-        // const progressFill = document.getElementById("progressFill");
+        const courseProgressBox = document.getElementById("courseProgressBox");
+        const progressPercent = document.getElementById("progressPercent");
+        const progressFill = document.getElementById("progressFill");
 
         const subscribeBtn = document.getElementById("subscribeBtn");
         const subscribeModal = document.getElementById("subscribeModal");
@@ -1085,20 +1319,7 @@
         let currentUser = null;
         let hasAccess = false;
         let allLessons = [];
-
-        if (menuBtn) {
-            menuBtn.addEventListener("click", () => {
-                navMenu.classList.toggle("active");
-                menuBtn.textContent = navMenu.classList.contains("active") ? "×" : "☰";
-            });
-        }
-
-        document.querySelectorAll("nav a").forEach(link => {
-            link.addEventListener("click", () => {
-                navMenu.classList.remove("active");
-                menuBtn.textContent = "☰";
-            });
-        });
+        let courseProgressPercent = 0;
 
         document.querySelectorAll(".tab-btn").forEach(button => {
             button.addEventListener("click", () => {
@@ -1120,6 +1341,18 @@
         async function getCurrentUser() {
             const { data } = await supabaseClient.auth.getUser();
             currentUser = data.user;
+
+            let profile = null;
+            if (currentUser) {
+                const { data: profileData } = await supabaseClient
+                    .from("profiles")
+                    .select("full_name, avatar_url")
+                    .eq("id", currentUser.id)
+                    .maybeSingle();
+                profile = profileData;
+            }
+
+            renderHeaderAvatar(currentUser, profile);
         }
 
         async function checkCourseAccess() {
@@ -1198,28 +1431,7 @@
         </div>
     `;
             }
-
-            // updateSidebarInfo(course);
         }
-
-        // function updateSidebarInfo(course) {
-        //     const sidebar = document.querySelector(".sidebar-card");
-
-        //     const oldTeacherBox = document.querySelector(".teacher-box");
-        //     if (oldTeacherBox) {
-        //         oldTeacherBox.remove();
-        //     }
-
-        //     const teacherName = course.teachers?.name || "مدرس المنصة";
-        //     const teacherBio = course.teachers?.bio || "مدرس متخصص على منصة البكالورينجية.";
-
-        //     sidebar.insertAdjacentHTML("beforeend", `
-        //     <div class="teacher-box">
-        //         <h4>${teacherName}</h4>
-        //         <p>${teacherBio}</p>
-        //     </div>
-        // `);
-        // }
 
         async function loadLessons() {
             curriculum.innerHTML = "<p>جاري تحميل الدروس...</p>";
@@ -1319,7 +1531,6 @@
 
             initUnitButtons();
             initWatchButtons();
-            // updateProgress();
         }
 
         async function loadExams() {
@@ -1410,6 +1621,110 @@
         `).join("");
         }
 
+        // ---------- نسبة إتمام الكورس (بناءً على lesson_progress الحقيقي) ----------
+        async function loadCourseProgress() {
+            if (!currentUser || !hasAccess) {
+                courseProgressPercent = 0;
+                courseProgressBox.style.display = "none";
+                return;
+            }
+
+            courseProgressBox.style.display = "";
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from("lesson_progress")
+                    .select("lesson_id, is_completed")
+                    .eq("user_id", currentUser.id)
+                    .eq("course_id", courseId);
+
+                if (error) throw error;
+
+                const completedIds = new Set(
+                    (data || []).filter(row => row.is_completed).map(row => row.lesson_id)
+                );
+
+                const totalLessons = allLessons.length;
+                const completedCount = allLessons.filter(lesson => completedIds.has(lesson.id)).length;
+
+                courseProgressPercent = totalLessons === 0
+                    ? 0
+                    : Math.round((completedCount / totalLessons) * 100);
+            } catch (err) {
+                console.error(err);
+                courseProgressPercent = 0;
+            }
+
+            progressPercent.textContent = courseProgressPercent + "%";
+            progressFill.style.width = courseProgressPercent + "%";
+        }
+
+        // ---------- تاب شهادة إتمام الكورس ----------
+        async function loadCertificateTab() {
+            if (!currentUser) {
+                certificateContainer.innerHTML = `
+                    <div class="certificate-icon locked">🔒</div>
+                    <h3>سجّل دخولك الأول</h3>
+                    <p>لازم تكون مسجل دخول ومشترك في الكورس عشان تقدر تحمّل شهادتك.</p>
+                `;
+                return;
+            }
+
+            if (!hasAccess) {
+                certificateContainer.innerHTML = `
+                    <div class="certificate-icon locked">🔒</div>
+                    <h3>لسه مش مشترك في الكورس</h3>
+                    <p>اشترك في الكورس وكمّل كل الدروس عشان تقدر تحمّل شهادة إتمام الكورس.</p>
+                `;
+                return;
+            }
+
+            if (courseProgressPercent < 100) {
+                certificateContainer.innerHTML = `
+                    <div class="certificate-icon locked">🔒</div>
+                    <h3>كمّل الكورس الأول</h3>
+                    <p>أنت كمّلت ${courseProgressPercent}% من دروس الكورس. خلّص باقي الدروس عشان تقدر تحمّل شهادتك.</p>
+                    <div class="certificate-progress-track">
+                        <div class="certificate-progress-fill" style="width:${courseProgressPercent}%"></div>
+                    </div>
+                `;
+                return;
+            }
+
+            // الطالب خلّص كل دروس الكورس: نشوف هل الشهادة جاهزة فعلاً
+            try {
+                const { data, error } = await supabaseClient
+                    .from("student_certificates")
+                    .select("certificate_url, title, issued_at")
+                    .eq("user_id", currentUser.id)
+                    .eq("course_id", courseId)
+                    .eq("is_active", true)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data && data.certificate_url) {
+                    certificateContainer.innerHTML = `
+                        <div class="certificate-icon ready">🎓</div>
+                        <h3>مبروك! خلصت الكورس بالكامل</h3>
+                        <p>شهادتك جاهزة، تقدر تحمّلها دلوقتي.</p>
+                        <a href="${data.certificate_url}" target="_blank" class="btn btn-primary" download>
+                            تحميل الشهادة (PDF)
+                        </a>
+                    `;
+                } else {
+                    certificateContainer.innerHTML = `
+                        <div class="certificate-icon pending">🎉</div>
+                        <h3>مبروك! خلصت كل دروس الكورس</h3>
+                        <p>شهادتك بتتجهز دلوقتي وهتظهر هنا قريبًا.</p>
+                    `;
+                }
+            } catch (err) {
+                console.error(err);
+                certificateContainer.innerHTML = `<p>حصل خطأ أثناء تحميل بيانات الشهادة.</p>`;
+            }
+        }
+
         function initUnitButtons() {
             document.querySelectorAll(".unit-header").forEach(button => {
                 button.addEventListener("click", () => {
@@ -1435,20 +1750,14 @@
             });
         }
 
-        // function updateProgress() {
-        //     const completedLessonsKey = `${courseId}-completed-lessons`;
-        //     const completedLessons = JSON.parse(localStorage.getItem(completedLessonsKey)) || [];
+        // ---------- زرار الاشتراك: لو الطالب مشترك بالفعل، يتحول لشارة "مشترك" ----------
+        function updateSubscribeButtonUI() {
+            if (!hasAccess) return;
 
-        //     const totalLessons = allLessons.length;
-        //     const completedCount = completedLessons.length;
-
-        //     const percentage = totalLessons === 0
-        //         ? 0
-        //         : Math.round((completedCount / totalLessons) * 100);
-
-        //     progressPercent.textContent = percentage + "%";
-        //     progressFill.style.width = percentage + "%";
-        // }
+            subscribeBtn.outerHTML = `
+                <span class="enrolled-badge">✅ مشترك في الكورس</span>
+            `;
+        }
 
         function generateWhatsAppMessage() {
             const email = currentUser?.email || "زائر لم يسجل الدخول";
@@ -1535,8 +1844,11 @@
             await loadCourseDetails();
             await checkCourseAccess();
             await loadLessons();
+            await loadCourseProgress();
             await loadExams();
             await loadAttachments();
+            await loadCertificateTab();
+            updateSubscribeButtonUI();
         }
 
         initPage();

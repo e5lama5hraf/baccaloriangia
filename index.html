@@ -1257,7 +1257,7 @@
           </button>
 
           <ul class="profile-dropdown" id="profileDropdown">
-            <li><a href="student-profile.html">👤 البروفايل</a></li>
+            <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
             <li><a href="settings.html">⚙️ الإعدادات</a></li>
             <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
           </ul>
@@ -1581,8 +1581,16 @@
         profileMenu.style.display = "inline-flex";
 
         const user = session.user;
-        const avatarUrl = user?.user_metadata?.avatar_url;
-        const displayName = user?.user_metadata?.full_name || user?.email || "";
+
+        // الاسم والصورة بقى مصدرهم جدول profiles مش الـ auth metadata
+        const { data: profile } = await supabaseClient
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        const avatarUrl = profile?.avatar_url;
+        const displayName = profile?.full_name || user?.email || "";
 
         if (avatarUrl) {
           // عنده صورة بروفايل محفوظة

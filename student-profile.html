@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بروفايل الطالب | البكالورينجية</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -64,6 +65,7 @@
       font-family: inherit;
       font-weight: 900;
       transition: 0.3s;
+      white-space: nowrap;
     }
 
     .btn-primary {
@@ -101,13 +103,15 @@
       gap: 18px;
     }
 
-    .brand-area {
+    .logo {
       display: flex;
       align-items: center;
       gap: 12px;
+      color: var(--primary);
+      font-size: 26px;
+      font-weight: 900;
     }
 
-    .profile-icon,
     .logo-icon {
       width: 46px;
       height: 46px;
@@ -120,29 +124,119 @@
       flex-shrink: 0;
     }
 
-    .profile-icon {
-      border-radius: 50%;
-      background: var(--white);
-      color: var(--primary);
-      border: 1px solid rgba(18, 60, 140, 0.12);
-      box-shadow: var(--soft-shadow);
-      font-size: 20px;
-    }
-
-    .logo {
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 12px;
-      color: var(--primary);
-      font-size: 26px;
-      font-weight: 900;
     }
 
-    .header-actions {
+    /* Student profile avatar + dropdown menu (نفس الكومبوننت اللي في باقي الموقع) */
+    .profile-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(18, 60, 140, 0.12);
+      background: var(--white);
+      box-shadow: var(--soft-shadow);
+      cursor: pointer;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      transition: 0.3s;
+      flex-shrink: 0;
+    }
+
+    .profile-avatar-btn:hover,
+    .profile-avatar-btn[aria-expanded="true"] {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
+    }
+
+    .profile-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-size: cover;
+      background-position: center;
+      color: var(--white);
+      font-weight: 900;
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 0;
+      min-width: 210px;
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid rgba(18, 60, 140, 0.1);
+      box-shadow: var(--shadow);
+      list-style: none;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+      display: flex;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .profile-dropdown li a,
+    .profile-dropdown li button {
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--dark);
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: right;
+      transition: 0.2s;
+    }
+
+    .profile-dropdown li a:hover,
+    .profile-dropdown li button:hover {
+      background: #f0f6ff;
+      color: var(--primary);
+    }
+
+    .profile-dropdown li:last-child button {
+      color: var(--danger);
+    }
+
+    .profile-dropdown li:last-child button:hover {
+      background: rgba(255, 77, 109, 0.08);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .page-hero {
@@ -180,14 +274,36 @@
       z-index: 2;
     }
 
+    .student-info .tags-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
     .student-info .tag {
       display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: rgba(11, 182, 214, 0.12);
       color: var(--primary);
       border-radius: 999px;
       padding: 8px 16px;
       font-weight: 900;
-      margin-bottom: 14px;
+    }
+
+    .join-date {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #f4f8ff;
+      color: var(--muted);
+      border: 1px solid rgba(18, 60, 140, 0.08);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-weight: 800;
+      font-size: 13px;
     }
 
     .student-info h1 {
@@ -210,10 +326,14 @@
       display: grid;
       place-items: center;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-size: cover;
+      background-position: center;
       color: var(--white);
       font-size: 48px;
       font-weight: 900;
       box-shadow: 0 18px 38px rgba(18, 60, 140, 0.28);
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
     .stats-grid {
@@ -227,20 +347,55 @@
       background: var(--white);
       border-radius: 24px;
       border: 1px solid rgba(18, 60, 140, 0.08);
-      padding: 20px;
+      padding: 18px 20px;
       box-shadow: var(--soft-shadow);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.icon-courses {
+      background: rgba(18, 60, 140, 0.1);
+      color: var(--primary);
+    }
+
+    .stat-icon.icon-certificates {
+      background: rgba(255, 183, 3, 0.18);
+      color: #8a5d00;
+    }
+
+    .stat-icon.icon-progress {
+      background: rgba(15, 159, 110, 0.12);
+      color: var(--success);
     }
 
     .stat-card span {
       color: var(--muted);
       font-weight: 800;
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+      font-size: 13px;
     }
 
     .stat-card strong {
-      color: var(--primary);
-      font-size: 28px;
+      color: var(--dark);
+      font-size: 26px;
       font-weight: 900;
     }
 
@@ -306,11 +461,11 @@
       background: var(--course-image);
       background-size: cover;
       background-position: center;
-      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, .18);
     }
 
     .continue-content small {
-      color: rgba(255,255,255,.72);
+      color: rgba(255, 255, 255, .72);
       font-weight: 800;
     }
 
@@ -324,7 +479,7 @@
       height: 10px;
       border-radius: 999px;
       overflow: hidden;
-      background: rgba(255,255,255,.22);
+      background: rgba(255, 255, 255, .22);
       margin-bottom: 8px;
     }
 
@@ -336,7 +491,7 @@
     }
 
     .progress-label {
-      color: rgba(255,255,255,.78);
+      color: rgba(255, 255, 255, .78);
       font-weight: 800;
       font-size: 14px;
     }
@@ -355,6 +510,13 @@
       border: 1px solid rgba(18, 60, 140, 0.08);
       box-shadow: var(--soft-shadow);
       overflow: hidden;
+      transition: 0.3s;
+    }
+
+    .course-card:hover,
+    .certificate-card:hover {
+      transform: translateY(-7px);
+      box-shadow: var(--shadow);
     }
 
     .course-thumb {
@@ -416,6 +578,18 @@
       grid-column: 1 / -1;
     }
 
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      font-size: 28px;
+      background: rgba(108, 120, 144, 0.1);
+      color: var(--muted);
+    }
+
     .loading {
       padding: 24px;
       text-align: center;
@@ -427,15 +601,25 @@
     }
 
     @media (max-width: 992px) {
+
       .profile-hero-card,
       .continue-card {
         grid-template-columns: 1fr;
+      }
+
+      .profile-hero-card {
+        text-align: center;
+      }
+
+      .student-info .tags-row {
+        justify-content: center;
       }
 
       .student-avatar {
         width: 96px;
         height: 96px;
         font-size: 38px;
+        margin: 0 auto;
       }
 
       .grid,
@@ -446,17 +630,11 @@
 
     @media (max-width: 620px) {
       .navbar {
-        height: auto;
-        padding: 16px 0;
-        align-items: flex-start;
+        height: 72px;
       }
 
       .logo {
-        font-size: 22px;
-      }
-
-      .header-actions {
-        justify-content: flex-end;
+        font-size: 21px;
       }
 
       .grid,
@@ -469,23 +647,43 @@
         padding: 24px;
       }
     }
+
+    @media (max-width: 420px) {
+      .logo-text {
+        display: none;
+      }
+
+      .nav-actions .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <header>
     <div class="container navbar">
-      <div class="brand-area">
-        <div class="profile-icon">👤</div>
-        <a href="index.html" class="logo">
-          <span class="logo-icon">ب</span>
-          البكالورينجية
-        </a>
-      </div>
+      <a href="index.html" class="logo">
+        <span class="logo-icon">ب</span>
+        <span class="logo-text">البكالورينجية</span>
+      </a>
 
-      <div class="header-actions">
+      <div class="nav-actions">
         <a href="index.html" class="btn btn-light">الرئيسية</a>
-        <button class="btn btn-primary" id="logoutBtn" type="button">تسجيل الخروج</button>
+
+        <div class="profile-menu" id="profileMenu">
+          <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
+            aria-expanded="false" title="حسابي">
+            <span class="profile-avatar-img" id="profileAvatarImg">👤</span>
+          </button>
+
+          <ul class="profile-dropdown" id="profileDropdown">
+            <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
+            <li><a href="settings.html">⚙️ الإعدادات</a></li>
+            <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
+          </ul>
+        </div>
       </div>
     </div>
   </header>
@@ -495,7 +693,11 @@
       <div class="container">
         <div class="profile-hero-card">
           <div class="student-info">
-            <span class="tag">بروفايل الطالب</span>
+            <div class="tags-row">
+              <span class="tag">🎓 بروفايل الطالب</span>
+              <span class="join-date" id="studentJoinDate"></span>
+            </div>
+
             <h1 id="studentName">جاري التحميل...</h1>
             <p id="studentEmail">بنجهز بيانات حسابك وكورساتك.</p>
           </div>
@@ -505,16 +707,27 @@
 
         <div class="stats-grid">
           <div class="stat-card">
-            <span>كورساتي المشتركة</span>
-            <strong id="coursesCount">0</strong>
+            <div class="stat-icon icon-courses">📚</div>
+            <div>
+              <span>كورساتي المشتركة</span>
+              <strong id="coursesCount">0</strong>
+            </div>
           </div>
+
           <div class="stat-card">
-            <span>الشهادات</span>
-            <strong id="certificatesCount">0</strong>
+            <div class="stat-icon icon-certificates">🏆</div>
+            <div>
+              <span>الشهادات</span>
+              <strong id="certificatesCount">0</strong>
+            </div>
           </div>
+
           <div class="stat-card">
-            <span>آخر تقدم</span>
-            <strong id="lastProgressPercent">0%</strong>
+            <div class="stat-icon icon-progress">📈</div>
+            <div>
+              <span>آخر تقدم</span>
+              <strong id="lastProgressPercent">0%</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -573,13 +786,38 @@
     const studentName = document.getElementById("studentName");
     const studentEmail = document.getElementById("studentEmail");
     const studentAvatar = document.getElementById("studentAvatar");
+    const studentJoinDate = document.getElementById("studentJoinDate");
     const coursesCount = document.getElementById("coursesCount");
     const certificatesCount = document.getElementById("certificatesCount");
     const lastProgressPercent = document.getElementById("lastProgressPercent");
     const continueCourseBox = document.getElementById("continueCourseBox");
     const myCoursesGrid = document.getElementById("myCoursesGrid");
     const certificatesGrid = document.getElementById("certificatesGrid");
+
+    // ---------- Header: profile avatar + dropdown (نفس كومبوننت باقي الموقع) ----------
+    const profileMenu = document.getElementById("profileMenu");
+    const profileAvatarBtn = document.getElementById("profileAvatarBtn");
+    const profileAvatarImg = document.getElementById("profileAvatarImg");
+    const profileDropdown = document.getElementById("profileDropdown");
     const logoutBtn = document.getElementById("logoutBtn");
+
+    profileAvatarBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = profileDropdown.classList.toggle("show");
+      profileAvatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!profileMenu.contains(e.target)) {
+        profileDropdown.classList.remove("show");
+        profileAvatarBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    });
 
     const fallbackCourseImage = "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=900&q=80";
 
@@ -590,7 +828,7 @@
     }
 
     function getNameFromProfile(profile, session) {
-      return profile?.full_name || profile?.name || profile?.username || session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "طالب البكالورينجية";
+      return profile?.full_name || session.user.email?.split("@")[0] || "طالب البكالورينجية";
     }
 
     function getInitials(name) {
@@ -601,6 +839,19 @@
       const number = Number(value || 0);
       if (Number.isNaN(number)) return 0;
       return Math.min(100, Math.max(0, Math.round(number)));
+    }
+
+    function renderHeaderAvatar(profile, session) {
+      const displayName = getNameFromProfile(profile, session);
+
+      if (profile?.avatar_url) {
+        profileAvatarImg.style.backgroundImage = `url('${profile.avatar_url}')`;
+        profileAvatarImg.textContent = "";
+      } else {
+        // مهم: نمسح الـ inline style مش نحطه "none" عشان الخلفية المتدرجة تفضل ظاهرة ورا الحرف
+        profileAvatarImg.style.backgroundImage = "";
+        profileAvatarImg.textContent = getInitials(displayName);
+      }
     }
 
     async function requireStudentSession() {
@@ -624,27 +875,50 @@
       const name = getNameFromProfile(profile, session);
       studentName.textContent = name;
       studentEmail.textContent = session.user.email || "";
-      studentAvatar.textContent = getInitials(name);
+
+      if (profile?.created_at) {
+        const joinDate = new Date(profile.created_at).toLocaleDateString("ar-EG", {
+          year: "numeric",
+          month: "long"
+        });
+
+        studentJoinDate.textContent = `🗓 عضو من ${joinDate}`;
+        studentJoinDate.style.display = "inline-flex";
+      }
+
+      if (profile?.avatar_url) {
+        studentAvatar.style.backgroundImage = `url('${profile.avatar_url}')`;
+        studentAvatar.textContent = "";
+      } else {
+        studentAvatar.style.backgroundImage = "";
+        studentAvatar.textContent = getInitials(name);
+      }
+
+      renderHeaderAvatar(profile, session);
     }
 
     async function loadStudentCourses(userId) {
-      const selectors = [
-        { column: "user_id", query: `id, user_id, course_id, status, created_at, courses (*, teachers (name))` },
-        { column: "student_id", query: `id, student_id, course_id, status, created_at, courses (*, teachers (name))` },
-        { column: "profile_id", query: `id, profile_id, course_id, status, created_at, courses (*, teachers (name))` }
-      ];
+      // الجدول الحقيقي للاشتراكات هو course_enrollments بعمود user_id
+      const { data, error } = await supabaseClient
+        .from("course_enrollments")
+        .select(`
+          id,
+          user_id,
+          course_id,
+          status,
+          created_at,
+          courses (*, teachers (name))
+        `)
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
 
-      for (const item of selectors) {
-        const { data, error } = await supabaseClient
-          .from("enrollments")
-          .select(item.query)
-          .eq(item.column, userId)
-          .order("created_at", { ascending: false });
-
-        if (!error) return data || [];
+      if (error) {
+        console.error(error);
+        return [];
       }
 
-      return [];
+      return data || [];
     }
 
     async function loadLastProgress(userId) {
@@ -699,6 +973,7 @@
       if (!progress || !progress.courses) {
         continueCourseBox.className = "empty-card";
         continueCourseBox.innerHTML = `
+          <div class="empty-icon">▶️</div>
           <p>لسه مفيش كورس مفتوح مؤخرًا. ابدأ من كورساتك، وأول كورس تفتحه هيظهر هنا تلقائيًا.</p>
           <a href="#myCoursesGrid" class="btn btn-primary">شوف كورساتي</a>
         `;
@@ -732,6 +1007,7 @@
       if (!visibleEnrollments.length) {
         myCoursesGrid.innerHTML = `
           <div class="empty-card">
+            <div class="empty-icon">📭</div>
             <p>لسه مفيش كورسات مشتركة في حسابك.</p>
             <a href="index.html#popularCourses" class="btn btn-primary">تصفح الكورسات</a>
           </div>
@@ -766,6 +1042,7 @@
       if (!certificates.length) {
         certificatesGrid.innerHTML = `
           <div class="empty-card">
+            <div class="empty-icon">🏅</div>
             <p>لسه مفيش شهادات مرفوعة لحسابك. الشهادات هتظهر هنا بعد ما الإدارة ترفعها لك.</p>
           </div>
         `;
@@ -781,11 +1058,6 @@
         </div>
       `).join("");
     }
-
-    logoutBtn.addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      window.location.href = "index.html";
-    });
 
     async function initProfilePage() {
       const session = await requireStudentSession();

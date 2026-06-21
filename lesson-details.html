@@ -71,6 +71,17 @@
             box-shadow: 0 14px 30px rgba(18, 60, 140, 0.25);
         }
 
+        .btn-outline {
+            border: 2px solid rgba(18, 60, 140, 0.14);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
         .btn-light {
             background: var(--white);
             color: var(--primary);
@@ -94,13 +105,14 @@
 
         .navbar {
             height: 82px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            justify-content: space-between;
             gap: 18px;
         }
 
         .logo {
+            justify-self: start;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -118,6 +130,135 @@
             display: grid;
             place-items: center;
             box-shadow: 0 12px 25px rgba(18, 60, 140, 0.25);
+            flex-shrink: 0;
+        }
+
+        .nav-back-link {
+            justify-self: center;
+            font-weight: 800;
+            color: var(--dark);
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-back-link:hover {
+            color: var(--secondary);
+        }
+
+        .nav-actions {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Student profile avatar + dropdown menu (نفس الكومبوننت اللي في باقي الموقع) */
+        .profile-menu {
+            position: relative;
+            display: none;
+            align-items: center;
+        }
+
+        .profile-avatar-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid rgba(18, 60, 140, 0.12);
+            background: var(--white);
+            box-shadow: var(--soft-shadow);
+            cursor: pointer;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-btn:hover,
+        .profile-avatar-btn[aria-expanded="true"] {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(18, 60, 140, 0.24);
+        }
+
+        .profile-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            font-weight: 900;
+            font-size: 18px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 14px);
+            left: 0;
+            min-width: 210px;
+            background: var(--white);
+            border-radius: 18px;
+            border: 1px solid rgba(18, 60, 140, 0.1);
+            box-shadow: var(--shadow);
+            list-style: none;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: flex;
+            animation: fadeUp 0.25s ease;
+        }
+
+        .profile-dropdown li a,
+        .profile-dropdown li button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: var(--dark);
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: right;
+            transition: 0.2s;
+        }
+
+        .profile-dropdown li a:hover,
+        .profile-dropdown li button:hover {
+            background: #f0f6ff;
+            color: var(--primary);
+        }
+
+        .profile-dropdown li:last-child button {
+            color: var(--danger);
+        }
+
+        .profile-dropdown li:last-child button:hover {
+            background: rgba(255, 77, 109, 0.08);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .lesson-page {
@@ -353,6 +494,12 @@
             font-weight: 900;
         }
 
+        @media (max-width: 992px) {
+            .nav-actions .btn-outline {
+                display: none;
+            }
+        }
+
         @media (max-width: 900px) {
             .lesson-layout {
                 grid-template-columns: 1fr;
@@ -378,13 +525,28 @@
                 padding: 20px;
             }
 
-            .btn {
+            .denied-actions .btn {
                 width: 100%;
             }
 
             .watch-head {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+
+            .nav-back-link {
+                font-size: 14px;
+            }
+
+            .nav-actions .btn {
+                padding: 10px 16px;
+                font-size: 13px;
             }
         }
     </style>
@@ -396,12 +558,30 @@
         <div class="container navbar">
             <a href="index.html" class="logo">
                 <span class="logo-icon">ب</span>
-                البكالورينجية
+                <span class="logo-text">البكالورينجية</span>
             </a>
 
-            <a href="#" class="back-to-course btn btn-primary">
+            <a href="#" class="back-to-course nav-back-link">
                 الرجوع للكورس
             </a>
+
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-outline" id="loginBtn">تسجيل الدخول</a>
+                <a href="register.html" class="btn btn-primary" id="registerBtn">إنشاء حساب</a>
+
+                <div class="profile-menu" id="profileMenu">
+                    <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-haspopup="true"
+                        aria-expanded="false" title="حسابي">
+                        <span class="profile-avatar-img" id="profileAvatarImg">👤</span>
+                    </button>
+
+                    <ul class="profile-dropdown" id="profileDropdown">
+                        <li><a href="student-profile.html">👤 البروفايل بتاعي</a></li>
+                        <li><a href="settings.html">⚙️ الإعدادات</a></li>
+                        <li><button type="button" id="logoutBtn">🚪 تسجيل خروج</button></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -524,6 +704,57 @@
 
         const whatsappAccessBtn = document.getElementById("whatsappAccessBtn");
 
+        // ---------- Header: profile avatar + dropdown (نفس كومبوننت باقي الموقع) ----------
+        const loginBtn = document.getElementById("loginBtn");
+        const registerBtn = document.getElementById("registerBtn");
+        const profileMenu = document.getElementById("profileMenu");
+        const profileAvatarBtn = document.getElementById("profileAvatarBtn");
+        const profileAvatarImg = document.getElementById("profileAvatarImg");
+        const profileDropdown = document.getElementById("profileDropdown");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        profileAvatarBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = profileDropdown.classList.toggle("show");
+            profileAvatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!profileMenu.contains(e.target)) {
+                profileDropdown.classList.remove("show");
+                profileAvatarBtn.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        });
+
+        function renderHeaderAvatar(user, profile) {
+            if (!user) {
+                loginBtn.style.display = "";
+                registerBtn.style.display = "";
+                profileMenu.style.display = "none";
+                return;
+            }
+
+            loginBtn.style.display = "none";
+            registerBtn.style.display = "none";
+            profileMenu.style.display = "inline-flex";
+
+            const displayName = profile?.full_name || user.email || "";
+
+            if (profile?.avatar_url) {
+                profileAvatarImg.style.backgroundImage = `url('${profile.avatar_url}')`;
+                profileAvatarImg.textContent = "";
+            } else {
+                // مهم: نمسح الـ inline style مش نحطه "none" عشان الخلفية المتدرجة تفضل ظاهرة ورا الحرف
+                profileAvatarImg.style.backgroundImage = "";
+                profileAvatarImg.textContent = displayName ? displayName.trim().charAt(0).toUpperCase() : "👤";
+            }
+        }
+
         let currentUser = null;
         let currentCourse = null;
         let currentLesson = null;
@@ -598,6 +829,19 @@
             const { data } = await supabaseClient.auth.getUser();
 
             currentUser = data.user;
+
+            // الاسم والصورة بقى مصدرهم جدول profiles مش الـ auth metadata
+            let profile = null;
+            if (currentUser) {
+                const { data: profileData } = await supabaseClient
+                    .from("profiles")
+                    .select("full_name, avatar_url")
+                    .eq("id", currentUser.id)
+                    .maybeSingle();
+                profile = profileData;
+            }
+
+            renderHeaderAvatar(currentUser, profile);
         }
 
         async function loadCourse() {
@@ -791,8 +1035,9 @@
 
         async function saveCompleted() {
             if (!currentUser) {
-                alert("من فضلك سجل الدخول أولًا حتى يتم حفظ تقدمك.");
-                window.location.href = "login.html";
+                // بدل التنبيه المفاجئ، نرجعه لصفحة الدخول وبعد ما يسجل يرجع لنفس الدرس ده تاني
+                const returnUrl = window.location.pathname + window.location.search;
+                window.location.href = `login.html?redirect=${encodeURIComponent(returnUrl)}`;
                 return;
             }
 

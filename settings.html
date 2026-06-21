@@ -843,7 +843,7 @@
                             <div class="form-group">
                                 <label for="emailInput">البريد الإلكتروني</label>
                                 <input type="email" id="emailInput" placeholder="example@email.com" required>
-                                <!-- <span class="field-note">لو غيّرت الإيميل هيتبعتلك لينك تأكيد على الإيميل الجديد.</span> -->
+                                <span class="field-note">لو غيّرت الإيميل هيتبعتلك لينك تأكيد على الإيميل الجديد.</span>
                             </div>
 
                             <div class="form-group">
@@ -1024,19 +1024,34 @@
             }
         }
 
-        function fillFormFromUser(user) {
-            const meta = user.user_metadata || {};
+        let currentProfile = null;
 
-            fullNameInput.value = meta.full_name || "";
+        async function fetchProfile(userId) {
+            const { data, error } = await supabaseClient
+                .from("profiles")
+                .select("full_name, phone, avatar_url, role")
+                .eq("id", userId)
+                .maybeSingle();
+
+            if (error) {
+                console.error(error);
+            }
+
+            // لو مفيش صف لسه لأي سبب، نرجع كائن فاضي عشان الفورم تشتغل عادي
+            return data || { full_name: "", phone: "", avatar_url: null, role: null };
+        }
+
+        function fillFormFromProfile(user, profile) {
+            fullNameInput.value = profile.full_name || "";
             emailInput.value = user.email || "";
-            phoneInput.value = meta.phone || "";
+            phoneInput.value = profile.phone || "";
 
-            avatarNameLabel.textContent = meta.full_name || "الطالب";
+            avatarNameLabel.textContent = profile.full_name || "الطالب";
             avatarEmailLabel.textContent = user.email || "";
 
-            const displayName = meta.full_name || user.email || "";
-            renderAvatar(avatarPreview, meta.avatar_url, displayName);
-            renderAvatar(profileAvatarImg, meta.avatar_url, displayName);
+            const displayName = profile.full_name || user.email || "";
+            renderAvatar(avatarPreview, profile.avatar_url, displayName);
+            renderAvatar(profileAvatarImg, profile.avatar_url, displayName);
         }
 
         async function initSettingsPage() {
@@ -1053,7 +1068,9 @@
             currentUser = session.user;
             profileMenu.style.display = "inline-flex";
 
-            fillFormFromUser(currentUser);
+            // البيانات (الاسم، التليفون، الصورة) بقت مصدرها جدول profiles مش الـ auth metadata
+            currentProfile = await fetchProfile(currentUser.id);
+            fillFormFromProfile(currentUser, currentProfile);
 
             authGuard.style.display = "none";
         }
@@ -1111,13 +1128,14 @@
                 // نضيف باراميتر وقتي عشان نكسر الـ cache ونضمن إن الصورة الجديدة تظهر فورًا
                 const freshUrl = `${publicUrlData.publicUrl}?t=${Date.now()}`;
 
-                const { data: updateData, error: updateError } = await supabaseClient.auth.updateUser({
-                    data: { avatar_url: freshUrl }
-                });
+                // upsert بدل update عادي: لو لأي سبب صف الـ profile مش موجود لسه، بينشئه بدل ما يفشل
+                const { error: profileError } = await supabaseClient
+                    .from("profiles")
+                    .upsert({ id: currentUser.id, avatar_url: freshUrl }, { onConflict: "id" });
 
-                if (updateError) throw updateError;
+                if (profileError) throw profileError;
 
-                currentUser = updateData.user;
+                currentProfile.avatar_url = freshUrl;
                 selectedAvatarFile = null;
                 avatarFileInput.value = "";
                 avatarSaveBtn.classList.remove("show");
@@ -1156,28 +1174,32 @@
             profileSaveBtn.disabled = true;
             profileSaveBtn.textContent = "جاري الحفظ...";
 
-            try {
-                const payload = {
-                    data: {
-                        full_name: fullName,
-                        phone: phone
-                    }
-                };
+            // لازم نحدد ده قبل أي تحديث، عشان currentUser.email هيتغير بعد نجاح تحديث الإيميل
+            const emailChanged = newEmail && newEmail !== currentUser.email;
 
-                // لو الإيميل اتغيّر بس، نبعته في نفس الطلب
-                if (newEmail && newEmail !== currentUser.email) {
-                    payload.email = newEmail;
+            try {
+                // الاسم ورقم التليفون بقوا بيتسجلوا في جدول profiles
+                // upsert بدل update عادي: لو الصف مش موجود لأي سبب، بينشئه بدل ما يفشل
+                const { error: profileError } = await supabaseClient
+                    .from("profiles")
+                    .upsert({ id: currentUser.id, full_name: fullName, phone: phone }, { onConflict: "id" });
+
+                if (profileError) throw profileError;
+
+                currentProfile.full_name = fullName;
+                currentProfile.phone = phone;
+
+                // الإيميل وحده بيتغير في نظام الـ Auth، مش جدول profiles
+                if (emailChanged) {
+                    const { data, error: emailError } = await supabaseClient.auth.updateUser({ email: newEmail });
+                    if (emailError) throw emailError;
+                    currentUser = data.user;
                 }
 
-                const { data, error } = await supabaseClient.auth.updateUser(payload);
-
-                if (error) throw error;
-
-                currentUser = data.user;
                 avatarNameLabel.textContent = fullName;
-                renderAvatar(profileAvatarImg, currentUser.user_metadata?.avatar_url, fullName);
+                renderAvatar(profileAvatarImg, currentProfile.avatar_url, fullName);
 
-                if (payload.email) {
+                if (emailChanged) {
                     showStatus(profileMsg, "تم الحفظ، وهيتبعتلك لينك تأكيد على إيميلك الجديد", "success");
                 } else {
                     showStatus(profileMsg, "تم حفظ بياناتك بنجاح", "success");

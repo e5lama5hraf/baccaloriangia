@@ -1022,7 +1022,7 @@
       window.location.reload();
     });
 
-    function renderHeaderAvatar(user) {
+    function renderHeaderAvatar(user, profile) {
       if (!user) {
         loginBtn.style.display = "";
         registerBtn.style.display = "";
@@ -1034,11 +1034,10 @@
       registerBtn.style.display = "none";
       profileMenu.style.display = "inline-flex";
 
-      const meta = user.user_metadata || {};
-      const displayName = meta.full_name || user.email || "";
+      const displayName = profile?.full_name || user.email || "";
 
-      if (meta.avatar_url) {
-        profileAvatarImg.style.backgroundImage = `url('${meta.avatar_url}')`;
+      if (profile?.avatar_url) {
+        profileAvatarImg.style.backgroundImage = `url('${profile.avatar_url}')`;
         profileAvatarImg.textContent = "";
       } else {
         // مهم: نمسح الـ inline style مش نحطه "none" عشان الخلفية المتدرجة تفضل ظاهرة ورا الحرف
@@ -1113,7 +1112,7 @@
     // بيحدد شكل الجزء الخاص بحالة الدرس: مقفول / مجاني / متاح للمشاهدة
     function renderLessonMeta(lesson, isEnrolled, courseId) {
       const status = getLessonStatus(lesson.status);
-      const watchLink = `<a href="lesson-details.html?course=${courseId}&lesson=${lesson.id}" class="lesson-watch-link">▶ مشاهدة</a>`;
+      const watchLink = `<a href="lesson-details.html?id=${lesson.id}&course=${courseId}" class="lesson-watch-link">▶ مشاهدة</a>`;
 
       if (isEnrolled) {
         // الطالب مشترك فعلاً في الكورس ده: كل الدروس بقت متاحة له
@@ -1135,7 +1134,18 @@
       } = await supabaseClient.auth.getSession();
 
       currentUser = session?.user || null;
-      renderHeaderAvatar(currentUser);
+
+      let profile = null;
+      if (currentUser) {
+        const { data } = await supabaseClient
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+        profile = data;
+      }
+
+      renderHeaderAvatar(currentUser, profile);
     }
 
     async function loadEnrollments() {
@@ -1145,10 +1155,13 @@
       }
 
       try {
+        // مهم: الجدول الحقيقي اللي بيتسجل فيه اشتراك الطالب هو course_enrollments
+        // (مش enrollments) وفيه عمود اسمه user_id مش student_id
         const { data, error } = await supabaseClient
           .from("course_enrollments")
           .select("course_id")
-          .eq("user_id", currentUser.id);
+          .eq("user_id", currentUser.id)
+          .eq("status", "active");
 
         if (error) throw error;
 
