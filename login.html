@@ -265,27 +265,27 @@
 
         // ---------- مكان الرجوع بعد تسجيل الدخول ----------
         // الصفحات التانية في الموقع بتبعت login.html?redirect=... وهنا لازم نقراها وننفذها فعليًا
-        const urlParams = new URLSearchParams(window.location.search);
+        // const urlParams = new URLSearchParams(window.location.search);
 
-        function getSafeRedirect() {
-            const target = urlParams.get("redirect");
+        // function getSafeRedirect() {
+        //     const target = urlParams.get("redirect");
 
-            if (!target) {
-                return "index.html";
-            }
+        //     if (!target) {
+        //         return "index.html";
+        //     }
 
-            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس،
-            // مش لينكات لمواقع خارجية حد ممكن يحط في الرابط
-            if (
-                target.startsWith("http://") ||
-                target.startsWith("https://") ||
-                target.startsWith("//")
-            ) {
-                return "index.html";
-            }
+        //     // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس،
+        //     // مش لينكات لمواقع خارجية حد ممكن يحط في الرابط
+        //     if (
+        //         target.startsWith("http://") ||
+        //         target.startsWith("https://") ||
+        //         target.startsWith("//")
+        //     ) {
+        //         return "index.html";
+        //     }
 
-            return target;
-        }
+        //     return target;
+        // }
 
         // لو الطالب أصلاً مسجل دخول وفتح صفحة الدخول تاني، نوديه على طول لمكانه
         async function checkExistingSession() {
