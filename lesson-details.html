@@ -495,9 +495,9 @@
         }
 
         @media (max-width: 992px) {
-            .nav-actions .btn-outline {
+            /* .nav-actions .btn-outline {
                 display: none;
-            }
+            } */
         }
 
         @media (max-width: 900px) {
@@ -536,17 +536,26 @@
         }
 
         @media (max-width: 480px) {
+            .logo-icon {
+                width: 26px;
+                height: 26px;
+                border-radius: 10px;
+                font-size: 16px;
+                display: grid;
+                place-items: center;
+            }
+
             .logo-text {
-                display: none;
+                font-size: 16px;
             }
 
             .nav-back-link {
-                font-size: 14px;
+                visibility: hidden;
             }
 
             .nav-actions .btn {
                 padding: 10px 16px;
-                font-size: 13px;
+                font-size: 10px;
             }
         }
     </style>
