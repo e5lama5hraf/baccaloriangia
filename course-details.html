@@ -1239,6 +1239,36 @@
         </div>
     </div>
 
+    <!-- Login Required Modal -->
+    <div class="access-modal" id="loginRequiredModal">
+        <div class="modal-box">
+
+            <button class="modal-close" id="closeLoginRequiredModal">×</button>
+
+            <h3>سجّل دخولك الأول</h3>
+
+            <p>
+                لازم يكون عندك حساب وتكون مسجل دخول عشان تقدر تشترك في الكورس أو تشاهد الدروس المدفوعة.
+            </p>
+
+            <div class="modal-actions">
+
+                <a id="loginRequiredRegisterLink" href="register.html" class="btn btn-primary">
+                    إنشاء حساب جديد
+                </a>
+
+                <a id="loginRequiredLoginLink" href="login.html" class="btn btn-light">
+                    عندي حساب بالفعل - تسجيل دخول
+                </a>
+
+                <button class="btn btn-light" id="cancelLoginRequired">
+                    إلغاء
+                </button>
+
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <p>© 2026 جميع الحقوق محفوظة لمنصة البكالورينجية</p>
@@ -1330,6 +1360,17 @@
         const closeSubscribeModal = document.getElementById("closeSubscribeModal");
         const cancelSubscribe = document.getElementById("cancelSubscribe");
         const whatsappLink = document.getElementById("whatsappLink");
+
+        const loginRequiredModal = document.getElementById("loginRequiredModal");
+        const closeLoginRequiredModal = document.getElementById("closeLoginRequiredModal");
+        const cancelLoginRequired = document.getElementById("cancelLoginRequired");
+        const loginRequiredRegisterLink = document.getElementById("loginRequiredRegisterLink");
+        const loginRequiredLoginLink = document.getElementById("loginRequiredLoginLink");
+
+        // لو الطالب يدوس "اشترك" وهو مش مسجل دخول، بعد ما يسجل/يعمل حساب نرجعه لنفس صفحة الكورس دي
+        const returnUrl = window.location.pathname + window.location.search;
+        loginRequiredRegisterLink.href = `register.html?redirect=${encodeURIComponent(returnUrl)}`;
+        loginRequiredLoginLink.href = `login.html?redirect=${encodeURIComponent(returnUrl)}`;
 
         const whatsappNumber = "201154593804";
 
@@ -1759,6 +1800,12 @@
                     const isFree = button.dataset.free === "true";
 
                     if (!isFree && !hasAccess) {
+                        // لازم يسجل دخول الأول قبل ما يعرض عليه طريقة الاشتراك
+                        if (!currentUser) {
+                            openLoginRequiredModal();
+                            return;
+                        }
+
                         openSubscribeModal();
                         return;
                     }
@@ -1797,13 +1844,39 @@
             subscribeModal.classList.remove("active");
         }
 
-        subscribeBtn.addEventListener("click", openSubscribeModal);
+        function openLoginRequiredModal() {
+            loginRequiredModal.classList.add("active");
+        }
+
+        function closeLoginRequiredModalFn() {
+            loginRequiredModal.classList.remove("active");
+        }
+
+        subscribeBtn.addEventListener("click", () => {
+            // لازم يسجل دخول الأول قبل ما يعرض عليه طريقة الاشتراك
+            if (!currentUser) {
+                openLoginRequiredModal();
+                return;
+            }
+
+            openSubscribeModal();
+        });
+
         closeSubscribeModal.addEventListener("click", closeSubscribeModalFn);
         cancelSubscribe.addEventListener("click", closeSubscribeModalFn);
 
         subscribeModal.addEventListener("click", (e) => {
             if (e.target === subscribeModal) {
                 closeSubscribeModalFn();
+            }
+        });
+
+        closeLoginRequiredModal.addEventListener("click", closeLoginRequiredModalFn);
+        cancelLoginRequired.addEventListener("click", closeLoginRequiredModalFn);
+
+        loginRequiredModal.addEventListener("click", (e) => {
+            if (e.target === loginRequiredModal) {
+                closeLoginRequiredModalFn();
             }
         });
 

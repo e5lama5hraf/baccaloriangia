@@ -15,6 +15,7 @@
         :root {
             --primary: #123c8c;
             --secondary: #0bb6d6;
+            --accent: #ffb703;
             --dark: #071a3d;
             --light: #f4f8ff;
             --white: #ffffff;
@@ -34,7 +35,10 @@
         }
 
         body {
-            background: var(--light);
+            background:
+                radial-gradient(circle at 12% 15%, rgba(11, 182, 214, 0.16), transparent 26%),
+                radial-gradient(circle at 88% 10%, rgba(255, 183, 3, 0.18), transparent 24%),
+                var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -43,12 +47,42 @@
             padding: 20px;
         }
 
+        a {
+            color: inherit;
+        }
+
         .card {
             width: min(420px, 92%);
             background: var(--white);
+            border: 1px solid rgba(18, 60, 140, 0.08);
             border-radius: var(--radius);
-            padding: 28px;
+            padding: 30px 28px;
             box-shadow: var(--shadow);
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--primary);
+            font-size: 19px;
+            font-weight: 900;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            box-shadow: 0 10px 22px rgba(18, 60, 140, 0.25);
+            flex-shrink: 0;
         }
 
         h1 {
@@ -73,11 +107,47 @@
             font-size: 14px;
             outline: none;
             transition: 0.3s;
+            background: var(--white);
+            color: var(--text);
         }
 
         .input:focus {
             border-color: var(--secondary);
             box-shadow: 0 0 0 4px rgba(11, 182, 214, 0.15);
+        }
+
+        /* حقل كلمة المرور + أيقونة الإظهار/الإخفاء */
+        .password-field {
+            position: relative;
+        }
+
+        .password-field .input {
+            padding-left: 46px;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 12px;
+            margin: auto 0;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 18px;
+            line-height: 1;
+            transition: 0.2s;
+        }
+
+        .password-toggle-btn:hover {
+            background: #eef4ff;
+            color: var(--primary);
         }
 
         .btn {
@@ -136,12 +206,21 @@
 <body>
 
     <div class="card">
+        <a href="index.html" class="auth-logo">
+            <span class="logo-icon">ب</span>
+            البكالورينجية
+        </a>
+
         <h1>تسجيل الدخول</h1>
         <p>ادخل البريد وكلمة المرور للدخول إلى المنصة</p>
 
         <form id="loginForm">
             <input type="email" id="email" class="input" placeholder="البريد الإلكتروني" required>
-            <input type="password" id="password" class="input" placeholder="كلمة المرور" required>
+
+            <div class="password-field">
+                <input type="password" id="password" class="input" placeholder="كلمة المرور" required>
+                <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="إظهار كلمة المرور">👁️</button>
+            </div>
 
             <div class="message error" id="errorMessage">من فضلك أدخل بيانات صحيحة</div>
             <div class="message success" id="successMessage">تم تسجيل الدخول بنجاح</div>
@@ -170,9 +249,54 @@
         const loginForm = document.getElementById("loginForm");
         const emailInput = document.getElementById("email");
         const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
         const errorMessage = document.getElementById("errorMessage");
         const successMessage = document.getElementById("successMessage");
         const loginBtn = document.getElementById("loginBtn");
+
+        // ---------- إظهار/إخفاء كلمة المرور ----------
+        togglePassword.addEventListener("click", () => {
+            const isHidden = passwordInput.type === "password";
+
+            passwordInput.type = isHidden ? "text" : "password";
+            togglePassword.textContent = isHidden ? "🙈" : "👁️";
+            togglePassword.setAttribute("aria-label", isHidden ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
+        });
+
+        // ---------- مكان الرجوع بعد تسجيل الدخول ----------
+        // الصفحات التانية في الموقع بتبعت login.html?redirect=... وهنا لازم نقراها وننفذها فعليًا
+        const urlParams = new URLSearchParams(window.location.search);
+
+        function getSafeRedirect() {
+            const target = urlParams.get("redirect");
+
+            if (!target) {
+                return "index.html";
+            }
+
+            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس،
+            // مش لينكات لمواقع خارجية حد ممكن يحط في الرابط
+            if (
+                target.startsWith("http://") ||
+                target.startsWith("https://") ||
+                target.startsWith("//")
+            ) {
+                return "index.html";
+            }
+
+            return target;
+        }
+
+        // لو الطالب أصلاً مسجل دخول وفتح صفحة الدخول تاني، نوديه على طول لمكانه
+        async function checkExistingSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (session) {
+                window.location.href = getSafeRedirect();
+            }
+        }
+
+        checkExistingSession();
 
         function showError(message) {
             successMessage.style.display = "none";
@@ -220,19 +344,21 @@
 
                 if (error) {
                     showError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = "دخول";
                     return;
                 }
 
-                showSuccess("تم تسجيل الدخول بنجاح");
+                showSuccess("تم تسجيل الدخول بنجاح، جاري تحويلك...");
+                loginBtn.textContent = "جاري التحويل...";
 
                 setTimeout(() => {
-                    window.location.href = "index.html";
+                    window.location.href = getSafeRedirect();
                 }, 800);
 
             } catch (err) {
                 showError("حدث خطأ غير متوقع. حاول مرة أخرى.");
                 console.error(err);
-            } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = "دخول";
             }

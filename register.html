@@ -117,15 +117,27 @@
             position: relative;
         }
 
+        .password-wrapper .form-control {
+            padding-left: 46px;
+        }
+
         .toggle-password {
             position: absolute;
-            left: 15px;
+            left: 8px;
             top: 50%;
             transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
             border: none;
             background: none;
             cursor: pointer;
             font-size: 18px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .toggle-password:hover {
+            background: #eef4ff;
         }
 
         .btn {
@@ -228,8 +240,9 @@
                 <div class="password-wrapper">
                     <input type="password" id="password" class="form-control" placeholder="********" required>
 
-                    <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                        👁
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', this)"
+                        aria-label="إظهار كلمة المرور">
+                        👁️
                     </button>
                 </div>
             </div>
@@ -240,8 +253,9 @@
                 <div class="password-wrapper">
                     <input type="password" id="confirmPassword" class="form-control" placeholder="********" required>
 
-                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
-                        👁
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)"
+                        aria-label="إظهار كلمة المرور">
+                        👁️
                     </button>
                 </div>
             </div>
@@ -285,12 +299,35 @@
         const successMessage = document.getElementById("successMessage");
         const submitBtn = document.getElementById("submitBtn");
 
-        function togglePassword(id) {
-            const input = document.getElementById(id);
+        // ---------- مكان الرجوع بعد التسجيل (نفس فكرة login.html بالظبط) ----------
+        const urlParams = new URLSearchParams(window.location.search);
 
-            input.type = input.type === "password"
-                ? "text"
-                : "password";
+        function getSafeRedirect() {
+            const target = urlParams.get("redirect");
+
+            if (!target) {
+                return "index.html";
+            }
+
+            // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس
+            if (
+                target.startsWith("http://") ||
+                target.startsWith("https://") ||
+                target.startsWith("//")
+            ) {
+                return "index.html";
+            }
+
+            return target;
+        }
+
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            const isHidden = input.type === "password";
+
+            input.type = isHidden ? "text" : "password";
+            btn.textContent = isHidden ? "🙈" : "👁️";
+            btn.setAttribute("aria-label", isHidden ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
         }
 
         function showError(message) {
@@ -324,6 +361,18 @@
                 return;
             }
 
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError("من فضلك أدخل بريد إلكتروني صحيح");
+                return;
+            }
+
+            const phoneRegex = /^01[0-9]{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showError("رقم التليفون لازم يكون 11 رقم ويبدأ بـ 01");
+                return;
+            }
+
             if (password.length < 6) {
                 showError("كلمة المرور يجب ألا تقل عن 6 أحرف");
                 return;
@@ -338,6 +387,9 @@
             submitBtn.textContent = "جاري إنشاء الحساب...";
 
             try {
+                // full_name و phone بيتبعتوا هنا بس عشان الـ trigger في قاعدة البيانات
+                // يقدر ينسخهم لجدول profiles وقت إنشاء الحساب مباشرة (راجع شرح الـ SQL).
+                // بعد كده التطبيق كله بيقرا وبيعدّل البيانات دي من جدول profiles بس.
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
@@ -351,24 +403,32 @@
 
                 if (error) {
                     showError(error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "إنشاء الحساب";
                     return;
                 }
 
-                /*
-                    لو Supabase مفعل تأكيد البريد الإلكتروني:
-                    المستخدم سيحتاج يفتح الإيميل ويأكد الحساب.
-                */
+                if (data.session) {
+                    // تأكيد الإيميل مش مفعّل في إعدادات Supabase: الحساب بقى شغال على طول
+                    showSuccess("تم إنشاء الحساب بنجاح، جاري تحويلك...");
+                    submitBtn.textContent = "جاري التحويل...";
 
-                showSuccess("تم إنشاء الحساب بنجاح. من فضلك تحقق من بريدك الإلكتروني إذا كان تفعيل البريد مفعلًا.");
+                    setTimeout(() => {
+                        window.location.href = getSafeRedirect();
+                    }, 1200);
+                } else {
+                    // تأكيد الإيميل مفعّل: لازم يفتح بريده الأول قبل ما يقدر يدخل
+                    showSuccess("تم إنشاء الحساب بنجاح. من فضلك تحقق من بريدك الإلكتروني لتأكيد الحساب.");
+                    submitBtn.textContent = "تم الإرسال...";
 
-                setTimeout(() => {
-                    window.location.href = "login.html";
-                }, 1800);
+                    setTimeout(() => {
+                        window.location.href = `login.html?redirect=${encodeURIComponent(getSafeRedirect())}`;
+                    }, 1800);
+                }
 
             } catch (err) {
                 showError("حدث خطأ غير متوقع. حاول مرة أخرى.");
                 console.error(err);
-            } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = "إنشاء الحساب";
             }

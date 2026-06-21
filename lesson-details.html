@@ -371,13 +371,6 @@
             transition: width 0.3s ease;
         }
 
-        .watch-note {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.8;
-            font-weight: 700;
-        }
-
         .completed-message {
             display: none;
             margin-top: 14px;
@@ -592,9 +585,6 @@
         <div class="container lesson-layout">
 
             <div class="lesson-main">
-                <div class="badge" id="lessonBadge">
-                    جاري تحميل بيانات الدرس...
-                </div>
 
                 <h1 id="lessonTitle">
                     عنوان الدرس
@@ -620,10 +610,6 @@
                     <div class="watch-bar">
                         <div class="watch-fill" id="watchFill"></div>
                     </div>
-
-                    <p class="watch-note">
-                        لأن الفيديو من YouTube، يتم تسجيل إتمام الدرس يدويًا بعد المشاهدة.
-                    </p>
 
                     <button class="btn btn-primary" id="completeLessonBtn" type="button" style="margin-top: 14px;">
                         تسجيل الدرس كمكتمل
@@ -692,7 +678,6 @@
         const lessonPage = document.getElementById("lessonPage");
         const accessDenied = document.getElementById("accessDenied");
 
-        const lessonBadge = document.getElementById("lessonBadge");
         const lessonTitle = document.getElementById("lessonTitle");
         const lessonDescription = document.getElementById("lessonDescription");
         const lessonList = document.getElementById("lessonList");
@@ -916,9 +901,6 @@
 
             document.title = `${lesson.title} | البكالورينجية`;
 
-            lessonBadge.textContent =
-                `درس داخل كورس ${currentCourse.title}`;
-
             lessonTitle.textContent =
                 lesson.title;
 
@@ -1077,6 +1059,67 @@
 
             completeLessonBtn.textContent = "تم إكمال الدرس";
             completeLessonBtn.disabled = true;
+
+            // نحدث نسبة إتمام الكورس فورًا بعد ما الدرس يتسجل كمكتمل
+            await updateContinueProgress();
+        }
+
+        // بتسجل "آخر درس اتفتح" + نسبة إتمام الكورس كله في student_course_progress
+        // ده اللي بيشغل خاصية "كمل آخر كورس فتحته" في صفحة بروفايل الطالب
+        async function updateContinueProgress() {
+            if (!currentUser) {
+                return;
+            }
+
+            try {
+                const { data: courseLessons, error: lessonsError } = await supabaseClient
+                    .from("lessons")
+                    .select("id")
+                    .eq("course_id", courseId)
+                    .eq("is_active", true);
+
+                if (lessonsError) throw lessonsError;
+
+                const { data: progressRows, error: progressError } = await supabaseClient
+                    .from("lesson_progress")
+                    .select("lesson_id, is_completed")
+                    .eq("user_id", currentUser.id)
+                    .eq("course_id", courseId);
+
+                if (progressError) throw progressError;
+
+                const completedIds = new Set(
+                    (progressRows || []).filter(row => row.is_completed).map(row => row.lesson_id)
+                );
+
+                const totalLessons = (courseLessons || []).length;
+                const completedCount = (courseLessons || [])
+                    .filter(lesson => completedIds.has(lesson.id)).length;
+
+                const percent = totalLessons === 0
+                    ? 0
+                    : Math.round((completedCount / totalLessons) * 100);
+
+                // onConflict على (user_id, course_id) عشان يفضل صف واحد بس لكل كورس،
+                // بيتحدث بآخر درس اتفتح ونسبة الإنجاز الحالية في كل مرة
+                const { error: upsertError } = await supabaseClient
+                    .from("student_course_progress")
+                    .upsert({
+                        user_id: currentUser.id,
+                        course_id: courseId,
+                        lesson_id: lessonId,
+                        progress_percent: percent,
+                        last_opened_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: "user_id,course_id"
+                    });
+
+                if (upsertError) throw upsertError;
+            } catch (err) {
+                // مش هنوقف الصفحة لو التتبع ده فشل، بس نسجله في الـ console
+                console.error(err);
+            }
         }
 
         function showAccessDenied() {
@@ -1126,6 +1169,7 @@
 
             if (lessonLoaded) {
                 await loadProgress();
+                await updateContinueProgress();
             }
 
             updateWhatsAppLink();
