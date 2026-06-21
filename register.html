@@ -310,13 +310,13 @@
             }
 
             // حماية بسيطة من open-redirect: نسمح بمسارات داخل الموقع بس
-            if (
-                target.startsWith("http://") ||
-                target.startsWith("https://") ||
-                target.startsWith("//")
-            ) {
-                return "index.html";
-            }
+            // if (
+            //     target.startsWith("http://") ||
+            //     target.startsWith("https://") ||
+            //     target.startsWith("//")
+            // ) {
+            //     return "index.html";
+            // }
 
             return target;
         }
