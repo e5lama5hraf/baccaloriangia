@@ -1161,8 +1161,7 @@
 
     @media (max-width: 620px) {
       .navbar {
-        height: 115px;
-        flex-wrap: wrap;
+        height: 76px;
       }
 
       .hero {
@@ -1220,6 +1219,25 @@
 
       .cta-box {
         padding: 34px 24px;
+      }
+
+      @media (max-width:480px) {
+        .logo {
+          font-size: 16px;
+        }
+
+        .brand-area .logo-icon {
+          width: 26px;
+          height: 26px;
+          border-radius: 10px;
+          display: grid;
+          place-items: center;
+        }
+
+        .nav-actions .btn {
+          font-size: 10px;
+          flex-wrap: wrap;
+        }
       }
     }
   </style>
