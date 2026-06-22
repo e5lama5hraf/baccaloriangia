@@ -649,22 +649,13 @@
     }
 
     @media (max-width: 420px) {
-      .logo-icon {
-        width: 26px;
-        height: 26px;
-        border-radius: 10px;
-        font-size: 16px;
-        display: grid;
-        place-items: center;
-      }
-
       .logo-text {
-        font-size: 16px;
+        display: none;
       }
 
       .nav-actions .btn {
         padding: 10px 16px;
-        font-size: 10px;
+        font-size: 13px;
       }
     }
   </style>
@@ -1052,21 +1043,67 @@
         certificatesGrid.innerHTML = `
           <div class="empty-card">
             <div class="empty-icon">🏅</div>
-            <p>لسه مفيش شهادات مرفوعة لحسابك. الشهادات هتظهر هنا بعد ما الإدارة ترفعها لك.</p>
+            <p>لسه مفيش شهادات محفوظة في بروفايلك.</p>
           </div>
         `;
         return;
       }
 
       certificatesGrid.innerHTML = certificates.map(certificate => `
-        <div class="certificate-card">
+        <div class="certificate-card" data-cert-id="${certificate.id}">
           <div class="certificate-icon">🏆</div>
           <h3>${certificate.title || certificate.courses?.title || "شهادة إتمام كورس"}</h3>
           <p>${certificate.courses?.title ? `خاصة بكورس: ${certificate.courses.title}` : "شهادة مرفوعة من إدارة المنصة"}</p>
-          <a href="${certificate.certificate_url}" target="_blank" class="btn btn-primary">عرض الشهادة</a>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="${certificate.certificate_url}" target="_blank" class="btn btn-primary" style="flex:1">عرض الشهادة</a>
+            <button class="btn delete-cert-btn" data-cert-id="${certificate.id}" style="flex:1;background:rgba(255,77,109,.1);color:var(--danger);border:1px solid rgba(255,77,109,.25);">
+              🗑️ حذف
+            </button>
+          </div>
         </div>
       `).join("");
     }
+
+    certificatesGrid.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".delete-cert-btn");
+      if (!btn) return;
+
+      if (!confirm("متأكد إنك عايز تحذف الشهادة دي من بروفايلك؟")) return;
+
+      const certId = btn.dataset.certId;
+      btn.disabled = true;
+      btn.textContent = "جاري الحذف...";
+
+      const { error } = await supabaseClient
+        .from("student_certificates")
+        .delete()
+        .eq("id", certId);
+
+      if (error) {
+        console.error(error);
+        btn.disabled = false;
+        btn.textContent = "🗑️ حذف";
+        alert("حصل خطأ أثناء الحذف، حاول تاني.");
+        return;
+      }
+
+      // نحذف الكارت من الـ DOM مباشرة بدون reload
+      const card = certificatesGrid.querySelector(`[data-cert-id="${certId}"]`);
+      if (card) card.remove();
+
+      // نحدث العداد
+      const remaining = certificatesGrid.querySelectorAll(".certificate-card").length;
+      certificatesCount.textContent = remaining;
+
+      if (remaining === 0) {
+        certificatesGrid.innerHTML = `
+          <div class="empty-card">
+            <div class="empty-icon">🏅</div>
+            <p>لسه مفيش شهادات محفوظة في بروفايلك.</p>
+          </div>
+        `;
+      }
+    });
 
     async function initProfilePage() {
       const session = await requireStudentSession();

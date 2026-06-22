@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الشهادات | البكالورينجية</title>
-
+    <title>شهادات الكورسات | البكالورينجية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-
     <style>
         :root {
             --primary: #123c8c;
@@ -22,8 +20,8 @@
             --danger: #ff4d6d;
             --success: #0f9f6e;
             --radius: 24px;
-            --shadow: 0 18px 40px rgba(7, 26, 61, 0.12);
-            --soft-shadow: 0 12px 28px rgba(7, 26, 61, 0.08);
+            --shadow: 0 18px 40px rgba(7, 26, 61, .12);
+            --soft-shadow: 0 12px 28px rgba(7, 26, 61, .08);
         }
 
         * {
@@ -50,8 +48,6 @@
             display: flex;
             min-height: 100vh;
         }
-
-        /* Sidebar */
 
         .sidebar {
             width: 280px;
@@ -104,26 +100,20 @@
             background: var(--primary);
         }
 
-        /* Main */
-
         .main-content {
             flex: 1;
             margin-right: 280px;
             padding: 30px;
         }
 
-        /* Topbar */
-
         .topbar {
             background: white;
             border-radius: var(--radius);
             padding: 20px 25px;
             box-shadow: var(--soft-shadow);
-
             display: flex;
             justify-content: space-between;
             align-items: center;
-
             margin-bottom: 30px;
         }
 
@@ -149,11 +139,9 @@
             border-radius: 50%;
             background: var(--primary);
             color: white;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             font-weight: bold;
         }
 
@@ -170,8 +158,6 @@
         .logout-btn:hover {
             opacity: .9;
         }
-
-        /* Statistics */
 
         .stats-grid {
             display: grid;
@@ -197,8 +183,6 @@
             font-weight: 900;
             color: var(--primary);
         }
-
-        /* Boxes */
 
         .box {
             background: white;
@@ -228,115 +212,23 @@
             font-size: 14px;
         }
 
-        /* Form */
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 800;
-            color: var(--dark);
-            font-size: 14px;
-        }
-
-        .form-control,
-        select.form-control {
-            width: 100%;
-            height: 52px;
-            border-radius: 14px;
-            border: 1px solid #d9e3f2;
-            padding: 0 14px;
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            transition: .3s;
-            background: var(--white);
-            color: var(--text);
-        }
-
-        .form-control:focus {
-            border-color: var(--secondary);
-        }
-
-        .file-drop {
-            border: 2px dashed rgba(18, 60, 140, 0.2);
+        .info-banner {
+            background: rgba(11, 182, 214, .1);
+            border: 1px solid rgba(11, 182, 214, .25);
             border-radius: 16px;
-            padding: 18px;
-            text-align: center;
-            color: var(--muted);
+            padding: 16px 18px;
+            margin-bottom: 26px;
+            color: var(--primary);
             font-weight: 700;
             font-size: 14px;
-            cursor: pointer;
-            transition: .3s;
-            background: #f8fbff;
+            line-height: 1.8;
         }
 
-        .file-drop:hover {
-            border-color: var(--secondary);
-            background: #f0f8ff;
-        }
-
-        .file-drop.has-file {
-            border-color: var(--success);
-            color: var(--success);
-            background: rgba(15, 159, 110, .06);
-        }
-
-        .submit-btn {
-            height: 52px;
-            border: none;
-            border-radius: 14px;
-            padding: 0 28px;
-            font-family: inherit;
+        .info-banner strong {
             font-weight: 900;
-            font-size: 15px;
-            cursor: pointer;
-            color: white;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transition: .3s;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .submit-btn:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .form-message {
-            margin-top: 14px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 14px;
-            display: none;
-        }
-
-        .form-message.error {
             display: block;
-            background: rgba(255, 77, 109, .1);
-            color: var(--danger);
+            margin-bottom: 4px;
         }
-
-        .form-message.success {
-            display: block;
-            background: rgba(15, 159, 110, .1);
-            color: var(--success);
-        }
-
-        /* Table */
 
         table {
             width: 100%;
@@ -349,7 +241,7 @@
 
         table th,
         table td {
-            padding: 12px;
+            padding: 14px 12px;
             text-align: center;
             font-size: 14px;
         }
@@ -368,12 +260,12 @@
             font-size: 12px;
         }
 
-        .status-pill.active {
+        .status-pill.has-cert {
             background: rgba(15, 159, 110, .1);
             color: var(--success);
         }
 
-        .status-pill.inactive {
+        .status-pill.no-cert {
             background: rgba(108, 120, 144, .12);
             color: var(--muted);
         }
@@ -412,16 +304,177 @@
             color: white;
         }
 
-        @media(max-width:1200px) {
+        /* Upload modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 26, 61, .65);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+        .modal-overlay.active {
+            display: flex;
+            animation: popIn .25s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(.9);
+                opacity: 0
             }
 
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .modal-box {
+            width: min(500px, 95%);
+            background: var(--white);
+            border-radius: 28px;
+            padding: 30px 26px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .modal-box h3 {
+            color: var(--dark);
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .modal-box p {
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            border: none;
+            background: #f4f8ff;
+            color: var(--dark);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            background: #e8eef8;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 800;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 52px;
+            border-radius: 14px;
+            border: 1px solid #d9e3f2;
+            padding: 0 14px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: .3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+        }
+
+        .file-drop {
+            border: 2px dashed rgba(18, 60, 140, .2);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .3s;
+            background: #f8fbff;
+            display: block;
+        }
+
+        .file-drop:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .file-drop.has-file {
+            border-color: var(--success);
+            color: var(--success);
+            background: rgba(15, 159, 110, .06);
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-weight: 900;
+            font-size: 15px;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin-top: 6px;
+            transition: .3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-message {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            display: none;
+        }
+
+        .form-message.error {
+            display: block;
+            background: rgba(255, 77, 109, .1);
+            color: var(--danger);
+        }
+
+        .form-message.success {
+            display: block;
+            background: rgba(15, 159, 110, .1);
+            color: var(--success);
         }
 
         @media(max-width:768px) {
-
             .sidebar {
                 width: 100%;
                 position: relative;
@@ -435,8 +488,8 @@
                 flex-direction: column;
             }
 
-            .form-grid {
-                grid-template-columns: 1fr;
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
             table {
@@ -444,580 +497,283 @@
                 overflow-x: auto;
                 white-space: nowrap;
             }
-
         }
 
         @media(max-width:576px) {
-
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
         }
     </style>
 </head>
 
 <body>
-
     <div class="dashboard">
-
-        <!-- Sidebar -->
-
         <aside class="sidebar">
-
             <div class="logo">
-                <div class="logo-icon">ب</div>
-                البكالورينجية
+                <div class="logo-icon">ب</div>البكالورينجية
             </div>
-
             <ul>
-
-                <li>
-                    <a href="dashboard.html">
-                        🏠 الرئيسية
-                    </a>
-                </li>
-
-                <li>
-                    <a href="teachers.html">
-                        👨‍🏫 المدرسين
-                    </a>
-                </li>
-
-                <li>
-                    <a href="courses.html">
-                        📚 الكورسات
-                    </a>
-                </li>
-
-                <li>
-                    <a href="units.html">
-                        📖 الوحدات
-                    </a>
-                </li>
-
-                <li>
-                    <a href="lessons.html">
-                        🎥 الدروس
-                    </a>
-                </li>
-
-                <li>
-                    <a href="exams.html">
-                        📝 الامتحانات
-                    </a>
-                </li>
-
-                <li>
-                    <a href="attachments.html">
-                        📂 الملفات
-                    </a>
-                </li>
-
-                <li class="active">
-                    <a href="certificates.html">
-                        🏆 الشهادات
-                    </a>
-                </li>
-
-                <li>
-                    <a href="students.html">
-                        👨‍🎓 الطلاب
-                    </a>
-                </li>
-
-                <li>
-                    <a href="enrollments.html">
-                        💳 الاشتراكات
-                    </a>
-                </li>
-
+                <li><a href="dashboard.html">🏠 الرئيسية</a></li>
+                <li><a href="teachers.html">👨‍🏫 المدرسين</a></li>
+                <li><a href="courses.html">📚 الكورسات</a></li>
+                <li><a href="units.html">📖 الوحدات</a></li>
+                <li><a href="lessons.html">🎥 الدروس</a></li>
+                <li><a href="exams.html">📝 الامتحانات</a></li>
+                <li><a href="attachments.html">📂 الملفات</a></li>
+                <li class="active"><a href="certificates.html">🏆 الشهادات</a></li>
+                <li><a href="students.html">👨‍🎓 الطلاب</a></li>
+                <li><a href="enrollments.html">💳 الاشتراكات</a></li>
             </ul>
-
         </aside>
 
-        <!-- Main Content -->
-
         <main class="main-content">
-
-            <!-- Topbar -->
-
             <div class="topbar">
-
                 <div class="page-title">
-                    <h1>إدارة الشهادات</h1>
-                    <p>إصدار شهادات إتمام الكورسات للطلاب اللي خلصوا كل الدروس</p>
+                    <h1>شهادات الكورسات</h1>
+                    <p>ارفع قالب شهادة PDF لكل كورس — الشهادة بتتفتح للطالب تلقائيًا بعد 100% إتمام</p>
                 </div>
-
                 <div class="admin-box">
-                    <div>
-                        <strong>Admin</strong>
+                    <div><strong>Admin</strong>
                         <div>مدير المنصة</div>
                     </div>
-
-                    <div class="admin-avatar">
-                        A
-                    </div>
-
-                    <button id="logoutBtn" class="logout-btn">
-                        خروج
-                    </button>
+                    <div class="admin-avatar">A</div>
+                    <button id="logoutBtn" class="logout-btn">خروج</button>
                 </div>
-
             </div>
 
-            <!-- Statistics -->
-
-            <section class="stats-grid">
-
+            <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-title">إجمالي الشهادات</div>
-                    <div class="stat-number" id="totalCertificatesCount">0</div>
+                    <div class="stat-title">إجمالي الكورسات</div>
+                    <div class="stat-number" id="totalCoursesCount">0</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-title">الشهادات النشطة</div>
-                    <div class="stat-number" id="activeCertificatesCount">0</div>
+                    <div class="stat-title">كورسات فيها شهادة</div>
+                    <div class="stat-number" id="coursesWithCertCount">0</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-title">عدد الطلاب الحاصلين على شهادات</div>
-                    <div class="stat-number" id="studentsWithCertificatesCount">0</div>
+                    <div class="stat-title">كورسات بدون شهادة</div>
+                    <div class="stat-number" id="coursesNoCertCount">0</div>
                 </div>
+            </div>
 
-            </section>
-
-            <!-- Issue Certificate Form -->
-
-            <section class="box">
+            <div class="box">
+                <div class="info-banner">
+                    <strong>إزاي بيشتغل النظام؟</strong>
+                    ارفع ملف PDF واحد لكل كورس (ده القالب العام للشهادة) — لما أي طالب يخلص 100% من دروس الكورس ده،
+                    الشهادة بتتفتحله تلقائيًا وبيقدر يحملها ويحفظها في بروفايله من غير ما تتدخل.
+                </div>
 
                 <div class="box-header">
                     <div>
-                        <h2>إصدار شهادة جديدة</h2>
-                        <p>اختار الطالب والكورس، وارفع ملف الشهادة بصيغة PDF</p>
-                    </div>
-                </div>
-
-                <form id="certificateForm">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-                            <label for="studentSelect">الطالب</label>
-                            <select id="studentSelect" class="form-control" required>
-                                <option value="">جاري تحميل الطلاب...</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="courseSelect">الكورس</label>
-                            <select id="courseSelect" class="form-control" required>
-                                <option value="">جاري تحميل الكورسات...</option>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="titleInput">عنوان الشهادة</label>
-                        <input type="text" id="titleInput" class="form-control"
-                            placeholder="هيتملي تلقائيًا لما تختار الكورس">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="certFileInput">ملف الشهادة (PDF)</label>
-
-                        <label class="file-drop" id="fileDropLabel" for="certFileInput">
-                            📄 دوس هنا لاختيار ملف PDF
-                        </label>
-
-                        <input type="file" id="certFileInput" accept="application/pdf" hidden required>
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="issueBtn">
-                        إصدار الشهادة
-                    </button>
-
-                    <div class="form-message" id="formMessage"></div>
-
-                </form>
-
-            </section>
-
-            <!-- Certificates Table -->
-
-            <section class="box">
-
-                <div class="box-header">
-                    <div>
-                        <h2>الشهادات الصادرة</h2>
-                        <p>كل الشهادات اللي اتصدرت للطلاب</p>
+                        <h2>الكورسات وقوالب الشهادات</h2>
                     </div>
                 </div>
 
                 <table>
-
                     <thead>
                         <tr>
-                            <th>الطالب</th>
                             <th>الكورس</th>
-                            <th>عنوان الشهادة</th>
-                            <th>تاريخ الإصدار</th>
-                            <th>الحالة</th>
+                            <th>المرحلة</th>
+                            <th>المدرس</th>
+                            <th>حالة الشهادة</th>
                             <th>إجراءات</th>
                         </tr>
                     </thead>
-
-                    <tbody id="certificatesTable">
+                    <tbody id="coursesTable">
                         <tr>
-                            <td colspan="6">جاري التحميل...</td>
+                            <td colspan="5">جاري التحميل...</td>
                         </tr>
                     </tbody>
-
                 </table>
-
-            </section>
-
+            </div>
         </main>
+    </div>
 
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-box">
+            <button class="modal-close" id="closeUploadModal">×</button>
+            <h3>رفع شهادة للكورس</h3>
+            <p id="modalCourseTitle">جاري التحميل...</p>
+
+            <div class="form-group">
+                <label>ملف الشهادة (PDF)</label>
+                <label class="file-drop" id="fileDropLabel" for="certFileInput">📄 دوس هنا لاختيار ملف PDF</label>
+                <input type="file" id="certFileInput" accept="application/pdf" hidden>
+            </div>
+
+            <button class="submit-btn" id="uploadBtn">رفع الشهادة</button>
+            <div class="form-message" id="formMessage"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
-
-        /* ==========================
-            Supabase Configuration
-        ========================== */
-
         const SUPABASE_URL = "https://gnxhzpskxhgxrlnrfnew.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdueGh6cHNreGhneHJsbnJmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODc2NTIsImV4cCI6MjA5NzI2MzY1Mn0.FyJY10Dif0tFAVFMnVjINrpjR4dPZShLxvrYezhc0TI";
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const db = supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
-
-        const studentSelect = document.getElementById("studentSelect");
-        const courseSelect = document.getElementById("courseSelect");
-        const titleInput = document.getElementById("titleInput");
-        const certFileInput = document.getElementById("certFileInput");
+        const coursesTable = document.getElementById("coursesTable");
+        const uploadModal = document.getElementById("uploadModal");
+        const closeUploadModal = document.getElementById("closeUploadModal");
+        const modalCourseTitle = document.getElementById("modalCourseTitle");
         const fileDropLabel = document.getElementById("fileDropLabel");
-        const certificateForm = document.getElementById("certificateForm");
-        const issueBtn = document.getElementById("issueBtn");
+        const certFileInput = document.getElementById("certFileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
         const formMessage = document.getElementById("formMessage");
-        const certificatesTable = document.getElementById("certificatesTable");
 
-        const totalCertificatesCount = document.getElementById("totalCertificatesCount");
-        const activeCertificatesCount = document.getElementById("activeCertificatesCount");
-        const studentsWithCertificatesCount = document.getElementById("studentsWithCertificatesCount");
-
-        /* ==========================
-            Admin Authentication
-            (نفس الكود بالظبط من dashboard.html)
-        ========================== */
+        let activeCourseId = null;
+        let activeCourseTitle = "";
 
         async function checkAdmin() {
-
-            const {
-                data: { session }
-            } = await db.auth.getSession();
-
-            if (!session) {
-                window.location.href = "../login.html";
-                return;
-            }
-
-            const { data: profile } = await db
-                .from("profiles")
-                .select("*")
-                .eq("id", session.user.id)
-                .single();
-
-            if (!profile) {
-                window.location.href = "../login.html";
-                return;
-            }
-
-            if (profile.role !== "admin") {
-                window.location.href = "../index.html";
-                return;
-            }
-
+            const { data: { session } } = await db.auth.getSession();
+            if (!session) { window.location.href = "../login.html"; return; }
+            const { data: profile } = await db.from("profiles").select("*").eq("id", session.user.id).single();
+            if (!profile || profile.role !== "admin") { window.location.href = "../index.html"; }
         }
 
-        /* ==========================
-            تحميل الطلاب والكورسات في القوائم
-        ========================== */
-
-        async function loadFormOptions() {
-
-            const [studentsRes, coursesRes] = await Promise.all([
-                db.from("profiles")
-                    .select("id, full_name, phone")
-                    .eq("role", "student")
-                    .order("full_name", { ascending: true }),
-
-                db.from("courses")
-                    .select("id, title")
-                    .eq("is_active", true)
-                    .order("title", { ascending: true })
-            ]);
-
-            if (studentsRes.error) console.error(studentsRes.error);
-            if (coursesRes.error) console.error(coursesRes.error);
-
-            const students = studentsRes.data || [];
-            const courses = coursesRes.data || [];
-
-            studentSelect.innerHTML = students.length
-                ? students.map(s =>
-                    `<option value="${s.id}">${s.full_name || "بدون اسم"}${s.phone ? " - " + s.phone : ""}</option>`
-                ).join("")
-                : `<option value="">لا يوجد طلاب مسجلين</option>`;
-
-            courseSelect.innerHTML = courses.length
-                ? courses.map(c => `<option value="${c.id}">${c.title}</option>`).join("")
-                : `<option value="">لا توجد كورسات</option>`;
+        function getStageArabic(stage) {
+            return stage === "first" ? "أولى بكالوريا" : stage === "second" ? "تانية بكالوريا" : "";
         }
 
-        // تعبئة عنوان الشهادة تلقائيًا لما يختار كورس (لو الأدمن لسه ماكتبش عنوان بنفسه)
-        courseSelect.addEventListener("change", () => {
-            const selectedOption = courseSelect.options[courseSelect.selectedIndex];
+        async function loadCourses() {
+            const { data: courses, error } = await db
+                .from("courses")
+                .select("id, title, stage, certificate_url, teachers(name)")
+                .eq("is_active", true)
+                .order("created_at", { ascending: false });
 
-            if (selectedOption && selectedOption.value && !titleInput.dataset.userEdited) {
-                titleInput.value = `شهادة إتمام كورس ${selectedOption.textContent}`;
+            if (error) { console.error(error); return; }
+
+            const total = courses.length;
+            const withCert = courses.filter(c => c.certificate_url).length;
+            document.getElementById("totalCoursesCount").textContent = total;
+            document.getElementById("coursesWithCertCount").textContent = withCert;
+            document.getElementById("coursesNoCertCount").textContent = total - withCert;
+
+            if (!courses.length) {
+                coursesTable.innerHTML = `<tr><td colspan="5">لا توجد كورسات</td></tr>`;
+                return;
             }
-        });
 
-        titleInput.addEventListener("input", () => {
-            titleInput.dataset.userEdited = "true";
+            coursesTable.innerHTML = courses.map(course => {
+                const hasCert = !!course.certificate_url;
+                const statusHTML = hasCert
+                    ? `<span class="status-pill has-cert">🏆 يوجد قالب شهادة</span>`
+                    : `<span class="status-pill no-cert">⚪ لا يوجد</span>`;
+
+                const actionsHTML = `
+                <div class="table-actions">
+                    <button class="table-link" data-upload="${course.id}" data-title="${course.title}">
+                        ${hasCert ? "استبدال الشهادة" : "رفع شهادة"}
+                    </button>
+                    ${hasCert ? `<a href="${course.certificate_url}" target="_blank" class="table-link">معاينة</a>` : ""}
+                    ${hasCert ? `<button class="table-link danger" data-remove="${course.id}">حذف</button>` : ""}
+                </div>
+            `;
+
+                return `
+                <tr>
+                    <td><strong>${course.title}</strong></td>
+                    <td>${getStageArabic(course.stage)}</td>
+                    <td>${course.teachers?.name || "—"}</td>
+                    <td>${statusHTML}</td>
+                    <td>${actionsHTML}</td>
+                </tr>
+            `;
+            }).join("");
+        }
+
+        coursesTable.addEventListener("click", async (e) => {
+            const uploadBtn = e.target.closest("[data-upload]");
+            const removeBtn = e.target.closest("[data-remove]");
+
+            if (uploadBtn) {
+                activeCourseId = uploadBtn.dataset.upload;
+                activeCourseTitle = uploadBtn.dataset.title;
+                modalCourseTitle.textContent = `الكورس: ${activeCourseTitle}`;
+                formMessage.className = "form-message";
+                certFileInput.value = "";
+                fileDropLabel.textContent = "📄 دوس هنا لاختيار ملف PDF";
+                fileDropLabel.classList.remove("has-file");
+                uploadModal.classList.add("active");
+            }
+
+            if (removeBtn) {
+                if (!confirm("متأكد إنك عايز تحذف قالب الشهادة من الكورس ده؟")) return;
+                const courseId = removeBtn.dataset.remove;
+                const { error } = await db.from("courses").update({ certificate_url: null }).eq("id", courseId);
+                if (error) { alert("حصل خطأ أثناء الحذف"); return; }
+                await loadCourses();
+            }
         });
 
         certFileInput.addEventListener("change", () => {
             const file = certFileInput.files[0];
-
-            if (file) {
-                fileDropLabel.textContent = `📄 ${file.name}`;
-                fileDropLabel.classList.add("has-file");
-            } else {
-                fileDropLabel.textContent = "📄 دوس هنا لاختيار ملف PDF";
-                fileDropLabel.classList.remove("has-file");
-            }
+            fileDropLabel.textContent = file ? `📄 ${file.name}` : "📄 دوس هنا لاختيار ملف PDF";
+            fileDropLabel.classList.toggle("has-file", !!file);
         });
 
-        function showFormMessage(message, type) {
-            formMessage.textContent = message;
+        function showMsg(msg, type) {
+            formMessage.textContent = msg;
             formMessage.className = `form-message ${type}`;
         }
 
-        /* ==========================
-            إصدار شهادة جديدة
-        ========================== */
-
-        certificateForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const studentId = studentSelect.value;
-            const courseId = courseSelect.value;
-            const title = titleInput.value.trim();
+        uploadBtn.addEventListener("click", async () => {
             const file = certFileInput.files[0];
+            if (!file) { showMsg("اختار ملف PDF الأول", "error"); return; }
+            if (file.type !== "application/pdf") { showMsg("الملف لازم يكون بصيغة PDF", "error"); return; }
 
-            formMessage.className = "form-message";
-
-            if (!studentId || !courseId || !title || !file) {
-                showFormMessage("من فضلك املأ كل الحقول واختار ملف PDF", "error");
-                return;
-            }
-
-            if (file.type !== "application/pdf") {
-                showFormMessage("الملف لازم يكون بصيغة PDF", "error");
-                return;
-            }
-
-            issueBtn.disabled = true;
-            issueBtn.textContent = "جاري الرفع...";
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = "جاري الرفع...";
 
             try {
-                const filePath = `${courseId}/${studentId}-${Date.now()}.pdf`;
+                const filePath = `course-${activeCourseId}/certificate.pdf`;
 
-                const { error: uploadError } = await db.storage
+                // خطوة 1: رفع الملف على Storage
+                showMsg("جاري رفع الملف...", "success");
+                const { data: uploadData, error: uploadError } = await db.storage
                     .from("certificates")
-                    .upload(filePath, file, {
-                        upsert: true,
-                        cacheControl: "3600",
-                        contentType: "application/pdf"
-                    });
+                    .upload(filePath, file, { upsert: true, cacheControl: "3600", contentType: "application/pdf" });
 
-                if (uploadError) throw uploadError;
+                if (uploadError) {
+                    // نعرض الخطأ الحقيقي عشان نفهم المشكلة
+                    console.error("Storage upload error:", uploadError);
+                    showMsg(`خطأ في رفع الملف: ${uploadError.message || uploadError.error || JSON.stringify(uploadError)}`, "error");
+                    return;
+                }
 
-                const { data: publicUrlData } = db.storage
-                    .from("certificates")
-                    .getPublicUrl(filePath);
+                const { data: urlData } = db.storage.from("certificates").getPublicUrl(filePath);
+                const freshUrl = `${urlData.publicUrl}?t=${Date.now()}`;
 
-                const { error: insertError } = await db
-                    .from("student_certificates")
-                    .upsert({
-                        user_id: studentId,
-                        course_id: courseId,
-                        title: title,
-                        certificate_url: publicUrlData.publicUrl,
-                        is_active: true,
-                        issued_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    }, {
-                        onConflict: "user_id,course_id"
-                    });
+                // خطوة 2: حفظ الـ URL في جدول courses
+                const { error: updateError } = await db
+                    .from("courses")
+                    .update({ certificate_url: freshUrl })
+                    .eq("id", activeCourseId);
 
-                if (insertError) throw insertError;
+                if (updateError) {
+                    console.error("DB update error:", updateError);
+                    showMsg(`خطأ في حفظ البيانات: ${updateError.message || JSON.stringify(updateError)}`, "error");
+                    return;
+                }
 
-                showFormMessage("تم إصدار الشهادة بنجاح ✅", "success");
+                showMsg("تم رفع الشهادة بنجاح ✅", "success");
+                await loadCourses();
 
-                certificateForm.reset();
-                titleInput.dataset.userEdited = "";
-                fileDropLabel.textContent = "📄 دوس هنا لاختيار ملف PDF";
-                fileDropLabel.classList.remove("has-file");
-
-                await loadCertificatesTable();
-
+                setTimeout(() => { uploadModal.classList.remove("active"); }, 1400);
             } catch (err) {
-                console.error(err);
-                showFormMessage("حصل خطأ أثناء إصدار الشهادة. حاول تاني.", "error");
+                console.error("Unexpected error:", err);
+                showMsg(`خطأ غير متوقع: ${err.message || JSON.stringify(err)}`, "error");
             } finally {
-                issueBtn.disabled = false;
-                issueBtn.textContent = "إصدار الشهادة";
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = "رفع الشهادة";
             }
         });
 
-        /* ==========================
-            جدول الشهادات الصادرة
-        ========================== */
-
-        async function loadCertificatesTable() {
-
-            certificatesTable.innerHTML = `<tr><td colspan="6">جاري التحميل...</td></tr>`;
-
-            const { data: certs, error } = await db
-                .from("student_certificates")
-                .select("id, user_id, course_id, title, certificate_url, is_active, issued_at")
-                .order("issued_at", { ascending: false });
-
-            if (error) {
-                console.error(error);
-                certificatesTable.innerHTML = `<tr><td colspan="6">حدث خطأ أثناء تحميل الشهادات</td></tr>`;
-                return;
-            }
-
-            if (!certs || certs.length === 0) {
-                certificatesTable.innerHTML = `<tr><td colspan="6">لا توجد شهادات مُصدرة حتى الآن</td></tr>`;
-                totalCertificatesCount.textContent = "0";
-                activeCertificatesCount.textContent = "0";
-                studentsWithCertificatesCount.textContent = "0";
-                return;
-            }
-
-            // بنجيب أسماء الطلاب وعناوين الكورسات لوحدهم (مش join مباشر)
-            // عشان الموضوع يشتغل حتى لو الـ foreign key مش متظبط بنفس الشكل في PostgREST
-            const userIds = [...new Set(certs.map(c => c.user_id))];
-            const courseIds = [...new Set(certs.map(c => c.course_id))];
-
-            const [profilesRes, coursesRes] = await Promise.all([
-                db.from("profiles").select("id, full_name").in("id", userIds),
-                db.from("courses").select("id, title").in("id", courseIds)
-            ]);
-
-            const profilesMap = new Map((profilesRes.data || []).map(p => [p.id, p]));
-            const coursesMap = new Map((coursesRes.data || []).map(c => [c.id, c]));
-
-            totalCertificatesCount.textContent = certs.length;
-            activeCertificatesCount.textContent = certs.filter(c => c.is_active).length;
-            studentsWithCertificatesCount.textContent = userIds.length;
-
-            certificatesTable.innerHTML = certs.map(cert => {
-                const studentName = profilesMap.get(cert.user_id)?.full_name || "طالب غير معروف";
-                const courseTitle = coursesMap.get(cert.course_id)?.title || "كورس غير معروف";
-                const issuedDate = cert.issued_at
-                    ? new Date(cert.issued_at).toLocaleDateString("ar-EG", { year: "numeric", month: "short", day: "numeric" })
-                    : "—";
-
-                const statusHTML = cert.is_active
-                    ? `<span class="status-pill active">🟢 نشطة</span>`
-                    : `<span class="status-pill inactive">⚪ معطلة</span>`;
-
-                return `
-                    <tr>
-                        <td>${studentName}</td>
-                        <td>${courseTitle}</td>
-                        <td>${cert.title}</td>
-                        <td>${issuedDate}</td>
-                        <td>${statusHTML}</td>
-                        <td>
-                            <div class="table-actions">
-                                <a href="${cert.certificate_url}" target="_blank" class="table-link">عرض</a>
-                                <button class="table-link" data-toggle="${cert.id}" data-active="${cert.is_active}">
-                                    ${cert.is_active ? "تعطيل" : "تفعيل"}
-                                </button>
-                                <button class="table-link danger" data-delete="${cert.id}">حذف</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join("");
-        }
-
-        certificatesTable.addEventListener("click", async (e) => {
-            const toggleBtn = e.target.closest("[data-toggle]");
-            const deleteBtn = e.target.closest("[data-delete]");
-
-            if (toggleBtn) {
-                const id = toggleBtn.dataset.toggle;
-                const currentlyActive = toggleBtn.dataset.active === "true";
-
-                const { error } = await db
-                    .from("student_certificates")
-                    .update({ is_active: !currentlyActive, updated_at: new Date().toISOString() })
-                    .eq("id", id);
-
-                if (error) {
-                    console.error(error);
-                    alert("حصل خطأ أثناء تحديث الحالة");
-                    return;
-                }
-
-                await loadCertificatesTable();
-                return;
-            }
-
-            if (deleteBtn) {
-                const id = deleteBtn.dataset.delete;
-                const confirmed = confirm("متأكد إنك عايز تحذف الشهادة دي نهائيًا؟");
-
-                if (!confirmed) return;
-
-                const { error } = await db
-                    .from("student_certificates")
-                    .delete()
-                    .eq("id", id);
-
-                if (error) {
-                    console.error(error);
-                    alert("حصل خطأ أثناء الحذف");
-                    return;
-                }
-
-                await loadCertificatesTable();
-            }
-        });
-
-        /* ==========================
-            Start Page
-        ========================== */
-
-        async function initPage() {
-            await checkAdmin();
-            await loadFormOptions();
-            await loadCertificatesTable();
-        }
+        closeUploadModal.addEventListener("click", () => uploadModal.classList.remove("active"));
+        uploadModal.addEventListener("click", (e) => { if (e.target === uploadModal) uploadModal.classList.remove("active"); });
 
         document.addEventListener("click", async (e) => {
             if (e.target.id === "logoutBtn") {
@@ -1026,10 +782,13 @@
             }
         });
 
+        async function initPage() {
+            await checkAdmin();
+            await loadCourses();
+        }
+
         initPage();
-
     </script>
-
 </body>
 
 </html>

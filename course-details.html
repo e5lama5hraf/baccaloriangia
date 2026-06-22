@@ -990,6 +990,9 @@
         }
 
         @media (max-width: 992px) {
+            .nav-actions .btn-outline {
+                display: none;
+            }
 
             .course-hero-grid,
             .content-layout {
@@ -1020,6 +1023,7 @@
 
             .video-preview {
                 height: 260px;
+                width: 340px;
             }
 
             .hero-actions,
@@ -1057,38 +1061,17 @@
         }
 
         @media (max-width: 480px) {
-            .logo-icon {
-                width: 26px;
-                height: 26px;
-                border-radius: 10px;
-                font-size: 16px;
-                display: grid;
-                place-items: center;
-            }
-
             .logo-text {
-                font-size: 16px;
-            }
-
-            .navbar {
-                gap: 8px;
-            }
-
-            nav a {
                 display: none;
             }
 
-            .nav-actions {
-                gap: 6px
+            nav a {
+                font-size: 14px;
             }
 
             .nav-actions .btn {
                 padding: 10px 16px;
-                font-size: 10px;
-            }
-
-            .preview-card {
-                width: 330px;
+                font-size: 13px;
             }
         }
     </style>
@@ -1750,34 +1733,82 @@
                 return;
             }
 
-            // الطالب خلّص كل دروس الكورس: نشوف هل الشهادة جاهزة فعلاً
+            // الطالب خلّص 100% — نجيب قالب شهادة الكورس من جدول courses
             try {
-                const { data, error } = await supabaseClient
-                    .from("student_certificates")
-                    .select("certificate_url, title, issued_at")
-                    .eq("user_id", currentUser.id)
-                    .eq("course_id", courseId)
-                    .eq("is_active", true)
-                    .maybeSingle();
+                const certUrl = currentCourse?.certificate_url;
 
-                if (error) throw error;
-
-                if (data && data.certificate_url) {
-                    certificateContainer.innerHTML = `
-                        <div class="certificate-icon ready">🎓</div>
-                        <h3>مبروك! خلصت الكورس بالكامل</h3>
-                        <p>شهادتك جاهزة، تقدر تحمّلها دلوقتي.</p>
-                        <a href="${data.certificate_url}" target="_blank" class="btn btn-primary" download>
-                            تحميل الشهادة (PDF)
-                        </a>
-                    `;
-                } else {
+                if (!certUrl) {
                     certificateContainer.innerHTML = `
                         <div class="certificate-icon pending">🎉</div>
-                        <h3>مبروك! خلصت كل دروس الكورس</h3>
-                        <p>شهادتك بتتجهز دلوقتي وهتظهر هنا قريبًا.</p>
+                        <h3>مبروك! خلصت الكورس بالكامل</h3>
+                        <p>شهادتك بتتجهز من إدارة المنصة وهتظهر هنا قريبًا.</p>
                     `;
+                    return;
                 }
+
+                // نتأكد هل الطالب حفظها في بروفايله قبل كده
+                const { data: savedCert } = await supabaseClient
+                    .from("student_certificates")
+                    .select("id")
+                    .eq("user_id", currentUser.id)
+                    .eq("course_id", courseId)
+                    .maybeSingle();
+
+                const alreadySaved = !!savedCert;
+
+                certificateContainer.innerHTML = `
+                    <div class="certificate-icon ready">🎓</div>
+                    <h3>مبروك! خلصت الكورس بالكامل</h3>
+                    <p>شهادتك جاهزة — تقدر تحمّلها على جهازك أو تحفظها في بروفايلك عشان توصلها في أي وقت.</p>
+
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
+                        <a href="${certUrl}" target="_blank" class="btn btn-primary" download>
+                            ⬇️ تحميل الشهادة (PDF)
+                        </a>
+
+                        <button class="btn btn-light" id="saveCertBtn" ${alreadySaved ? "disabled" : ""}>
+                            ${alreadySaved ? "✅ محفوظة في البروفايل" : "💾 حفظ في بروفايلي"}
+                        </button>
+                    </div>
+
+                    <div id="saveCertMsg" style="margin-top:12px;font-weight:800;font-size:14px;"></div>
+                `;
+
+                const saveCertBtn = document.getElementById("saveCertBtn");
+                const saveCertMsg = document.getElementById("saveCertMsg");
+
+                if (saveCertBtn && !alreadySaved) {
+                    saveCertBtn.addEventListener("click", async () => {
+                        saveCertBtn.disabled = true;
+                        saveCertBtn.textContent = "جاري الحفظ...";
+
+                        const { error } = await supabaseClient
+                            .from("student_certificates")
+                            .upsert({
+                                user_id: currentUser.id,
+                                course_id: courseId,
+                                title: `شهادة إتمام كورس ${currentCourse.title}`,
+                                certificate_url: certUrl,
+                                is_active: true,
+                                issued_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, { onConflict: "user_id,course_id" });
+
+                        if (error) {
+                            console.error(error);
+                            saveCertMsg.style.color = "var(--danger)";
+                            saveCertMsg.textContent = "حصل خطأ أثناء الحفظ، حاول تاني.";
+                            saveCertBtn.disabled = false;
+                            saveCertBtn.textContent = "💾 حفظ في بروفايلي";
+                            return;
+                        }
+
+                        saveCertBtn.textContent = "✅ محفوظة في البروفايل";
+                        saveCertMsg.style.color = "var(--success)";
+                        saveCertMsg.textContent = "تم حفظ الشهادة في بروفايلك.";
+                    });
+                }
+
             } catch (err) {
                 console.error(err);
                 certificateContainer.innerHTML = `<p>حصل خطأ أثناء تحميل بيانات الشهادة.</p>`;

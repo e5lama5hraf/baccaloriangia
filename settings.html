@@ -282,6 +282,20 @@
                 linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
         }
 
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+        }
+
         .page-hero h1 {
             font-size: clamp(28px, 4vw, 44px);
             color: var(--dark);
@@ -647,12 +661,16 @@
             }
 
             .logo {
-                font-size: 16px;
+                font-size: 20px;
             }
 
             .logo-icon {
                 width: 40px;
                 height: 40px;
+            }
+
+            .breadcrumb {
+                font-size: 13px;
             }
 
             .settings-card {
@@ -766,6 +784,12 @@
     <!-- Page hero -->
     <section class="page-hero">
         <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">الرئيسية</a>
+                <span>/</span>
+                <span>إعدادات الحساب</span>
+            </div>
+
             <h1>إعدادات الحساب</h1>
             <p>عدّل بياناتك الشخصية، غيّر صورتك، وحدّث كلمة المرور بتاعتك في أي وقت.</p>
         </div>
@@ -1111,6 +1135,13 @@
 
                 if (profileError) throw profileError;
 
+                // نمرّر نفس التعديل لجدول auth.users (الـ metadata) عشان الاتنين يفضلوا متطابقين دايمًا
+                const { error: authError } = await supabaseClient.auth.updateUser({
+                    data: { avatar_url: freshUrl }
+                });
+
+                if (authError) throw authError;
+
                 currentProfile.avatar_url = freshUrl;
                 selectedAvatarFile = null;
                 avatarFileInput.value = "";
@@ -1165,10 +1196,20 @@
                 currentProfile.full_name = fullName;
                 currentProfile.phone = phone;
 
-                // الإيميل وحده بيتغير في نظام الـ Auth، مش جدول profiles
+                // نمرّر نفس الاسم والتليفون لجدول auth.users (الـ metadata) عشان الاتنين يفضلوا متطابقين دايمًا،
+                // ولو الإيميل اتغيّر بعت التحديث بتاعه في نفس الطلب
+                const authPayload = {
+                    data: { full_name: fullName, phone: phone }
+                };
+
                 if (emailChanged) {
-                    const { data, error: emailError } = await supabaseClient.auth.updateUser({ email: newEmail });
-                    if (emailError) throw emailError;
+                    authPayload.email = newEmail;
+                }
+
+                const { data, error: authError } = await supabaseClient.auth.updateUser(authPayload);
+                if (authError) throw authError;
+
+                if (emailChanged) {
                     currentUser = data.user;
                 }
 

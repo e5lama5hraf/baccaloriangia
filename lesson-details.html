@@ -371,6 +371,13 @@
             transition: width 0.3s ease;
         }
 
+        .watch-note {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: 700;
+        }
+
         .completed-message {
             display: none;
             margin-top: 14px;
@@ -488,6 +495,12 @@
         }
 
         @media (max-width: 992px) {
+            .nav-actions .btn-outline {
+                display: none;
+            }
+        }
+
+        @media (max-width: 900px) {
             .lesson-layout {
                 grid-template-columns: 1fr;
             }
@@ -523,26 +536,17 @@
         }
 
         @media (max-width: 480px) {
-            .logo-icon {
-                width: 26px;
-                height: 26px;
-                border-radius: 10px;
-                font-size: 16px;
-                display: grid;
-                place-items: center;
-            }
-
             .logo-text {
-                font-size: 16px;
+                display: none;
             }
 
             .nav-back-link {
-                visibility: hidden;
+                font-size: 14px;
             }
 
             .nav-actions .btn {
                 padding: 10px 16px;
-                font-size: 10px;
+                font-size: 13px;
             }
         }
     </style>
@@ -585,6 +589,9 @@
         <div class="container lesson-layout">
 
             <div class="lesson-main">
+                <div class="badge" id="lessonBadge">
+                    جاري تحميل بيانات الدرس...
+                </div>
 
                 <h1 id="lessonTitle">
                     عنوان الدرس
@@ -595,15 +602,13 @@
                 </p>
 
                 <div class="video-box youtube-box" id="videoBox">
-                    <iframe id="youtubeFrame" src="" title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen>
-                    </iframe>
+                    <!-- YouTube IFrame API بينشئ اليوتيوب بلاير هنا تلقائيًا -->
+                    <div id="ytPlayer"></div>
                 </div>
 
                 <div class="watch-info">
                     <div class="watch-head">
-                        <span>حالة مشاهدة هذا الدرس</span>
+                        <span>نسبة المشاهدة</span>
                         <span id="watchPercent">0%</span>
                     </div>
 
@@ -611,9 +616,19 @@
                         <div class="watch-fill" id="watchFill"></div>
                     </div>
 
-                    <button class="btn btn-primary" id="completeLessonBtn" type="button" style="margin-top: 14px;">
-                        تسجيل الدرس كمكتمل
-                    </button>
+                    <p class="watch-note" id="watchNote">
+                        شاهد 70% على الأقل من الفيديو عشان يتفعّل زرار تسجيل الدرس كمكتمل.
+                    </p>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+                        <button class="btn btn-primary" id="completeLessonBtn" type="button" disabled>
+                            تسجيل الدرس كمكتمل
+                        </button>
+
+                        <button class="btn btn-light" id="unmarkLessonBtn" type="button" style="display:none;">
+                            إلغاء تسجيل الإتمام
+                        </button>
+                    </div>
 
                     <div class="completed-message" id="completedMessage">
                         ✅ تم تسجيل إتمام مشاهدة الدرس بنجاح.
@@ -659,6 +674,8 @@
         </div>
     </section>
 
+    <!-- YouTube IFrame Player API — لازم يكون قبل كود الصفحة عشان onYouTubeIframeAPIReady تشتغل صح -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -678,17 +695,19 @@
         const lessonPage = document.getElementById("lessonPage");
         const accessDenied = document.getElementById("accessDenied");
 
+        const lessonBadge = document.getElementById("lessonBadge");
         const lessonTitle = document.getElementById("lessonTitle");
         const lessonDescription = document.getElementById("lessonDescription");
         const lessonList = document.getElementById("lessonList");
 
         const videoBox = document.getElementById("videoBox");
-        const youtubeFrame = document.getElementById("youtubeFrame");
 
         const watchPercent = document.getElementById("watchPercent");
         const watchFill = document.getElementById("watchFill");
+        const watchNote = document.getElementById("watchNote");
         const completedMessage = document.getElementById("completedMessage");
         const completeLessonBtn = document.getElementById("completeLessonBtn");
+        const unmarkLessonBtn = document.getElementById("unmarkLessonBtn");
 
         const whatsappAccessBtn = document.getElementById("whatsappAccessBtn");
 
@@ -748,6 +767,115 @@
         let currentLesson = null;
         let hasAccess = false;
         let completedSaved = false;
+
+        // ---------- YouTube IFrame Player API ----------
+        // ytPlayer: الـ player object اللي بتنشئه الـ YouTube API
+        // currentWatchedPercent: أعلى نسبة مشاهدة وصلها الطالب في الجلسة دي
+        // progressInterval: الـ setInterval اللي بيتابع موقع الفيديو
+        // videoReadyToTrack: بتاخد true لما الـ player يبقى جاهز وعندنا videoId
+        let ytPlayer = null;
+        let currentWatchedPercent = 0;
+        let progressInterval = null;
+        let pendingVideoId = null;
+
+        // YouTube API بيكال الدالة دي تلقائيًا لما تتحمل
+        window.onYouTubeIframeAPIReady = function () {
+            if (pendingVideoId) {
+                createYTPlayer(pendingVideoId);
+            }
+        };
+
+        function createYTPlayer(videoId) {
+            // لو حد استدعى createYTPlayer قبل ما الـ API تكون جاهزة، نخلي الـ API
+            // هي اللي تنشئ البلاير لما تكون جاهزة (عبر pendingVideoId)
+            if (typeof YT === "undefined" || !YT.Player) {
+                pendingVideoId = videoId;
+                return;
+            }
+
+            ytPlayer = new YT.Player("ytPlayer", {
+                videoId: videoId,
+                playerVars: {
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1
+                },
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // لو كان الطالب خلص الدرس قبل كده، مش محتاجين نتابعه
+            if (completedSaved) return;
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                // بدأ التشغيل: ابدأ متابعة كل ثانيتين
+                if (!progressInterval) {
+                    progressInterval = setInterval(trackWatchProgress, 2000);
+                }
+            } else {
+                // وقف أو خلص: وقف المتابعة
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                // لو خلص بشكل طبيعي (ended)
+                if (event.data === YT.PlayerState.ENDED) {
+                    trackWatchProgress();
+                }
+            }
+        }
+
+        function trackWatchProgress() {
+            if (!ytPlayer || typeof ytPlayer.getCurrentTime !== "function") return;
+            if (completedSaved) return;
+
+            const duration = ytPlayer.getDuration();
+            const elapsed = ytPlayer.getCurrentTime();
+
+            if (!duration || duration === 0) return;
+
+            const percent = Math.min(100, Math.round((elapsed / duration) * 100));
+
+            if (percent > currentWatchedPercent) {
+                currentWatchedPercent = percent;
+            }
+
+            // تحديث شريط التقدم في الواجهة
+            watchPercent.textContent = currentWatchedPercent + "%";
+            watchFill.style.width = currentWatchedPercent + "%";
+
+            // تفعيل زرار "تسجيل كمكتمل" لما يوصل 70%
+            if (currentWatchedPercent >= 70) {
+                completeLessonBtn.disabled = false;
+                watchNote.textContent = "شاهدت " + currentWatchedPercent + "% من الفيديو — تقدر تسجل الدرس كمكتمل دلوقتي.";
+            }
+
+            // حفظ النسبة في قاعدة البيانات كل 10% زيادة (من غير تسجيل إتمام)
+            if (currentUser && currentWatchedPercent % 10 === 0 && currentWatchedPercent < 100) {
+                saveWatchedPercent(currentWatchedPercent);
+            }
+        }
+
+        async function saveWatchedPercent(percent) {
+            if (!currentUser || completedSaved) return;
+
+            await supabaseClient
+                .from("lesson_progress")
+                .upsert({
+                    user_id: currentUser.id,
+                    course_id: courseId,
+                    lesson_id: lessonId,
+                    is_completed: false,
+                    watched_percent: percent,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: "user_id,lesson_id" });
+        }
 
         document.querySelectorAll(".back-to-course").forEach(btn => {
             btn.href = `course-details.html?id=${courseId}`;
@@ -901,6 +1029,9 @@
 
             document.title = `${lesson.title} | البكالورينجية`;
 
+            lessonBadge.textContent =
+                `درس داخل كورس ${currentCourse.title}`;
+
             lessonTitle.textContent =
                 lesson.title;
 
@@ -912,13 +1043,17 @@
                 getYouTubeId(lesson.youtube_url || lesson.video_url);
 
             if (videoId) {
-                youtubeFrame.src =
-                    `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1`;
+                // YouTube IFrame API بتنشئ البلاير في الـ div#ytPlayer
+                createYTPlayer(videoId);
             } else {
                 videoBox.classList.remove("youtube-box");
 
                 videoBox.innerHTML =
                     `<div class="no-video">لا يوجد فيديو مضاف لهذا الدرس حاليًا.</div>`;
+
+                // لو مفيش فيديو، نفعّل زرار الإتمام على طول بدون شرط المشاهدة
+                completeLessonBtn.disabled = false;
+                watchNote.textContent = "لا يوجد فيديو لهذا الدرس، تقدر تسجله كمكتمل مباشرة.";
             }
 
             return true;
@@ -982,10 +1117,29 @@
             });
         }
 
-        async function loadProgress() {
-            if (!currentUser) {
-                return;
+        function setCompletedUI(isCompleted) {
+            completedSaved = isCompleted;
+
+            if (isCompleted) {
+                completedMessage.classList.add("active");
+                completeLessonBtn.textContent = "تم إكمال الدرس ✅";
+                completeLessonBtn.disabled = true;
+                unmarkLessonBtn.style.display = "inline-flex";
+                watchNote.textContent = "أنت كملت مشاهدة الدرس ده بالكامل.";
+            } else {
+                completedMessage.classList.remove("active");
+                completeLessonBtn.textContent = "تسجيل الدرس كمكتمل";
+                // نفعّل زرار التسجيل فقط لو الطالب شاف 70% فعلاً
+                completeLessonBtn.disabled = currentWatchedPercent < 70;
+                unmarkLessonBtn.style.display = "none";
+                watchNote.textContent = currentWatchedPercent >= 70
+                    ? `شاهدت ${currentWatchedPercent}% من الفيديو — تقدر تسجل الدرس كمكتمل دلوقتي.`
+                    : "شاهد 70% على الأقل من الفيديو عشان يتفعّل زرار تسجيل الدرس كمكتمل.";
             }
+        }
+
+        async function loadProgress() {
+            if (!currentUser) return;
 
             const { data, error } = await supabaseClient
                 .from("lesson_progress")
@@ -994,41 +1148,34 @@
                 .eq("lesson_id", lessonId)
                 .maybeSingle();
 
-            if (error) {
-                console.error(error);
-                return;
-            }
+            if (error) { console.error(error); return; }
+            if (!data) return;
 
-            if (!data) {
-                return;
-            }
+            // نستعيد أعلى نسبة مشاهدة محفوظة في السيرفر
+            currentWatchedPercent = data.is_completed ? 100 : (data.watched_percent || 0);
+            watchPercent.textContent = currentWatchedPercent + "%";
+            watchFill.style.width = currentWatchedPercent + "%";
 
-            const watched = data.is_completed
-                ? 100
-                : data.watched_percent || 0;
-
-            watchPercent.textContent = watched + "%";
-            watchFill.style.width = watched + "%";
-
-            if (data.is_completed) {
-                completedSaved = true;
-                completedMessage.classList.add("active");
-                completeLessonBtn.textContent = "تم إكمال الدرس";
-                completeLessonBtn.disabled = true;
-            }
+            setCompletedUI(!!data.is_completed);
         }
 
         async function saveCompleted() {
             if (!currentUser) {
-                // بدل التنبيه المفاجئ، نرجعه لصفحة الدخول وبعد ما يسجل يرجع لنفس الدرس ده تاني
                 const returnUrl = window.location.pathname + window.location.search;
                 window.location.href = `login.html?redirect=${encodeURIComponent(returnUrl)}`;
                 return;
             }
 
-            if (completedSaved) {
+            // الزرار مش بيشتغل إلا بعد 70%، لكن نتأكد مرة تانية
+            if (currentWatchedPercent < 70) {
+                watchNote.textContent = "لازم تشاهد 70% على الأقل من الفيديو الأول.";
                 return;
             }
+
+            if (completedSaved) return;
+
+            completeLessonBtn.disabled = true;
+            completeLessonBtn.textContent = "جاري الحفظ...";
 
             const { error } = await supabaseClient
                 .from("lesson_progress")
@@ -1037,31 +1184,62 @@
                     course_id: courseId,
                     lesson_id: lessonId,
                     is_completed: true,
-                    watched_percent: 100,
+                    watched_percent: currentWatchedPercent,
                     completed_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
-                }, {
-                    onConflict: "user_id,lesson_id"
-                });
+                }, { onConflict: "user_id,lesson_id" });
 
             if (error) {
                 console.error(error);
                 alert("حدث خطأ أثناء حفظ تقدمك. حاول مرة أخرى.");
+                completeLessonBtn.disabled = false;
+                completeLessonBtn.textContent = "تسجيل الدرس كمكتمل";
                 return;
             }
 
-            completedSaved = true;
-
-            watchPercent.textContent = "100%";
-            watchFill.style.width = "100%";
-
-            completedMessage.classList.add("active");
-
-            completeLessonBtn.textContent = "تم إكمال الدرس";
-            completeLessonBtn.disabled = true;
-
-            // نحدث نسبة إتمام الكورس فورًا بعد ما الدرس يتسجل كمكتمل
+            setCompletedUI(true);
             await updateContinueProgress();
+        }
+
+        async function unmarkLesson() {
+            if (!currentUser || !completedSaved) return;
+
+            unmarkLessonBtn.disabled = true;
+            unmarkLessonBtn.textContent = "جاري الإلغاء...";
+
+            // بنصفّر النسبة عشان الطالب يلازم يشاهد 70% تاني عشان يُعيد التسجيل
+            const { error } = await supabaseClient
+                .from("lesson_progress")
+                .upsert({
+                    user_id: currentUser.id,
+                    course_id: courseId,
+                    lesson_id: lessonId,
+                    is_completed: false,
+                    watched_percent: 0,
+                    completed_at: null,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: "user_id,lesson_id" });
+
+            if (error) {
+                console.error("unmark error:", error);
+                alert(`حدث خطأ أثناء إلغاء الإتمام: ${error.message || JSON.stringify(error)}`);
+                unmarkLessonBtn.disabled = false;
+                unmarkLessonBtn.textContent = "إلغاء تسجيل الإتمام";
+                return;
+            }
+
+            // نصفّر شريط المشاهدة والمتغير المحلي
+            currentWatchedPercent = 0;
+            watchPercent.textContent = "0%";
+            watchFill.style.width = "0%";
+
+            unmarkLessonBtn.disabled = false;
+            unmarkLessonBtn.textContent = "إلغاء تسجيل الإتمام";
+            setCompletedUI(false);
+
+            // نحدث نسبة إتمام الكورس في السيرفر ونعرض تأكيد
+            await updateContinueProgress();
+            watchNote.textContent = "تم إلغاء الإتمام — شاهد 70% من الفيديو تاني عشان تُعيد التسجيل. (نسبة الكورس اتحدثت تلقائيًا)";
         }
 
         // بتسجل "آخر درس اتفتح" + نسبة إتمام الكورس كله في student_course_progress
@@ -1146,6 +1324,7 @@
         }
 
         completeLessonBtn.addEventListener("click", saveCompleted);
+        unmarkLessonBtn.addEventListener("click", unmarkLesson);
 
         async function initPage() {
             if (!courseId || !lessonId) {
