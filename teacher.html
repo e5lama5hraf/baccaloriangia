@@ -1123,7 +1123,7 @@
     // بيحدد شكل الجزء الخاص بحالة الدرس: مقفول / مجاني / متاح للمشاهدة
     function renderLessonMeta(lesson, isEnrolled, courseId) {
       const status = getLessonStatus(lesson.status);
-      const watchLink = `<a href="lesson-details.html?id=${lesson.id}&course=${courseId}" class="lesson-watch-link">▶ مشاهدة</a>`;
+      const watchLink = `<a href="lesson-details.html?lesson=${lesson.id}&course=${courseId}" class="lesson-watch-link">▶ مشاهدة</a>`;
 
       if (isEnrolled) {
         // الطالب مشترك فعلاً في الكورس ده: كل الدروس بقت متاحة له
